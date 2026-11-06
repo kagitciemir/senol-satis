@@ -1118,6 +1118,7 @@ function normalizeRoomCool(room){
   if (room.coolModel===undefined) room.coolModel = '';
   if (room.coolEvap===undefined) room.coolEvap = '';
   if (room.coolPanel===undefined) room.coolPanel = true;
+  if (!room.coolDuzen) room.coolDuzen = '1-1'; // '1-1' tek grup+tek evap, '1-2' tek grup+2 evap, '2-2' 2 grup+2 evap (patron 2026-11-06)
   COOL_OPTS.forEach(o=>{ const k='cool_'+o.key; if (room[k]===undefined) room[k] = false; });
 }
 function coolEvapKey(r){ return r.evap+'|'+r.qty+'|'+r.pEvap; }
@@ -1135,12 +1136,14 @@ function calcCoolingMerkezi(room){
   if (!res.on) return res;
   if (!(req>0)){ res.msgs.push('Oda ölçülerini girin.'); return res; }
   const ser = room.coolSeries==='ORT' && zone==='NEG' ? 'HRM' : (room.coolSeries||'HRM');
+  const nE = room.coolDuzen==='1-1' ? 1 : 2, reqE = Math.ceil(req/nE);
+  Object.assign(res, {nG:0, nE, reqE});
   const evs = coolEvapChoices(ser, zone);
   let ev = room.coolEvap ? evs.find(e=>e.key===room.coolEvap) : null;
-  if (ev) res.auto = false; else ev = evs.find(e=>e.cap>=req) || null;
+  if (ev) res.auto = false; else ev = evs.find(e=>e.cap>=reqE) || null;
   if (!ev){ res.msgs.push(`Gerekli ${fmtNum(req,0)} W için listede tek evaporatör yok.`); return res; }
-  res.evap = ev; res.evapList = ev.price;
-  if (ev.cap < req) res.msgs.push(`Evaporatör kapasitesi gerekli değerin altında (${ev.cap} W < ${req} W).`);
+  res.evap = ev; res.evapList = ev.price*nE;
+  if (ev.cap < reqE) res.msgs.push(`Evaporatör kapasitesi gerekli değerin altında (${ev.cap} W < ${reqE} W${nE>1?' evaporatör başına':''}).`);
   const row = COOL_DATA.find(x=>x.series===ser && x.zone===zone && coolEvapKey(x)===ev.key && x.pPanel>0) || COOL_DATA.find(x=>x.zone===zone && x.pPanel>0);
   res.panelList = row ? row.pPanel : 0;
   res.listTotal = res.evapList + res.panelList;
@@ -1159,42 +1162,51 @@ function calcCooling(room){
   if (!res.on) return res;
   if (room.coolSeries==='ORT' && zone==='NEG'){ res.msgs.push('Ortam serisinde negatif oda grubu yok — Hermetik veya Tropikal seçin.'); return res; }
   if (!(req>0)){ res.msgs.push('Oda ölçülerini girin.'); return res; }
+  // düzen: grup ve evaporatör adedi; her grup gücün 1/nG'sini, her evaporatör 1/nE'sini karşılar
+  const nG = room.coolDuzen==='2-2' ? 2 : 1, nE = room.coolDuzen==='1-1' ? 1 : 2;
+  const reqU = Math.ceil(req/nG), reqE = Math.ceil(req/nE);
+  Object.assign(res, {nG, nE, reqU, reqE});
   const cands = coolCandidates(room.coolSeries, room.coolBrand, room.coolSS, zone);
   res.cands = cands;
   if (!cands.length){ res.msgs.push('Bu seri / marka / kasa için fiyat listesinde model yok.'); return res; }
   let unit = null;
   if (room.coolModel){ unit = cands.find(c=>c.model===room.coolModel) || null; if (unit) res.auto = false; }
-  if (!unit) unit = cands.find(c=>c.cap>=req) || null;
+  if (!unit) unit = cands.find(c=>c.cap>=reqU) || null;
   if (!unit){
     // markada yeterli model yok → daha büyük marka öner
     const maxCap = cands[cands.length-1].cap;
-    res.msgs.push(`${COOL_BRAND_LABEL[room.coolBrand]} markasında yeterli model yok (en büyüğü ${maxCap} W, gerekli ${req} W).`);
+    res.msgs.push(`${COOL_BRAND_LABEL[room.coolBrand]} markasında yeterli model yok (en büyüğü ${maxCap} W, gerekli ${reqU} W${nG>1?' grup başına':''}).`);
     COOL_BRANDS.forEach(b=>{
       if (b===room.coolBrand) return;
-      const c = coolCandidates(room.coolSeries, b, room.coolSS, zone).find(x=>x.cap>=req);
+      const c = coolCandidates(room.coolSeries, b, room.coolSS, zone).find(x=>x.cap>=reqU);
       if (c) res.suggest.push({brand:b, model:c.model, cap:c.cap});
     });
-    if (!res.suggest.length) res.msgs.push('Hiçbir markada tek ünite yetmiyor — çoklu ünite / merkezi sistem gerekir.');
+    if (!res.suggest.length) res.msgs.push(nG>1 ? 'Hiçbir markada grup başına yeterli ünite yok — merkezi sistem gerekir.' : 'Hiçbir markada tek ünite yetmiyor — "2 grup + 2 evaporatör" düzenini ya da merkezi sistemi deneyin.');
     return res;
   }
   res.unit = unit;
-  if (unit.cap < req) res.msgs.push(`Seçili model gerekli kapasiteyi karşılamıyor (${unit.cap} W < ${req} W).`);
+  if (unit.cap < reqU) res.msgs.push(`Seçili model gerekli kapasiteyi karşılamıyor (${unit.cap} W < ${reqU} W${nG>1?' grup başına':''}).`);
   // evaporatör: modelin eşleşen evaporatörü, elle değiştirilebilir
+  // 1 grup + 2 evaporatör (patron 2026-11-06): her evaporatör, grubun eşleşen evaporatör kapasitesinin yarısını karşılar
   let ev = { key:coolEvapKey(unit), evap:unit.evap, qty:unit.qty, cap:unit.evapCap, price:unit.pEvap };
-  if (room.coolEvap){ const alt = coolEvapChoices(room.coolSeries, zone).find(e=>e.key===room.coolEvap); if (alt) ev = alt; }
+  if (nE>nG){ res.reqE = Math.ceil((unit.evapCap||0)/2); }
+  const reqE2 = res.reqE;
+  const evs = coolEvapChoices(room.coolSeries, zone);
+  if (room.coolEvap){ const alt = evs.find(e=>e.key===room.coolEvap); if (alt) ev = alt; }
+  else if (nE>nG){ const alt = evs.find(e=>e.cap>=reqE2); if (alt) ev = alt; }
   res.evap = ev;
-  if (ev.cap < req) res.msgs.push(`Evaporatör kapasitesi gerekli değerin altında (${ev.cap} W < ${req} W).`);
-  res.unitList = unit.pUnit; res.evapList = ev.price;
+  if (ev.cap < reqE2) res.msgs.push(`Evaporatör kapasitesi gerekli değerin altında (${ev.cap} W < ${reqE2} W${nE>1?' evaporatör başına':''}).`);
+  res.unitList = unit.pUnit*nG; res.evapList = ev.price*nE;
   COOL_OPTS.forEach(o=>{
     const price = unit[o.key];
     const avail = price!=null && price>0;
     const on = !!room['cool_'+o.key] && avail;
-    res.opts.push({key:o.key,label:o.label,price:avail?price:0,avail,on});
-    if (on) res.optList += price;
+    res.opts.push({key:o.key,label:o.label,price:avail?price*nG:0,avail,on});
+    if (on) res.optList += price*nG;
   });
-  res.panelList = room.coolPanel ? (unit.pPanel||0) : 0;
+  res.panelList = room.coolPanel ? (unit.pPanel||0)*nG : 0;
   res.listTotal = res.unitList + res.evapList + res.optList + res.panelList;
-  res.ok = unit.cap >= req;
+  res.ok = unit.cap >= reqU;
   res.priced = true; // seçili bir model var, fiyat hesaplanır
   return res;
 }
@@ -1219,13 +1231,14 @@ function coolBoxInner(room){
   if (!on) return head;
   if (c.merkezi){
     const evs = coolEvapChoices(room.coolSeries==='ORT' && c.zone==='NEG' ? 'HRM' : (room.coolSeries||'HRM'), c.zone);
-    const evOpts = evs.map(e=>`<option value="${e.key}" ${(!c.auto && c.evap && c.evap.key===e.key)?'selected':''}>${e.cap<c.req?'⚠ ':''}${e.evap}${e.qty>1?' ×'+e.qty:''} · ${fmtNum(e.cap,0)} W · ${fmt(e.price)}</option>`).join('');
+    const evOpts = evs.map(e=>`<option value="${e.key}" ${(!c.auto && c.evap && c.evap.key===e.key)?'selected':''}>${e.cap<(c.reqE||c.req)?'⚠ ':''}${e.evap}${e.qty>1?' ×'+e.qty:''} · ${fmtNum(e.cap,0)} W · ${fmt(e.price)}</option>`).join('');
     return head + `<div class="cool-merk">Merkezi sisteme bağlı: bu odaya sadece <b>evaporatör</b> ve <b>dijital kontrol paneli</b> verilir. Soğutma grubu projedeki merkezi sistemden gelir (proje ayarları → Soğutma Şekli).</div>
       <div class="form-grid" style="margin-top:12px;">
+        <div class="fld"><label>Evaporatör adedi</label><select class="rf" data-f="coolDuzen"><option value="1-1"${room.coolDuzen==='1-1'?' selected':''}>1 evaporatör</option><option value="1-2"${room.coolDuzen!=='1-1'?' selected':''}>2 evaporatör</option></select>${c.nE>1?`<small class="hint">Her evaporatör ${fmtNum(c.reqE,0)} W</small>`:''}</div>
         <div class="fld"><label>Evaporatör</label><select class="rf" data-f="coolEvap"><option value="">Otomatik${c.auto&&c.evap?' → '+c.evap.evap:''}</option>${evOpts}</select><small class="hint">Otomatik = gerekli gücü karşılayan en küçük evaporatör</small></div>
       </div>
       ${c.msgs.length?`<div class="cool-warn">⚠ ${c.msgs.join(' ')}</div>`:''}
-      ${c.evap?`<div class="cool-total">Evaporatör ${fmt(c.evapList*cf)}${c.panelList>0?' · Dijital panel '+fmt(c.panelList*cf):''} · <b>Toplam (net): ${fmt((c.evapList+c.panelList)*cf)}</b></div>`:''}`;
+      ${c.evap?`<div class="cool-total">Evaporatör${c.nE>1?' ×'+c.nE:''} ${fmt(c.evapList*cf)}${c.panelList>0?' · Dijital panel '+fmt(c.panelList*cf):''} · <b>Toplam (net): ${fmt((c.evapList+c.panelList)*cf)}</b></div>`:''}`;
   }
   const zone = c.zone;
   const autoZoneTxt = (room.thickness==='120'||room.thickness==='150') ? 'Negatif' : 'Pozitif';
@@ -1234,12 +1247,13 @@ function coolBoxInner(room){
     return `<option value="${b}" ${b===room.coolBrand?'selected':''} ${has?'':'disabled'}>${COOL_BRAND_LABEL[b]}${has?'':' (listede yok)'}</option>`;
   }).join('');
   const hasSS = COOL_BRANDS.some(b=>coolHasData(room.coolSeries,b,true,zone));
-  const modelOpts = c.cands.map(m=>`<option value="${m.model}" ${(!c.auto && c.unit && c.unit.model===m.model)?'selected':''}>${m.cap<c.req?'⚠ ':''}${m.model} · ${m.comp} · ${m.hp} HP · ${coolPhase(m.model)} · ${fmtNum(m.cap,0)} W · ${fmt(m.pUnit)}</option>`).join('');
+  const modelOpts = c.cands.map(m=>`<option value="${m.model}" ${(!c.auto && c.unit && c.unit.model===m.model)?'selected':''}>${m.cap<(c.reqU||c.req)?'⚠ ':''}${m.model} · ${m.comp} · ${m.hp} HP · ${coolPhase(m.model)} · ${fmtNum(m.cap,0)} W · ${fmt(m.pUnit)}</option>`).join('');
   const evChoices = coolEvapChoices(room.coolSeries, zone);
   const evSel = (c.unit && room.coolEvap) ? c.evap.key : '';
-  const evOpts = evChoices.map(e=>`<option value="${e.key}" ${e.key===evSel?'selected':''}>${e.cap<c.req?'⚠ ':''}${e.evap}${e.qty>1?' ×'+e.qty:''} · ${fmtNum(e.cap,0)} W · ${fmt(e.price)}</option>`).join('');
+  const evOpts = evChoices.map(e=>`<option value="${e.key}" ${e.key===evSel?'selected':''}>${e.cap<(c.reqE||c.req)?'⚠ ':''}${e.evap}${e.qty>1?' ×'+e.qty:''} · ${fmtNum(e.cap,0)} W · ${fmt(e.price)}</option>`).join('');
   let body = `
     <div class="form-grid" style="margin-top:12px;">
+      <div class="fld"><label>Düzen</label><select class="rf" data-f="coolDuzen"><option value="1-1"${room.coolDuzen==='1-1'?' selected':''}>1 grup + 1 evaporatör</option><option value="1-2"${room.coolDuzen==='1-2'?' selected':''}>1 grup + 2 evaporatör</option><option value="2-2"${room.coolDuzen==='2-2'?' selected':''}>2 grup + 2 evaporatör</option></select>${c.nG>1||c.nE>1?`<small class="hint">${c.nG>1?'Her grup '+fmtNum(c.reqU,0)+' W':''}${c.nG>1&&c.nE>1?' · ':''}${c.nE>1?'her evaporatör '+fmtNum(c.reqE,0)+' W'+(c.nG===1&&c.unit?' (grubun evaporatörü '+fmtNum(c.unit.evapCap,0)+' W / 2)':''):''}</small>`:''}</div>
       <div class="fld"><label>Seri</label><select class="rf" data-f="coolSeries">${COOL_SERIES.map(s=>`<option value="${s.key}" ${s.key===room.coolSeries?'selected':''}>${s.label}</option>`).join('')}</select></div>
       <div class="fld"><label>Marka</label><select class="rf" data-f="coolBrand">${brandOpts}</select><small class="hint">Yetmezse büyük marka önerilir</small></div>
       <div class="fld"><label>Kasa</label><select class="rf" data-f="coolSS"><option value="0" ${!room.coolSS?'selected':''}>Standart</option><option value="1" ${room.coolSS?'selected':''} ${hasSS?'':'disabled'}>Sessiz (SS)${hasSS?'':' — yok'}</option></select></div>
@@ -1257,11 +1271,11 @@ function coolBoxInner(room){
     const line = (lbl, txt, list) => `<div class="r-line"><span class="lbl">${lbl}</span><span class="val">${txt} · <span style="color:var(--muted)">liste ${fmt(list)}</span> → <b>${fmt(list*cf)}</b></span></div>`;
     body += `<div class="cool-info">
       <div class="r-line"><span class="lbl">Gerekli kapasite</span><span class="val">${fmtNum(c.req,0)} W <span style="color:var(--muted)">(${c.zoneInfo.label}, ${c.zoneInfo.basis})</span></span></div>
-      ${line('Soğutma grubu', `${c.unit.model} · ${c.unit.comp} · ${c.unit.hp} HP · ${coolPhase(c.unit.model)} · ${fmtNum(c.unit.cap,0)} W (${c.unit.capLabel})`, c.unitList)}
-      ${line('Evaporatör', `${c.evap.evap}${c.evap.qty>1?' ×'+c.evap.qty:''} · ${fmtNum(c.evap.cap,0)} W`, c.evapList)}
+      ${line('Soğutma grubu'+(c.nG>1?' ×'+c.nG:''), `${c.unit.model} · ${c.unit.comp} · ${c.unit.hp} HP · ${coolPhase(c.unit.model)} · ${fmtNum(c.unit.cap,0)} W (${c.unit.capLabel})`, c.unitList)}
+      ${line('Evaporatör'+(c.nE>1?' ×'+c.nE:''), `${c.evap.evap}${c.evap.qty>1?' ×'+c.evap.qty:''} · ${fmtNum(c.evap.cap,0)} W`, c.evapList)}
     </div>
     <div class="opt-acc-grid" style="margin-top:12px;">
-      <div class="opt-acc-row"><div class="toggle-row"><div class="toggle ${room.coolPanel?'on':''}" data-toggle="coolPanel"><div class="dot"></div></div><span class="toggle-label">Dijital Kontrol Paneli <b>(${fmt(c.unit.pPanel*cf)})</b></span></div></div>
+      <div class="opt-acc-row"><div class="toggle-row"><div class="toggle ${room.coolPanel?'on':''}" data-toggle="coolPanel"><div class="dot"></div></div><span class="toggle-label">Dijital Kontrol Paneli${c.nG>1?' ×'+c.nG:''} <b>(${fmt(c.unit.pPanel*c.nG*cf)})</b></span></div></div>
       ${c.opts.map(o=>`<div class="opt-acc-row${o.avail?'':' off'}"><div class="toggle-row"><div class="toggle ${o.on?'on':''}" ${o.avail?`data-toggle="cool_${o.key}"`:''}><div class="dot"></div></div><span class="toggle-label">${o.label} <b>${o.avail?'('+fmt(o.price*cf)+')':'(bu markada listede yok)'}</b></span></div></div>`).join('')}
     </div>
     <div class="cool-total">Soğutma toplamı (net): <b>${fmt(c.listTotal*cf)}</b></div>`;
@@ -1287,6 +1301,7 @@ function handleCoolChange(room, f, v){
   else if (f==='coolZone'){ room.coolZone = v; room.coolModel=''; room.coolEvap=''; }
   else if (f==='coolModel'){ room.coolModel = v; }
   else if (f==='coolEvap'){ room.coolEvap = v; }
+  else if (f==='coolDuzen'){ room.coolDuzen = v; room.coolModel=''; room.coolEvap=''; }
 }
 
 function coolEnsureBrand(room){
@@ -2114,9 +2129,10 @@ function calcProject(){
   const yurtIci = projectState.yurtIci !== false;
   // Montaj bizdeyse, soğutma grubu olan odada (yurt içi): 10 m tesisat, 1 tüp freon, grup montajı — net, iskontosuz; nakliye hariç
   roomResults.forEach(x=>{
+    const nG = (x.cool && x.cool.nG) || 1; // 2 grup varsa kurulum kalemleri grup başına
     x.kurulum = (yurtIci && x.room.montajVar && x.coolNet && !x.coolNet.merkezi) ? {
-      tesisatM: KURULUM.tesisatM, tesisat: KURULUM.tesisatM*KURULUM.tesisatEUR, freon: KURULUM.freon, montaj: KURULUM.montaj,
-      total: KURULUM.tesisatM*KURULUM.tesisatEUR + KURULUM.freon + KURULUM.montaj } : null;
+      nG, tesisatM: KURULUM.tesisatM*nG, tesisat: KURULUM.tesisatM*KURULUM.tesisatEUR*nG, freon: KURULUM.freon*nG, montaj: KURULUM.montaj*nG,
+      total: (KURULUM.tesisatM*KURULUM.tesisatEUR + KURULUM.freon + KURULUM.montaj)*nG } : null;
   });
   // Merkezi sistem: bağlı odaların gerekli gücü bölge (pozitif/negatif) başına toplanır, en uygun scroll (yetmezse harici kondenserli) seçilir
   const merkezi = [];
@@ -2152,13 +2168,13 @@ function coolReceiptLines(x){
   }
   if (c.merkezi){
     if (!c.evap) return `<div class="r-line"><span class="lbl" style="color:var(--danger);">Soğutma</span><span class="val" style="color:var(--danger);">⚠ ${c.msgs[0]||'Evaporatör seçilemedi'} — fiyata dahil değil</span></div>`;
-    let hm = `<div class="r-line"><span class="lbl">Evaporatör (merkezi)</span><span class="val">${c.evap.evap}${c.evap.qty>1?' ×'+c.evap.qty:''} · ${fmtNum(c.evap.cap,0)} W · gerekli ${fmtNum(c.req,0)} W · ${fmt(x.coolNet.evap)}</span></div>`;
+    let hm = `<div class="r-line"><span class="lbl">Evaporatör (merkezi${c.nE>1?', '+c.nE+' adet':''})</span><span class="val">${c.nE>1?c.nE+' × ':''}${c.evap.evap}${c.evap.qty>1?' ×'+c.evap.qty:''} · ${fmtNum(c.evap.cap,0)} W · gerekli ${fmtNum(c.req,0)} W · ${fmt(x.coolNet.evap)}</span></div>`;
     if (c.panelList>0) hm += `<div class="r-line"><span class="lbl">Dijital Kontrol Paneli</span><span class="val">${fmt(x.coolNet.panel)}</span></div>`;
     return hm;
   }
   const n = x.coolNet, u = c.unit, ev = c.evap;
-  let h = `<div class="r-line"><span class="lbl">Soğutma Grubu</span><span class="val">${u.model} · ${u.comp} · ${u.hp} HP · ${fmtNum(u.cap,0)} W (${COOL_BRAND_LABEL[u.brand]}) · ${fmt(n.unit)}</span></div>`;
-  h += `<div class="r-line"><span class="lbl">Evaporatör</span><span class="val">${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W · ${fmt(n.evap)}</span></div>`;
+  let h = `<div class="r-line"><span class="lbl">Soğutma Grubu${c.nG>1?' ('+c.nG+' adet)':''}</span><span class="val">${c.nG>1?c.nG+' × ':''}${u.model} · ${u.comp} · ${u.hp} HP · ${fmtNum(u.cap,0)} W (${COOL_BRAND_LABEL[u.brand]}) · ${fmt(n.unit)}</span></div>`;
+  h += `<div class="r-line"><span class="lbl">Evaporatör${c.nE>1?' ('+c.nE+' adet)':''}</span><span class="val">${c.nE>1?c.nE+' × ':''}${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W · ${fmt(n.evap)}</span></div>`;
   n.opts.forEach(o=>{ h += `<div class="r-line"><span class="lbl">${o.label}</span><span class="val">${fmt(o.price)}</span></div>`; });
   if (c.panelList>0) h += `<div class="r-line"><span class="lbl">Dijital Kontrol Paneli</span><span class="val">${fmt(n.panel)}</span></div>`;
   if (c.msgs.length) h += `<div class="r-line"><span class="lbl" style="color:var(--danger);">Uyarı</span><span class="val" style="color:var(--danger);">${c.msgs.join(' ')}</span></div>`;
@@ -2187,7 +2203,7 @@ function renderProjectReceipt(){
       ${r.sirenCount>0 ? `<div class="r-line"><span class="lbl">Acil Durum Sireni</span><span class="val">${r.sirenCount} adet × ${fmt(OPTIONAL_ACCESSORY_PRICE)} · ${fmt(r.sirenPrice)}</span></div>` : ''}
       ${coolReceiptLines(x)}
       ${x.kurulum ? `<div class="r-line"><span class="lbl">Tesisat</span><span class="val">${x.kurulum.tesisatM} m × ${fmt(KURULUM.tesisatEUR)} · ${fmt(x.kurulum.tesisat)}</span></div>
-      <div class="r-line"><span class="lbl">Freon Gaz</span><span class="val">1 tüp · ${fmt(x.kurulum.freon)}</span></div>
+      <div class="r-line"><span class="lbl">Freon Gaz</span><span class="val">${x.kurulum.nG} tüp · ${fmt(x.kurulum.freon)}</span></div>
       <div class="r-line"><span class="lbl">Soğutma Grubu Montajı</span><span class="val">${fmt(x.kurulum.montaj)} · nakliye hariç</span></div>` : ''}
       <div class="r-line"><span class="lbl" style="font-weight:600;">Oda Ara Toplamı</span><span class="val" style="font-weight:600;">${fmt(d(r.total) + r.accLaborNet + r.doorPriceNet + r.pvcPrice + r.pressureValvePrice + r.ledPrice + r.panicButtonPrice + r.sirenPrice + r.railPriceEUR + (x.coolNet?x.coolNet.total:0) + (x.kurulum?x.kurulum.total:0))}</span></div>
     </div>
@@ -2953,21 +2969,21 @@ function tkRoomLines(){
     out.push({tip:'oda', ad:`${neg?'Dondurucu oda (-18°C)':'Soğuk oda (0/+5°C)'} ${dims}`, aciklama:lines.join('\n'), fiyat:net});
     if (x.coolNet && c && c.merkezi && c.evap){
       const ev = c.evap;
-      const cl = [`Evaporatör: ${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W, exp. valf dahil`, `Oda ihtiyacı: ${fmtNum(c.req,0)} W (${c.zoneInfo.basis})`, 'Merkezi sisteme bağlanır (soğutma grubu merkezi sistemde)'];
+      const cl = [`Evaporatör: ${c.nE>1?c.nE+' adet ':''}${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W${c.nE>1?' (her biri)':''}, exp. valf dahil`, `Oda ihtiyacı: ${fmtNum(c.req,0)} W (${c.zoneInfo.basis})`, 'Merkezi sisteme bağlanır (soğutma grubu merkezi sistemde)'];
       if (c.panelList>0) cl.push('Dijital kontrol paneli dahil');
       out.push({tip:'sogutma', ad:`${room.name} evaporatör + dijital panel (${neg?'negatif':'pozitif'}, merkezi sisteme bağlı)`, aciklama:cl.join('\n'), fiyat:x.coolNet.total, birim:'TK'});
     } else if (x.coolNet && c && c.unit){
       const u = c.unit, ev = c.evap;
       const cl = [
-        `Soğutma grubu modeli: ${u.model}`,
+        `Soğutma grubu modeli: ${u.model}${c.nG>1?' (2 adet, oda gücü iki gruba bölünür)':''}`,
         `Kompresör: ${COOL_BRAND_LABEL[u.brand]} ${u.comp} · ${u.hp} HP · ${coolPhase(u.model)}`,
         `Soğutma kapasitesi: ${fmtNum(u.cap,0)} W (${u.capLabel})`,
         `Oda ihtiyacı: ${fmtNum(c.req,0)} W (${c.zoneInfo.basis})`,
-        `Evaporatör: ${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W, exp. valf dahil`,
+        `Evaporatör: ${c.nE>1?c.nE+' adet ':''}${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W${c.nE>1?' (her biri)':''}, exp. valf dahil`,
       ];
       if (c.panelList>0) cl.push('Dijital kontrol paneli dahil');
       c.opts.filter(o=>o.on).forEach(o=>cl.push(o.label+' dahil'));
-      out.push({tip:'sogutma', ad:`${room.name} soğutma grubu ${COOL_BRAND_LABEL[u.brand]} ${u.hp} HP (${neg?'negatif':'pozitif'})`, aciklama:cl.join('\n'), fiyat:x.coolNet.total, birim:'TK',
+      out.push({tip:'sogutma', ad:`${room.name} ${c.nG>1?'2 adet ':''}soğutma grubu ${COOL_BRAND_LABEL[u.brand]} ${u.hp} HP (${neg?'negatif':'pozitif'}${c.nE>c.nG?', 2 evaporatör':''})`, aciklama:cl.join('\n'), fiyat:x.coolNet.total, birim:'TK',
         odaMerk:{oda:room.name, zone:c.zone, req:c.req, evapAd:`${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W`, evapList:ev.price, panelList:c.panelList}});
     }
   });
@@ -2980,7 +2996,7 @@ function tkRoomLines(){
       out.push({tip:'hizmet', ad:'Merkezi sistem montajı', aciklama:'Merkezi sistem montajı ve devreye alma\nTesisat ve nakliye hariçtir.', miktar:1, birim:'AD', fiyat:KURULUM.montaj, manuel:true});
     }
   });
-  const nK = pr.roomResults.filter(x=>x.kurulum).length;
+  const nK = pr.roomResults.reduce((t,x)=>t+(x.kurulum?x.kurulum.nG:0), 0); // grup sayısı
   if (nK){
     out.push({tip:'hizmet', ad:'Tesisat bedeli', aciklama:'Bakır boru, kablo, izolasyon ve ara tesisat malzemeleri', miktar:KURULUM.tesisatM*nK, birim:'M', fiyat:KURULUM.tesisatEUR, manuel:true});
     out.push({tip:'hizmet', ad:'Freon gaz', aciklama:'', miktar:nK, birim:'AD', fiyat:KURULUM.freon, manuel:true});
