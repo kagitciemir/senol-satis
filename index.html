@@ -695,19 +695,51 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .tk-adet-s input{width:84px;height:44px;text-align:center;font:700 20px 'Inter',sans-serif;border:1px solid #cbd5e1;border-radius:10px}
 .tk-adet-b{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media (max-width:900px){
-  .dl-duzen.ozetli{display:block;padding-bottom:70px}
-  .dl-ozet{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:18px 18px 0 0;border-width:1px 0 0;max-height:82vh;box-shadow:0 -8px 24px rgba(19,77,128,.14);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
-  .dl-ozet{overflow:auto}
+  .dl-duzen.ozetli{display:block;padding-bottom:84px}
   .dl-ozet-yer{position:static;max-height:none;overflow:visible}
   .so-layout{grid-template-columns:minmax(0,1fr)}
-  .so-side{display:flex;flex-direction:column;max-height:88vh;overflow:auto;background:#fff}
-  .so-side .dl-ozet{position:static;border-radius:0;box-shadow:none;border-width:1px 0 0;max-height:none}
-  .so-side .dl-ozet-yer{margin:0}
-  [data-view="soguk-oda"]{padding-bottom:150px!important}
-  [data-view="soguk-oda"] .side-card .btn-tk{grid-column:auto}
+  /* kapalı: altta lacivert düğme */
+  .dl-ozet{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;padding:0;border:0;background:none}
   .dl-ozet:not(.acik) .oz-ic{display:none}
-  .oz-bas small{display:inline;font-weight:500;font-size:12px;color:var(--acc)}
+  .dl-ozet.bos:not(.acik){display:none}
+  .dl-ozet:not(.acik) .oz-bas{background:#134d80;color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 8px 24px rgba(19,77,128,.35);font-size:15px}
+  .dl-ozet:not(.acik) .oz-yazi,.dl-ozet.acik .oz-ok{display:none}
+  .oz-ok{display:inline;font-size:18px;line-height:1;margin-left:6px}
+  .dl-ozet.oz-eklendi .oz-bas{animation:ozVurgu .6s ease}
+  @keyframes ozVurgu{0%,100%{transform:scale(1)}40%{transform:scale(1.04);background:#1f9d55}}
+  /* açık: tam ekran */
+  .dl-ozet.acik{inset:0;z-index:90;overflow:auto;background:#eef2f7;border-radius:0;padding:0 14px;-webkit-overflow-scrolling:touch}
+  .dl-ozet.acik .oz-bas{position:sticky;top:0;z-index:3;margin:0 -14px;width:calc(100% + 28px);padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px;background:#fff;border-bottom:1px solid #dfe5ec;font-size:16px}
+  .oz-geri{display:none}
+  .dl-ozet.acik .oz-geri{display:inline;font-size:20px;line-height:1;margin-right:10px;color:#134d80}
+  .oz-bas-sol{flex:1;min-width:0}
+  .dl-ozet.acik .oz-sabit{display:flex;position:sticky;bottom:0;z-index:3;margin:12px -14px 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #dfe5ec;align-items:center;gap:12px}
+  .oz-sabit>span{flex:1;font-size:12px;color:#4a5b6e;line-height:1.2}
+  .oz-sabit b{display:block;font-size:16px;color:#132a43}
+  .oz-sabit .btn-primary{flex:none;height:44px;padding:0 18px;width:auto}
+  .dl-ozet.acik #dlOzKaydet{display:none}
+  body.oz-acik{overflow:hidden}
+  /* soğuk oda: tek satır "Bu hesap" + düğme */
+  [data-view="soguk-oda"]{padding-bottom:130px!important}
+  .so-side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;display:block;max-height:none;overflow:visible;background:none;pointer-events:none}
+  .so-side>*{pointer-events:auto}
+  body.oz-acik .so-side{z-index:90}
+  [data-view="soguk-oda"] .so-side .side-card{display:flex!important;align-items:center;gap:6px;margin:0;padding:8px 10px;border-radius:14px 14px 0 0;background:#fff;box-shadow:0 -6px 18px rgba(19,77,128,.12)}
+  [data-view="soguk-oda"] .side-card .side-title{display:block;flex:none;margin:0;font-size:10.5px;line-height:1.1;width:34px;letter-spacing:0;text-transform:none}
+  .so-side #liveTotals{flex:1;min-width:0}
+  .so-side .lt.grand{margin:0;padding:0;border:0}
+  .so-side .lt.grand span{display:none}
+  .so-side .lt.grand b{font-size:15px!important;white-space:nowrap}
+  [data-view="soguk-oda"] .so-side .side-card .btn-primary,[data-view="soguk-oda"] .so-side .side-card .btn-tk{flex:none;width:auto;height:36px;margin:0;padding:0 8px;font-size:12px;grid-column:auto}
+  [data-view="soguk-oda"] .so-side #btnGoSave{display:none}
+  .so-side .dl-ozet-yer{margin:0;background:#fff;padding:6px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+  .so-side .dl-ozet:not(.acik){position:static}
+  .so-side .dl-ozet.bos:not(.acik){display:none}
+  .so-side .dl-ozet:not(.acik) .oz-bas{padding:10px 14px;box-shadow:none}
 }
+@media (min-width:901px){.oz-geri,.oz-ok{display:none}.oz-sabit{display:none}}
+.oz-sabit{display:none}
+.oz-bas-sag{white-space:nowrap}
 .onr-yaz{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .onr-yaz textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font:15px 'Inter',sans-serif;resize:vertical}
 .onr-k{background:#fff;border:1px solid #e3e9f0;border-radius:14px;padding:12px 14px;margin-top:10px}
@@ -2793,7 +2825,7 @@ function renderDolapDetail(id){
   let h = `<a class="crumb" href="#/dolaplar">← Tüm dolaplar</a>
     <section class="cat-sec pd-head"><div class="pd-txt"><div class="pcat">${escHtml(p.cat)}</div><h2>${escHtml(p.name)}</h2><p>${escHtml(p.sub||'')}</p></div>
     ${p.img.length ? `<div class="pd-imgs">${p.img.map(i=>`<a href="${i.src}" target="_blank" rel="noopener"><img src="${i.src}" alt="${escHtml(i.cap||p.name)}" loading="lazy"><span>${escHtml(i.cap|| (i.k==='cizim'?'Teknik çizim':'Ürün görseli'))}</span></a>`).join('')}</div>` : ''}</section>${disc}`;
-  h += '<section class="cat-sec"><p class="tk-hint">Fiyata tıklayın: adet sorulur, dolap sağdaki <b>teklif özetine</b> eklenir.</p>';
+  h += '<section class="cat-sec"><p class="tk-hint">Fiyata tıklayın: adet sorulur, dolap <b>teklif özetine</b> eklenir.</p>';
   const blks = [];
   p.blocks.forEach((b,bi)=>{
     const prev = blks[blks.length-1];
@@ -3570,6 +3602,7 @@ function tkPosHesap(list){
 }
 function tkMarkaSecenek(zone){ const a = sogAyar(zone), mz = a.mod==='merkezi'; return `<option value="">${mz?'En uygun':'Embraco'}</option>${COOL_BRANDS.filter(b=>mz||b!=='EMBRACO').map(b=>`<option value="${b}"${a.marka===b?' selected':''}>${COOL_BRAND_LABEL[b]}</option>`).join('')}`; }
 function tkIklimSecenek(zone){ const t = sogAyar(zone).iklim==='tropikal'; return `<option value="normal"${t?'':' selected'}>Normal</option><option value="tropikal"${t?' selected':''}>Tropikal</option>`; }
+function dlOzetVurgu(){ const el = document.getElementById('dlOzet'); if (!el) return; el.classList.remove('oz-eklendi'); void el.offsetWidth; el.classList.add('oz-eklendi'); setTimeout(()=>el.classList.remove('oz-eklendi'), 700); }
 function tkYeniId(){ return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function tkModAdd(mod, adet){
   const n = Math.max(1, adet||1), mods = tkMods();
@@ -3962,7 +3995,7 @@ document.getElementById('dlDetail').addEventListener('click', async e=>{
   const mod = parts.length===4 && +parts[3]>=0 && rr && dolapSatiriMi(pp, rr) ? tkDolapModule(c.dataset.tk) : null;
   const tkAday = mod || tkDolapLine(c.dataset.tk); if (!tkAday) return;
   const adet = await tkAdetSor(tkAday.baslik||tkAday.ad); if (!adet) return;
-  if (mod) tkModAdd(mod, adet); else { tkAdd(Object.assign(tkAday, {miktar:adet})); }
+  if (mod) tkModAdd(mod, adet); else { tkAdd(Object.assign(tkAday, {miktar:adet})); } dlOzetVurgu();
   dlOzetCiz();
   c.classList.add('added'); setTimeout(()=>c.classList.remove('added'), 900);
 });
@@ -4048,10 +4081,13 @@ function dlOzetCiz(){
     + ((plan.ekstralar||[]).length ? `<div class="oz-k"><div class="oz-baslik">Ekstralar</div>${plan.ekstralar.map(x=>`<label class="oz-tik"><input type="checkbox" data-ekstra="${x.k}"${(TK.ekstra||{})[x.k]?' checked':''}> ${escHtml(x.ad)} · ${fmtNum(x.miktar,0)} ${x.birim==='M'?'m':'adet'}${x.fiyat?' × '+fmt(x.fiyat):''}</label>`).join('')}</div>` : '')
     + hizmet.map(l=>`<div class="oz-k">${satir({tur:'s', key:l.elleKey, l})}</div>`).join('');
   const digerHtml = satirlarG.filter(l=>!kullanilan.has(l) && !odaBagli(l)).map(l=>`<div class="oz-k">${satir({tur:'l', id:l.id, l, sil:'data-oz-lsil', miktarAttr:'data-oz-lmiktar'})}</div>`).join('');
-  el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span>Teklif özeti · ${n} kalem</span><span>${fmt(t.genel)} <small>${el.classList.contains('acik')?'Kapat ▾':'Aç ▴'}</small></span></button>
+  el.classList.toggle('bos', !n);
+  if (!n && el.classList.contains('acik')){ el.classList.remove('acik'); document.body.classList.remove('oz-acik'); }
+  el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span class="oz-geri" aria-hidden="true">←</span><span class="oz-bas-sol"><span class="oz-yazi">Teklif özeti · </span>${n} kalem</span><span class="oz-bas-sag">${fmt(t.genel)}<span class="oz-ok" aria-hidden="true">›</span></span></button>
     <div class="oz-ic"><div class="oz-musteri"><input id="dlOzMusteri" placeholder="Müşteri" value="${escHtml(TK.musteri||'')}" aria-label="Müşteri"><input id="dlOzProje" placeholder="Proje adı" value="${escHtml(TK.proje||'')}" aria-label="Proje adı"></div>
     ${n ? `<div class="oz-sutun"><span>Adet</span><span>İsk. %</span><span>Birim €</span><span>Tutar</span></div>`+kalemHtml+digerHtml+sogHtml+`<div class="oz-top"><div><span>Toplam (KDV hariç)</span><b>${fmt(t.ara)}</b></div>${t.otv?`<div><span>ÖTV %6,7</span><b>${fmt(t.otv)}</b></div>`:''}${TK.kdv?`<div><span>KDV %20</span><b>${fmt(t.kdv)}</b></div>`:''}<div class="g"><span>Genel toplam</span><span>${fmt(t.genel)}</span></div></div>
-    <div class="oz-btn"><button class="btn-primary" type="button" id="dlOzKaydet">Teklifi kaydet</button><button class="btn-ghost" type="button" data-go="teklif">Teklif Sepeti'ne git</button><button class="lnk tk-clear" type="button" id="dlOzTemizle">Teklifi temizle</button></div>` : '<div class="oz-bos">Henüz kalem yok. Dolap fiyatına tıklayın ya da soğuk oda ve soğutma sayfalarından ekleyin.</div>'}</div>`;
+    <div class="oz-btn"><button class="btn-primary" type="button" id="dlOzKaydet">Teklifi kaydet</button><button class="btn-ghost" type="button" data-go="teklif">Teklif Sepeti'ne git</button><button class="lnk tk-clear" type="button" id="dlOzTemizle">Teklifi temizle</button></div>
+    <div class="oz-sabit"><span>Genel toplam<b>${fmt(t.genel)}</b></span><button class="btn-primary" type="button" data-oz-kaydet>Teklifi kaydet</button></div>` : '<div class="oz-bos">Henüz kalem yok. Dolap fiyatına tıklayın ya da soğuk oda ve soğutma sayfalarından ekleyin.</div>'}</div>`;
   if (odak){ const y = el.querySelector(odak); if (y){ y.focus(); if (y.select) y.select(); } }
 }
 document.getElementById('dlOzet').addEventListener('keydown', e=>{ if (e.key==='Enter' && e.target.matches('.oz-adin')){ e.preventDefault(); e.target.blur(); } });
@@ -4061,9 +4097,9 @@ window.addEventListener('pointercancel', ()=>{ if (OZ_BASILI){ OZ_BASILI = false
 document.getElementById('dlOzet').addEventListener('change', ()=>{ OZ_DEGISIM = true; setTimeout(()=>{ OZ_DEGISIM = false; dlOzetBekleyen(); }, 0); }, true);
 document.getElementById('dlOzet').addEventListener('click', e=>{
   const el = e.currentTarget;
-  if (e.target.closest('[data-oz-ac]')){ el.classList.toggle('acik'); dlOzetCiz(); return; }
+  if (e.target.closest('[data-oz-ac]')){ const ac = el.classList.toggle('acik'); document.body.classList.toggle('oz-acik', ac); if (ac) el.scrollTop = 0; return; }
   const uh = e.target.closest('[data-unite-hepsi]'); if (uh){ tkUniteHepsi(uh.dataset.uniteHepsi==='tek', uh.dataset.zone); tkSave(); return; }
-  if (e.target.id==='dlOzKaydet'){ document.getElementById('tkKaydet').click(); return; }
+  if (e.target.id==='dlOzKaydet' || e.target.closest('[data-oz-kaydet]')){ document.getElementById('tkKaydet').click(); return; }
   if (e.target.id==='dlOzTemizle'){ if (confirm('Teklifteki tüm kalemler ve müşteri bilgileri silinsin mi?')){ TK = tkEmpty(); tkSave(); renderTeklif(); } return; }
   if (e.target.closest('[data-oz-lsil]')){ const id = e.target.closest('[data-oz-s]').dataset.id; TK.satirlar = TK.satirlar.filter(x=>x.id!==id); tkSave(); return; }
   if (e.target.closest('[data-oz-sil]')){ const k = tkKalemler().find(x=>x.id===e.target.closest('[data-oz]').dataset.oz); if (k && confirm(`"${k.mods[0].baslik||k.mods[0].ad}" çıkarılsın mı?`)){ k.mods.forEach(tkEsleCoz); TK.moduller = tkMods().filter(m=>!k.mods.includes(m)); if (TK.moduller[0]) TK.moduller[0].birlesik = false; tkSave(); } }
@@ -4121,6 +4157,7 @@ function currentView(){
 function routeParam(){ return decodeURIComponent((location.hash.match(/^#\/[\w-]+\/(.+)$/)||[])[1]||''); }
 const OZ_SAYFA = ['dolaplar','sogutma','soguk-oda'];
 function showView(){
+  { const oz = document.getElementById('dlOzet'); if (oz) oz.classList.remove('acik'); document.body.classList.remove('oz-acik'); }
   const v = currentView();
   document.querySelectorAll('.view').forEach(el=>{ el.hidden = el.dataset.view!==v; });
   window.scrollTo(0,0);
@@ -4284,7 +4321,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = 'b21f887d54af4316';
+const APP_SURUM = 'e5c931e0461d2217';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
