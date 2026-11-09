@@ -631,10 +631,18 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .grv-k b{color:#132a43;font-size:15px;overflow-wrap:anywhere}
 .grv-k p{margin:4px 0 0;font-size:14px;color:#4a5b6e;white-space:pre-wrap;overflow-wrap:anywhere}
 .grv-gec{color:#e3342b;font-weight:600}
+.so-layout{grid-template-columns:minmax(0,1fr) 380px}
 .dl-duzen.ozetli{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
 .dl-ana{min-width:0}
-.dl-ozet{position:sticky;top:16px;background:#fff;border:1px solid #dfe5ec;border-radius:16px;padding:14px;max-height:calc(100vh - 100px);overflow:auto;font-size:13.5px;color:#132a43}
-.dl-ozet[hidden]{display:none}
+.dl-ozet-yer{position:sticky;top:16px;max-height:calc(100vh - 100px);overflow:auto;border-radius:16px}
+.dl-ozet{background:#fff;border:1px solid #dfe5ec;border-radius:16px;padding:14px;font-size:13.5px;color:#132a43}
+.so-side{max-height:calc(100vh - 90px);overflow:auto}
+.so-side .dl-ozet-yer{position:static;max-height:none;overflow:visible;margin-top:10px}
+[data-view="soguk-oda"] .side-card{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+[data-view="soguk-oda"] .side-card .side-title,[data-view="soguk-oda"] .side-card #liveTotals{grid-column:1/-1;margin:0}
+.side-card #liveRooms,.side-card .lt:not(.grand){display:none}
+[data-view="soguk-oda"] .side-card .btn-primary,[data-view="soguk-oda"] .side-card .btn-tk,[data-view="soguk-oda"] .side-card .btn-ghost{margin:0;width:100%;height:40px;padding:0 6px;font-size:13px;white-space:nowrap}
+[data-view="soguk-oda"] .side-card .btn-tk{grid-column:1/-1}
 .oz-bas{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:15px;width:100%;background:none;border:0;padding:0;color:inherit;font-family:inherit;text-align:left}
 .oz-bas small{display:none}
 .oz-musteri input,.oz-k select,.oz-k .oz-kisa{height:34px;border:1px solid #cbd5e1;border-radius:8px;padding:0 8px;font:13.5px 'Inter',sans-serif;background:#fff;width:100%;min-width:0}
@@ -667,6 +675,14 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 @media (max-width:900px){
   .dl-duzen.ozetli{display:block;padding-bottom:70px}
   .dl-ozet{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:18px 18px 0 0;border-width:1px 0 0;max-height:82vh;box-shadow:0 -8px 24px rgba(19,77,128,.14);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+  .dl-ozet{overflow:auto}
+  .dl-ozet-yer{position:static;max-height:none;overflow:visible}
+  .so-layout{grid-template-columns:minmax(0,1fr)}
+  .so-side{display:flex;flex-direction:column;max-height:88vh;overflow:auto;background:#fff}
+  .so-side .dl-ozet{position:static;border-radius:0;box-shadow:none;border-width:1px 0 0;max-height:none}
+  .so-side .dl-ozet-yer{margin:0}
+  [data-view="soguk-oda"]{padding-bottom:150px!important}
+  [data-view="soguk-oda"] .side-card .btn-tk{grid-column:auto}
   .dl-ozet:not(.acik) .oz-ic{display:none}
   .oz-bas small{display:inline;font-weight:500;font-size:12px;color:var(--acc)}
 }
@@ -786,7 +802,7 @@ body:not(.auth-locked) .view > header:first-child,body:not(.auth-locked) .view >
 .online-pop .op-r .av{width:28px;height:28px;font-size:11px;background:#e6f1fb;color:var(--accd)}
 .online-pop .op-r .me{margin-left:auto;font-size:11.5px;color:var(--muted)}
 #btnLogout{border-radius:8px;padding:8px 14px}
-@media (min-width:901px){body:not(.auth-locked) .so-side,body:not(.auth-locked) .dl-ozet{top:72px}}
+@media (min-width:901px){body:not(.auth-locked) .so-side,body:not(.auth-locked) .dl-ozet-yer{top:72px}}
 @media (max-width:640px){#appBar .who small,#appBar .who .nm{display:none}.online-chip{padding:7px 12px}.online-chip .txt-l{display:none}.oneri-chip{padding:7px 10px}#appBar{gap:8px}}
 #authOverlay{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
 body.auth-locked #authOverlay{display:flex}
@@ -965,13 +981,14 @@ body.auth-locked #authOverlay{display:flex}
 </div>
 <aside class="so-side" id="soSide">
   <div class="side-card">
-    <div class="side-title">Teklif Özeti</div>
+    <div class="side-title">Bu hesap</div>
     <div id="liveRooms"></div>
     <div id="liveTotals"></div>
     <button class="btn-primary" id="btnCalcProject" type="button">Detaylı Döküm</button>
-    <button class="btn-ghost" id="btnGoSave" type="button">Teklif Olarak Kaydet</button>
-    <button class="btn-tk" id="btnTkRooms" type="button">+ Teklif sepetine ekle</button>
+    <button class="btn-ghost" id="btnGoSave" type="button">Hesabı kaydet</button>
+    <button class="btn-tk" id="btnTkRooms" type="button">+ Teklife ekle</button>
   </div>
+  <div class="dl-ozet-yer" data-oz-yer="soguk-oda"></div>
 </aside>
 </div>
 
@@ -1036,13 +1053,13 @@ body.auth-locked #authOverlay{display:flex}
     <input type="search" id="dlSearch" placeholder="Model ara (ör. Apella HD, Rose, 93/200)" autocomplete="off">
     <label class="disc-box"><span>İskonto %</span><input type="text" id="dlDisc" inputmode="decimal" placeholder="—"></label>
   </div>
-  <div class="dl-duzen" id="dlDuzen"><div class="dl-ana">
+  <div class="dl-duzen ozetli" id="dlDuzen"><div class="dl-ana">
   <div id="dlList">
     <div class="cat-chips" id="dlCats"></div>
     <div class="prod-grid" id="dlGrid"></div>
   </div>
   <div id="dlDetail" hidden></div>
-  </div><aside class="dl-ozet" id="dlOzet" hidden></aside></div>
+  </div><aside class="dl-ozet-yer" data-oz-yer="dolaplar"><div class="dl-ozet" id="dlOzet"></div></aside></div>
 </div>
 
 <div class="view cat-view" data-view="sogutma" hidden>
@@ -1050,6 +1067,7 @@ body.auth-locked #authOverlay{display:flex}
     <button class="back-btn hdr-back" type="button" data-go="home" aria-label="Ana Sayfa">←<span> Ana Sayfa</span></button>
     <div><h1>Soğutma Sistemleri</h1><p id="sgMeta">Fiyat listesi · EUR · KDV hariç</p></div>
   </header>
+  <div class="dl-duzen ozetli"><div class="dl-ana">
   <section class="cat-sec sg-ne">
     <h3 class="blk-h">Ne lazım?</h3>
     <div class="sg-ne-row">
@@ -1082,6 +1100,7 @@ body.auth-locked #authOverlay{display:flex}
     <div class="tbl-wrap"><table class="ptable sg-table" id="sgTable"></table></div>
   </section>
   <div id="sgGroup"></div>
+  </div><aside class="dl-ozet-yer" data-oz-yer="sogutma"></aside></div>
 </div>
 <div class="view cat-view" data-view="teklif" hidden>
   <header class="mod-head">
@@ -3869,7 +3888,18 @@ document.getElementById('tkPrint').addEventListener('click', ()=>{
 });
 window.addEventListener('afterprint', ()=>document.body.classList.remove('tk-printing'));
 // modüllerden ekleme
-document.getElementById('btnTkRooms').addEventListener('click', ()=>{ const l = tkRoomLines(); if (l.length) tkAdd(l); else showToast('Önce oda ekleyin.', true); });
+// Soğuk oda hesabı teklife bir kez girer; tekrar basınca aynı kalemler güncellenir, çoğalmaz. Merkeziye bağlama seçimi oda adına göre korunur.
+document.getElementById('btnTkRooms').addEventListener('click', ()=>{
+  const l = tkRoomLines(); if (!l.length){ showToast('Önce oda ekleyin.', true); return; }
+  const yeni = l.map(x=>tkPrep(Object.assign({}, x, {kaynak:'oda'})));
+  const eski = TK.satirlar.filter(x=>x.kaynak==='oda'), yer = eski.length ? TK.satirlar.indexOf(eski[0]) : TK.satirlar.length;
+  eski.filter(x=>x.odaMerk).forEach(x=>{ const y = yeni.find(n=>n.odaMerk && n.odaMerk.oda===x.odaMerk.oda);
+    if (y && (TK.odaBag||{})[x.id]) TK.odaBag[y.id] = true;
+    if (y && (TK.elle||{})['o|'+x.id]) TK.elle['o|'+y.id] = TK.elle['o|'+x.id];
+    if (TK.odaBag) delete TK.odaBag[x.id]; if (TK.elle) delete TK.elle['o|'+x.id]; });
+  TK.satirlar = TK.satirlar.filter(x=>x.kaynak!=='oda'); TK.satirlar.splice(Math.min(yer, TK.satirlar.length), 0, ...yeni);
+  tkSave(); showToast(eski.length ? 'Soğuk oda kalemleri teklifte güncellendi.' : `${yeni.length} kalem teklife eklendi.`);
+});
 document.getElementById('dlDetail').addEventListener('click', async e=>{
   const c = e.target.closest('[data-tk]'); if (!c) return;
   const parts = c.dataset.tk.split('|');
@@ -3908,7 +3938,7 @@ function dlOzetCiz(){
   const el = document.getElementById('dlOzet'); if (!el) return;
   if (OZ_BASILI || OZ_DEGISIM){ OZ_BEKLIYOR = true; return; }
   const ks = tkKalemler(), n = ks.length + TK.satirlar.length;
-  el.hidden = false; document.getElementById('dlDuzen').classList.add('ozetli');
+  const btnO = document.getElementById('btnTkRooms'); if (btnO) btnO.textContent = TK.satirlar.some(l=>l.kaynak==='oda') ? 'Teklifi güncelle' : '+ Teklife ekle';
   const od = document.activeElement && el.contains(document.activeElement) ? document.activeElement : null;
   const odSat = od && od.closest('[data-oz-s]');
   const odak = !od ? '' : od.id ? '#'+od.id : od.dataset.ozF && odSat ? `[data-oz-s="${odSat.dataset.ozS}"][data-id="${CSS.escape(odSat.dataset.id)}"][data-key="${CSS.escape(odSat.dataset.key)}"] [data-oz-f="${od.dataset.ozF}"]` : '';
@@ -3962,7 +3992,7 @@ function dlOzetCiz(){
   el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span>Teklif özeti · ${n} kalem</span><span>${fmt(t.genel)} <small>${el.classList.contains('acik')?'Kapat ▾':'Aç ▴'}</small></span></button>
     <div class="oz-ic"><div class="oz-musteri"><input id="dlOzMusteri" placeholder="Müşteri" value="${escHtml(TK.musteri||'')}" aria-label="Müşteri"><input id="dlOzProje" placeholder="Proje adı" value="${escHtml(TK.proje||'')}" aria-label="Proje adı"></div>
     ${n ? `<div class="oz-sutun"><span>Adet</span><span>İsk. %</span><span>Birim €</span><span>Tutar</span></div>`+kalemHtml+digerHtml+sogHtml+`<div class="oz-top"><div><span>Toplam (KDV hariç)</span><b>${fmt(t.ara)}</b></div>${t.otv?`<div><span>ÖTV %6,7</span><b>${fmt(t.otv)}</b></div>`:''}${TK.kdv?`<div><span>KDV %20</span><b>${fmt(t.kdv)}</b></div>`:''}<div class="g"><span>Genel toplam</span><span>${fmt(t.genel)}</span></div></div>
-    <div class="oz-btn"><button class="btn-primary" type="button" id="dlOzKaydet">Teklifi kaydet</button><button class="btn-ghost" type="button" data-go="teklif">Teklif Sepeti'ne git</button><button class="lnk tk-clear" type="button" id="dlOzTemizle">Teklifi temizle</button></div>` : '<div class="oz-bos">Henüz ürün yok. Dolap fiyatına tıklayın, adet sorulur ve buraya eklenir.</div>'}</div>`;
+    <div class="oz-btn"><button class="btn-primary" type="button" id="dlOzKaydet">Teklifi kaydet</button><button class="btn-ghost" type="button" data-go="teklif">Teklif Sepeti'ne git</button><button class="lnk tk-clear" type="button" id="dlOzTemizle">Teklifi temizle</button></div>` : '<div class="oz-bos">Henüz kalem yok. Dolap fiyatına tıklayın ya da soğuk oda ve soğutma sayfalarından ekleyin.</div>'}</div>`;
   if (odak){ const y = el.querySelector(odak); if (y){ y.focus(); if (y.select) y.select(); } }
 }
 document.getElementById('dlOzet').addEventListener('keydown', e=>{ if (e.key==='Enter' && e.target.matches('.oz-adin')){ e.preventDefault(); e.target.blur(); } });
@@ -3986,9 +4016,9 @@ document.getElementById('dlOzet').addEventListener('change', e=>{
   if (t.matches('[data-oz-sog]')){ const z = t.dataset.zone; sogAyarYaz(z,'mod',t.value); tkMods().filter(m=>m.zone===z).forEach(m=>{ m.sog = t.value; if (t.value!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); return; }
   if (t.matches('[data-ekstra]')){ TK.ekstra = Object.assign({}, TK.ekstra, {[t.dataset.ekstra]:t.checked}); tkSave(); return; }
   if (t.matches('[data-oz-oda]')){ TK.odaBag = Object.assign({}, TK.odaBag, {[t.dataset.ozOda]:t.checked}); tkSave(); return; }
-  if (t.matches('[data-oz-marka]')){ sogAyarYaz(t.dataset.zone,'marka',t.value); tkSave(); renderDolaplar(); return; }
+  if (t.matches('[data-oz-marka]')){ sogAyarYaz(t.dataset.zone,'marka',t.value); tkSave(); if (currentView()==='dolaplar') renderDolaplar(); return; }
   if (t.matches('[data-unite]')){ tkUniteAta(t.dataset.unite, t.value); tkSave(); return; }
-  if (t.matches('[data-oz-iklim]')){ sogAyarYaz(t.dataset.zone,'iklim',t.value); tkSave(); renderDolaplar(); return; }
+  if (t.matches('[data-oz-iklim]')){ sogAyarYaz(t.dataset.zone,'iklim',t.value); tkSave(); if (currentView()==='dolaplar') renderDolaplar(); return; }
   const f = t.dataset.ozF, w = t.closest('[data-oz-s]');
   if (f && w){ const v = t.value.trim(), tur = w.dataset.ozS;
     if (tur==='l'){ const l = TK.satirlar.find(x=>x.id===w.dataset.id); if (!l) return;
@@ -4029,12 +4059,15 @@ function currentView(){
   return v;
 }
 function routeParam(){ return decodeURIComponent((location.hash.match(/^#\/[\w-]+\/(.+)$/)||[])[1]||''); }
+const OZ_SAYFA = ['dolaplar','sogutma','soguk-oda'];
 function showView(){
   const v = currentView();
   document.querySelectorAll('.view').forEach(el=>{ el.hidden = el.dataset.view!==v; });
   window.scrollTo(0,0);
   if (v==='soguk-oda') liveCalc();
-  if (v==='dolaplar'){ if (TK.modArsiv) tkGeriAl(); renderDolaplar(); dlOzetCiz(); }
+  // Teklif özeti tek: dolap, soğutma ve soğuk oda sayfalarında aynı özet durur
+  if (OZ_SAYFA.includes(v)){ if (TK.modArsiv) tkGeriAl(); const yer = document.querySelector(`[data-oz-yer="${v}"]`), oz = document.getElementById('dlOzet'); if (yer && oz && oz.parentElement!==yer) yer.appendChild(oz); dlOzetCiz(); }
+  if (v==='dolaplar') renderDolaplar();
   if (v==='sogutma') renderSogutma();
   if (v==='teklif') renderTeklif();
   if (v==='takvim') renderTakvim();
@@ -4191,7 +4224,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '4098cd2698d3e324';
+const APP_SURUM = 'e3b4f45e7fa21cdc';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
@@ -4397,15 +4430,15 @@ let tklKayit = [];
 $a('tkKaydet').onclick = async ()=>{
   if (!TK.satirlar.length && !tkMods().length){ showToast('Önce sepete kalem ekleyin.', true); return; }
   const ad = [TK.musteri, TK.proje].map(x=>String(x||'').trim()).filter(Boolean).join(' · ');
-  if (!ad){ showToast('Kaydetmek için müşteri veya proje adı yazın.', true); const yer = currentView()==='dolaplar' ? 'dlOzMusteri' : 'tkMusteri'; if ($a(yer)) $a(yer).focus(); return; }
+  if (!ad){ showToast('Kaydetmek için müşteri veya proje adı yazın.', true); const yer = OZ_SAYFA.includes(currentView()) ? 'dlOzMusteri' : 'tkMusteri'; if ($a(yer)) $a(yer).focus(); return; }
   if (tkMods().length) tkModAktar(true);
   const veri = JSON.parse(JSON.stringify(TK)); delete veri.kayitId;
   const alan = {ad, toplam:tkTotals().genel, veri, guncelleme:new Date().toISOString()};
   const r = TK.kayitId ? await SB.from('teklifler').update(alan).eq('id', TK.kayitId)
     : await (async()=>{ const id = crypto.randomUUID(); const q = await SB.from('teklifler').insert({id, user_id:CUR.id, yazan:CUR.full_name||CUR.email, durum:'taslak', ...alan}); if (!q.error) TK.kayitId = id; return q; })();
-  if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); if (currentView()==='dolaplar') tkGeriAl(); return; }
+  if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); if (OZ_SAYFA.includes(currentView())) tkGeriAl(); return; }
   tkSave(); showToast('Teklif kaydedildi. Kayıtlı Projeler sayfasında görünür.');
-  if (currentView()==='dolaplar') location.hash = '#/teklif';
+  if (OZ_SAYFA.includes(currentView())) location.hash = '#/teklif';
 };
 renderTeklifler = async function(){
   const el = $a('tklListe'), oz = $a('tklOzet');
