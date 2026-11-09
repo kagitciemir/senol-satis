@@ -513,7 +513,20 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .ptable tr.short td{color:#a3b0bf}
 .ptable tr.short td b{color:#a3b0bf}
 .ptable tr.best td{background:#eef8f2!important}
-.sg-ne .sg-toolbar{margin:12px 0 0}
+/* Ne lazım: üstte sıcaklık ve güç, altında tek sıra filtre; hepsinde etiket üstte */
+.sg-ne .sg-ne-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1.1fr) minmax(0,.8fr);gap:10px;align-items:end}
+.sg-ne .sg-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 0;align-items:end;padding:0;background:none;border:0}
+.sg-ne label.sel,.sg-ne label.disc-box{display:flex;flex-direction:column;align-items:stretch;gap:3px;margin:0;min-width:0}
+.sg-ne .sg-toolbar label{flex:1 1 104px}
+.sg-ne .sg-toolbar label:first-child{flex:1.25 1 130px}
+.sg-ne label>span{overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:600;color:#4a5b6e;white-space:nowrap}
+.sg-ne label input,.sg-ne label select{width:100%;min-width:0;height:40px;box-sizing:border-box}
+.sg-ne .sg-zone{display:grid;grid-template-columns:1fr 1fr;width:100%;min-width:0;height:40px;margin:0;box-sizing:border-box}
+.sg-ne .sg-zone button{display:flex;align-items:center;justify-content:center;height:100%;min-height:0;min-width:0;padding:0 4px}
+.sg-ne label select{padding:0 18px 0 8px!important;font-size:13.5px}
+.sg-ne label input{height:40px!important;margin:0}
+.sg-ne .disc-box{flex-direction:column!important}
+@media (max-width:560px){.sg-ne .sg-ne-row{grid-template-columns:1fr 1fr}.sg-ne .sg-zone,.sg-ne .sg-ne-row .disc-box{grid-column:1/-1}.sg-ne .sg-toolbar label,.sg-ne .sg-toolbar label:first-child{flex:1 1 calc(50% - 5px)}}
 .oz-baslik2{font-weight:600;font-size:12.5px;color:#4a5b6e;margin-bottom:2px}
 .oz-musteri{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
 .oz-sutun,.oz-g{display:grid;grid-template-columns:50px 50px minmax(0,1fr) 86px;gap:5px;align-items:center}
@@ -1071,10 +1084,9 @@ body.auth-locked #authOverlay{display:flex}
   <section class="cat-sec sg-ne">
     <h3 class="blk-h">Ne lazım?</h3>
     <div class="sg-ne-row">
-      <div class="seg2 sg-zone" id="sgZoneSeg" role="group" aria-label="Oda tipi"><button type="button" class="on" data-zone="POZ">Pozitif<small>soğuk oda</small></button><button type="button" data-zone="NEG">Negatif<small>dondurucu</small></button></div>
-      <label class="sel"><span>Oda hacmi (m³)</span><input type="text" id="sgVol" inputmode="decimal" placeholder="ör. 40"></label>
-      <span class="sg-or">veya</span>
+      <div class="seg2 sg-zone" id="sgZoneSeg" role="group" aria-label="Sıcaklık"><button type="button" class="on" data-zone="POZ">Pozitif</button><button type="button" data-zone="NEG">Negatif</button></div>
       <label class="sel"><span>Gerekli güç (W)</span><input type="text" id="sgReq" inputmode="numeric" placeholder="ör. 4500"></label>
+      <label class="sel"><span>veya oda hacmi (m³)</span><input type="text" id="sgVol" inputmode="decimal" placeholder="ör. 40"></label>
       <label class="disc-box"><span>İskonto %</span><input type="text" id="sgDisc" inputmode="decimal" placeholder="—"></label>
     </div>
     <div class="cat-toolbar sg-toolbar" id="sgAdv">
@@ -1082,7 +1094,7 @@ body.auth-locked #authOverlay{display:flex}
     <label class="sel" data-sgf="kondenser grup"><span>Marka</span><select id="sgBrand"></select></label>
     <label class="sel" data-sgf="scroll"><span>Yağlama</span><select id="sgLub"></select></label>
     <label class="sel" data-sgf="kondenser"><span>Kasa</span><select id="sgSS"><option value="0">Standart</option><option value="1">Sessiz (SS)</option></select></label>
-    <label class="sel" id="sgCapColBox"><span>Evaporasyon / Kondenzasyon</span><select id="sgCapCol"></select></label>
+    <label class="sel" id="sgCapColBox"><span>Evap. / Kond.</span><select id="sgCapCol"></select></label>
     <select id="sgZone" hidden><option value="POZ">Pozitif</option><option value="NEG">Negatif</option></select>
   </div>
     <div id="sgOneri"></div>
@@ -2947,7 +2959,7 @@ const SG_TAB_INFO = {
 // "Ne lazım?" önerileri: tek ünite (Hermetik + Embraco, profesör varsayılanı) ve merkezi sistem
 function renderSgOneri(){
   const el = sgEl('sgOneri'), req = sgRequired(), zone = sgEl('sgZone').value, f = readDisc('sgDisc');
-  if (!req.w){ el.innerHTML = '<p class="blk-n">Oda tipini seçip oda hacmini ya da gerekli gücü yazın; uygun soğutma grubu ve fiyatı burada çıkar.</p>'; return; }
+  if (!req.w){ el.innerHTML = ''; return; }
   const kart = (baslik, ad, alt, fiyat, liste, btn, ek='', attr='') => `<div class="sg-card"${attr}><div class="sg-card-h">${baslik}</div><b class="sg-card-m">${escHtml(ad)}</b><div class="sg-card-a">${alt}</div>
     <div class="sg-card-p">${fmt(fiyat)}${f!==1?`<small>liste ${fmt(liste)}</small>`:''}</div>${ek}${btn}</div>`;
   let h = req.note ? `<p class="blk-n">${req.note}</p>` : '';
@@ -3010,7 +3022,7 @@ function renderSgKondenser(){
   SG_SATIRLAR = hepsi;
   const pen = req.w ? sgPencere(hepsi, req.w, x=>x.cap, x=>x.pUnit||0) : null;
   const pick = sgEl('sgPick');
-  sgEl('sgPickBox').open = !!req.w;
+  sgEl('sgPickBox').hidden = !req.w; sgEl('sgPickBox').open = !!req.w;
   if (!req.w) pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; seçili filtrelere göre gücün %10 altı ve üstündeki modeller listelenir, en iyi tercih yeşil işaretlenir.</p>';
   else if (series==='ORT' && zone==='NEG') pick.innerHTML = '<p class="blk-w">Ortam serisinde negatif oda grubu yok — Hermetik veya Tropikal seçin.</p>';
   else {
@@ -3090,7 +3102,7 @@ function renderSgGroup(tab){
   });
   sgEl('sgGroup').innerHTML = h || '<section class="cat-sec"><p class="blk-n">Bu seçim için listede ürün yok.</p></section>';
   const pick = sgEl('sgPick');
-  sgEl('sgPickBox').open = !!req.w;
+  sgEl('sgPickBox').hidden = !req.w; sgEl('sgPickBox').open = !!req.w;
   if (!req.w){ pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; seçili filtrelere göre gücün %10 altı ve üstündeki modeller listelenir, en iyi tercih yeşil işaretlenir.</p>'; return; }
   const secili = sgEl('sgBrand').value;
   const diger = secili && tab!=='soklama' ? sgPencere(adayla(byZone.filter(g=>g.marka!==secili && (tab!=='scroll' || g.yaglama===sgEl('sgLub').value))), req.w, x=>x.w, x=>x.fiyat).liste : [];
@@ -4224,7 +4236,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = 'e3b4f45e7fa21cdc';
+const APP_SURUM = 'a48bdbe769f30efc';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
