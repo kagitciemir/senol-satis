@@ -948,7 +948,7 @@ body.auth-locked #authOverlay{display:flex}
       <label><span>Dolaplar ve aksesuar</span><input type="text" data-tkisk="dolap" inputmode="decimal"></label>
       <label><span>Soğutma grupları</span><input type="text" data-tkisk="sogutma" inputmode="decimal"></label>
       <label><span>Soğuk oda</span><input type="text" data-tkisk="oda" inputmode="decimal"></label>
-      <small>Zincir iskonto: 65+5. Her kalemde ayrıca değiştirilebilir.</small>
+      <small>Her kalemde ayrıca değiştirilebilir. Zincir de yazılabilir: 65+5.</small>
     </div>
     <div class="tk-grid">
       <label><span>Müşteri</span><input type="text" id="tkMusteri" placeholder="Firma ünvanı"></label>
@@ -2925,8 +2925,18 @@ sgEl('sgPick').addEventListener('click', e=>{
   const tr = document.querySelector(`#sgTable [data-sg="${CSS.escape(model)}"]`); if (tr) tr.scrollIntoView({behavior:'smooth', block:'center'});
 });
 restoreDisc('dlDisc'); restoreDisc('sgDisc');
-// soğutma iskontosu boşsa teklif sepetindeki soğutma kategori iskontosu (varsayılan 65+5) gelir
-if (localStorage.getItem('disc:sgDisc')===null){ try{ sgEl('sgDisc').value = (JSON.parse(localStorage.getItem('teklif:isk')||'{}').sogutma) || '65+5'; }catch(e){ sgEl('sgDisc').value = '65+5'; } }
+// 2026-11-09: soğutma varsayılanı 65 oldu. Cihazlarda eski varsayılan (65+5) kayıtlıysa bir kez 65'e çevrilir; sonradan elle yazılan 65+5'e dokunulmaz.
+try{
+  if (!localStorage.getItem('isk-gecis-65')){
+    const ki = JSON.parse(localStorage.getItem('teklif:isk')||'null');
+    if (ki && ki.sogutma==='65+5'){ ki.sogutma='65'; localStorage.setItem('teklif:isk', JSON.stringify(ki)); }
+    if (localStorage.getItem('disc:sgDisc')==='65+5'){ localStorage.removeItem('disc:sgDisc'); sgEl('sgDisc').value=''; }
+    if (localStorage.getItem('disc:dlSogDisc')==='65+5') localStorage.removeItem('disc:dlSogDisc');
+    localStorage.setItem('isk-gecis-65','1');
+  }
+}catch(e){}
+// soğutma iskontosu boşsa teklif sepetindeki soğutma kategori iskontosu (varsayılan 65) gelir
+if (localStorage.getItem('disc:sgDisc')===null){ try{ sgEl('sgDisc').value = (JSON.parse(localStorage.getItem('teklif:isk')||'{}').sogutma) || '65'; }catch(e){ sgEl('sgDisc').value = '65'; } }
 
 // ====== TEKLİF SEPETİ (bu cihazda taslak; fiyatlar net EUR) ======
 const TK_KEY = 'teklif:taslak';
@@ -2938,7 +2948,7 @@ function tkBadge(){ const n = TK.satirlar.length + (Array.isArray(TK.moduller) ?
 function tkRound(v){ return Math.round((+v||0)*100)/100; }
 // kategori iskontoları (varsayılan; satırda değiştirilebilir). Liste fiyatı olan satırda fiyat = liste × iskonto, elle yazılırsa 'manuel'
 const TK_ISK_KEY = 'teklif:isk';
-const TK_ISK_DEF = {dolap:'65', sogutma:'65+5', oda:'70+10'};
+const TK_ISK_DEF = {dolap:'65', sogutma:'65', oda:'70+10'};
 let TK_ISK = (()=>{ try{ return Object.assign({}, TK_ISK_DEF, JSON.parse(localStorage.getItem(TK_ISK_KEY))||{}); }catch(e){ return Object.assign({}, TK_ISK_DEF); } })();
 function tkCat(tip){ return tip==='dolap'||tip==='aksesuar'||tip==='yan' ? 'dolap' : (tip==='sogutma' ? 'sogutma' : (tip==='oda' ? 'oda' : null)); }
 function tkIskF(str){ return parseDiscountChain(String(str||'')).reduce((x,p)=>x*(1-p/100), 1); }
@@ -3760,7 +3770,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '103f6e05067c1658';
+const APP_SURUM = 'c2f150ca1972e0b6';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
