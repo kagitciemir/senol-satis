@@ -518,6 +518,11 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .oz-alt{margin:8px 0 0 10px;padding:0 0 0 10px;border-left:2px solid #eef2f6}
 .oz-alt b{font-weight:600;font-size:13px}
 .oz-bos{color:#64748b;font-size:13px;padding:12px 0;line-height:1.45}
+.oz-unite{margin:8px 0;padding:8px 10px;background:#f6f9fc;border-radius:10px}
+.oz-ur{display:grid;grid-template-columns:minmax(0,1fr) 118px;gap:8px;align-items:center;margin-top:6px;font-size:12.5px;color:#132a43}
+.oz-ur select{height:30px}
+.oz-hizli{display:flex;gap:4px}
+.oz-hizli .chip{padding:3px 8px;font-size:11.5px;white-space:nowrap}
 .oz-tik{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:#4a5b6e}
 .oz-tik input{width:auto!important;height:auto!important}
 .sg-eksik{color:#b45309;font-weight:600}
@@ -3497,16 +3502,8 @@ function tkBirlesimUygula(k, yazi){
   list.forEach(p=>{ for (let j=0;j<p;j++,i++){ if (i>0) k.mods[i].birlesik = j>0; } });
   k.mods.forEach(tkEsleCoz);
   if (parca.length) k.mods[0].birlesim = parca.join('+'); else delete k.mods[0].birlesim;
-  delete k.mods[0].yanElle; delete k.mods[0].ikili;
+  delete k.mods[0].yanElle;
   return true;
-}
-// "Aynı üniteye ikişer bağla": ayrı duran dolaplar ikişer ikişer tek split üniteye
-function tkKalemIkili(k, acik){
-  k.mods.forEach(tkEsleCoz);
-  if (acik){ const tek = tkGroups().filter(g=>g.length===1 && k.mods.includes(g[0])).map(g=>g[0]);
-    for (let i=0;i+1<tek.length;i+=2){ tek[i].esle = tek[i+1].id; tek[i+1].esle = tek[i].id; }
-    k.mods[0].ikili = true; }
-  else delete k.mods[0].ikili;
 }
 function tkKalemAdet(k, n){
   n = Math.max(1, Math.min(99, n||1));
@@ -3514,10 +3511,10 @@ function tkKalemAdet(k, n){
   const mods = tkMods(), bas = mods.indexOf(k.mods[0]);
   if (n>k.mods.length){
     const son = k.mods[k.mods.length-1];
-    mods.splice(mods.indexOf(son)+1, 0, ...Array.from({length:n-k.mods.length}, ()=>Object.assign({}, son, {id:tkYeniId(), birlesik:false})));
+    mods.splice(mods.indexOf(son)+1, 0, ...Array.from({length:n-k.mods.length}, ()=>Object.assign({}, son, {id:tkYeniId(), birlesik:false, unite:undefined})));
   } else if (n<k.mods.length){ k.mods.slice(n).forEach(tkEsleCoz); mods.splice(bas+n, k.mods.length-n); }
   tkMods().slice(bas, bas+n).forEach((m,i)=>{ if (i>0) m.birlesik = false; m.kalem = m.kalem||k.id; });
-  delete mods[bas].birlesim; delete mods[bas].yanElle; delete mods[bas].ikili;
+  delete mods[bas].birlesim; delete mods[bas].yanElle;
 }
 // plan satırları: aynı dolap, aynı yan ve aynı soğutma grubu tek kalem olur
 function tkPlanBirlestir(lines){
@@ -3579,15 +3576,37 @@ function tkMerkeziPick(need, zone, kolon){
 // Dolap projesi soğutma planı (patron 2026-11-06): her grup için Merkezi / Split / Yok; split'te isteğe bağlı eşleştirme
 // (aynı sıcaklık, en fazla 2 modül); pozitif ve negatif merkezi ayrı; soğuk oda satırları istenirse merkeziye bağlanır.
 // Tesisat, freon, montaj ve nakliye otomatik eklenmez: "önerilen ekstralar" olarak hesaplanır, seçilenler aktarılır.
+// Split ünite: dolap grupları istenen sayıda aynı üniteye bağlanır (2'den fazlası önerilmez ama serbest). Sıcaklığı farklı olan aynı üniteye girmez.
+function tkUniteKey(g){ const m = g[0]; return m.unite || (m.esle ? [m.id,m.esle].sort().join('+') : m.id); }
+function tkSplitUniteler(groups){
+  const out = [], yer = new Map();
+  (groups||tkGroups()).filter(g=>g[0].motor==='RT' && tkGrupSog(g)==='split').forEach(g=>{ const k = g[0].zone+'|'+tkUniteKey(g); let u = yer.get(k); if (!u){ u = {zone:g[0].zone, gruplar:[]}; yer.set(k,u); out.push(u); } u.gruplar.push(g); });
+  return out;
+}
+function tkUniteAta(mid, no){
+  const g = tkGroups().find(x=>x[0].id===mid); if (!g) return;
+  const us = tkSplitUniteler();
+  tkEsleCoz(g[0]);
+  if (!no){ delete g[0].unite; return; }
+  const u = us[+no-1]; if (!u || u.gruplar.includes(g)) return;
+  const id = u.gruplar[0][0].unite || tkYeniId();
+  u.gruplar.forEach(x=>{ tkEsleCoz(x[0]); x[0].unite = id; });
+  g[0].unite = id;
+}
+function tkUniteHepsi(tek){
+  const us = tkSplitUniteler(), ids = {};
+  us.flatMap(u=>u.gruplar).forEach(g=>{ tkEsleCoz(g[0]); if (tek) g[0].unite = ids[g[0].zone] || (ids[g[0].zone] = tkYeniId()); else delete g[0].unite; });
+}
+function tkUniteSec(g, us, attr){
+  const i = us.findIndex(u=>u.gruplar.includes(g));
+  return `<select ${attr} aria-label="Split ünite">${us.map((u,k)=>u.zone===g[0].zone?`<option value="${k+1}"${k===i?' selected':''}>Ünite ${k+1}${u.gruplar.length>1?' ('+u.gruplar.reduce((t,x)=>t+x.length,0)+' dolap)':''}</option>`:'').join('')}<option value="">Ayrı ünite</option></select>`;
+}
 function tkEsleCoz(m){ if (!m.esle) return; const o = tkMods().find(x=>x.id===m.esle); if (o && o.esle===m.id) delete o.esle; delete m.esle; }
 // tablo hücresi: grup soğutma seçimi; split ise aynı üniteye bağlanabilecek gruplar (aynı sıcaklık, iki tarafı da tek modül)
 function tkSogHucre(m, groups){
   const g = groups.find(x=>x[0].id===m.id) || [m], sog = tkGrupSog(g);
   let h = `<select data-msog><option value="merkezi"${sog==='merkezi'?' selected':''}>Merkezi</option><option value="split"${sog==='split'?' selected':''}>Split</option><option value="yok"${sog==='yok'?' selected':''}>Soğutma yok</option></select>`;
-  if (sog==='split' && g.length===1){
-    const cand = groups.filter(x=>x[0].id!==m.id && x.length===1 && x[0].motor==='RT' && tkGrupSog(x)==='split' && x[0].zone===m.zone && (!x[0].esle || x[0].esle===m.id));
-    if (cand.length) h += `<select data-mesle class="tk-esle"><option value="">Kendi ünitesi</option>${cand.map(x=>`<option value="${x[0].id}"${m.esle===x[0].id?' selected':''}>+ ${escHtml(x[0].ad.split(' · ')[0])} ${fmtNum(x[0].L,1)} cm</option>`).join('')}</select>`;
-  }
+  if (sog==='split'){ const us = tkSplitUniteler(groups); if (us.flatMap(u=>u.gruplar).length>1) h += tkUniteSec(g, us, 'data-munite class="tk-esle"'); }
   return h;
 }
 function tkGrupSog(g){ return g[0].motor!=='RT' ? '' : (g[0].sog || TK.sogMode || 'split'); }
@@ -3611,12 +3630,7 @@ function tkModPlanHam(){
   remote.forEach(g=>g.forEach(m=>{ if (m.wpm==null) warn.push(`${m.ad}: kapasite tablosunda yok, soğutmaya dahil edilmedi.`); }));
   const ad = m => m.ad.split(' · ')[0]+' '+fmtNum(m.L,1)+' cm';
   // split: her grup kendi ünitesine; eşleştirilmiş iki grup aynı üniteye
-  const splitG = remote.filter(g=>tkGrupSog(g)==='split'), used = new Set(), parts = [];
-  splitG.forEach(g=>{
-    if (used.has(g[0].id)) return; used.add(g[0].id);
-    const e = g[0].esle ? splitG.find(x=>x[0].id===g[0].esle && !used.has(x[0].id) && x[0].zone===g[0].zone) : null;
-    if (e){ used.add(e[0].id); parts.push([g, e]); } else parts.push([g]);
-  });
+  const parts = tkSplitUniteler(groups).map(u=>u.gruplar);
   parts.forEach(pg=>{
     const mods = pg.flat().filter(m=>m.wpm!=null); if (!mods.length) return;
     const need = Math.round(mods.reduce((t,m)=>t+m.wpm*m.L/100, 0)), zone = mods[0].zone;
@@ -3701,13 +3715,13 @@ document.getElementById('tkMod').addEventListener('change', e=>{
     m.birlesik = e.target.checked;
   }
   if (e.target.matches('[data-myan]')) m.yan = e.target.value;
-  if (e.target.matches('[data-msog]')){ m.sog = e.target.value; if (m.sog!=='split') tkEsleCoz(m); }
-  if (e.target.matches('[data-mesle]')){ tkEsleCoz(m); if (e.target.value){ const o = mods.find(x=>x.id===e.target.value); if (o){ tkEsleCoz(o); m.esle = o.id; o.esle = m.id; } } }
+  if (e.target.matches('[data-msog]')){ m.sog = e.target.value; if (m.sog!=='split'){ tkEsleCoz(m); delete m.unite; } }
+  if (e.target.matches('[data-munite]')) tkUniteAta(m.id, e.target.value);
   tkSave(); renderTkMod();
 });
 document.getElementById('tkMod').addEventListener('click', e=>{
   const all = e.target.closest('[data-sog-all]');
-  if (all){ TK.sogMode = all.dataset.sogAll; tkMods().forEach(m=>{ m.sog = TK.sogMode; if (TK.sogMode!=='split') delete m.esle; }); tkSave(); renderTkMod(); return; }
+  if (all){ TK.sogMode = all.dataset.sogAll; tkMods().forEach(m=>{ m.sog = TK.sogMode; if (TK.sogMode!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); renderTkMod(); return; }
   const d = e.target.closest('[data-mdel]'); if (!d) return;
   const mods = tkMods(), i = mods.findIndex(m=>m.id===d.closest('[data-mid]').dataset.mid);
   mods.splice(i,1); if (mods[i] && i===0) mods[i].birlesik = false;
@@ -3821,29 +3835,26 @@ function dlOzetCiz(){
   const lineHtml = (l, alt)=>`<div class="${alt?'oz-alt':'oz-k'}" data-oz-l="${l.id}"><div class="oz-ad"><b>${escHtml(l.ad)}</b><button type="button" data-oz-lsil aria-label="Çıkar">✕</button></div><div class="oz-sat"><span class="oz-step"><button type="button" data-oz-ld="-1" aria-label="Azalt">−</button><input data-oz-lmiktar inputmode="decimal" value="${escHtml(String(l.miktar))}" aria-label="Adet"><button type="button" data-oz-ld="1" aria-label="Artır">+</button></span><em>${fmt((+l.miktar||0)*(+l.fiyat||0))}</em></div><div class="oz-not">${carpim(+l.miktar||0, +l.fiyat||0)}</div></div>`;
   const kullanilan = new Set();
   const sonPid = {}; ks.forEach(k=>{ sonPid[k.mods[0].pid] = k.id; });
-  const gruplar = tkGroups();
+  const gruplar = tkGroups(), us = tkSplitUniteler(gruplar), spGr = us.flatMap(u=>u.gruplar);
+  const uniteAd = g => { const m0 = g[0], kk = ks.find(x=>x.mods.includes(m0)), sira = kk && kk.mods.length>1 ? ` · ${kk.mods.indexOf(m0)+1}. dolap` : ''; return `${m0.baslik||m0.ad}${g.length>1?` · ${g.length} birleşik`:sira}`; };
   const kalemHtml = ks.map(k=>{ const m = k.mods[0], rt = m.motor==='RT', opts = rt ? tkYanOpts(m.pid) : [], cur = m.yan==null ? tkYanDefault(m.pid) : m.yan;
     const dl = planSat.find(l=>l.tip==='dolap' && l.ad===(m.baslik||m.ad) && l.miktar===k.mods.length) || planSat.find(l=>l.tip==='dolap' && l.ad===(m.baslik||m.ad));
     const grup = 1 + k.mods.slice(1).filter(x=>!x.birlesik).length;
     const yanAd = cur ? cur.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').replace(/\s{2,}/g,' ').trim() : '';
     const yanSat = planSat.find(l=>l.tip==='yan' && l.pid===m.pid && l.ad===yanAd);
     const yanAdet = m.yanElle!=null ? m.yanElle : grup*2;
-    const tekler = gruplar.filter(g=>g.length===1 && k.mods.includes(g[0]));
-    const split = rt && tkGrupSog([m])==='split';
-    const diger = split && tekler.length===1 ? gruplar.filter(g=>g.length===1 && !k.mods.includes(g[0]) && g[0].motor==='RT' && tkGrupSog(g)==='split' && g[0].zone===m.zone && (!g[0].esle || g[0].esle===tekler[0][0].id)) : [];
     const aks = TK.satirlar.filter(l=>l.tip==='aksesuar' && l.pid===m.pid && sonPid[m.pid]===k.id);
     aks.forEach(l=>kullanilan.add(l));
     return `<div class="oz-k" data-oz="${k.id}"><div class="oz-ad"><b>${escHtml(m.baslik||m.ad)}</b><button type="button" data-oz-sil aria-label="Çıkar">✕</button></div>
       <div class="oz-sat"><span class="oz-step"><button type="button" data-oz-d="-1" aria-label="Azalt">−</button><input data-oz-adet inputmode="numeric" value="${k.mods.length}" aria-label="Adet"><button type="button" data-oz-d="1" aria-label="Artır">+</button></span><em>${dl?fmt(dl.fiyat*dl.miktar):''}</em></div>
       ${dl?`<div class="oz-not">${carpim(dl.miktar, dl.fiyat)}</div>`:''}
       ${rt && k.mods.length>1 ? `<div class="oz-sat"><span>Birleşen</span><input class="oz-kisa" data-oz-bir value="${escHtml(m.birlesim||'')}" placeholder="Örn. 3+2" aria-label="Birleşen dolaplar"></div><div class="oz-not">${m.birlesim?`${grup} grup`:'Boş bırakılırsa hepsi ayrı durur.'}</div>` : ''}
-      ${split && tekler.length>1 ? `<label class="oz-tik"><input type="checkbox" data-oz-ikili${m.ikili?' checked':''}> İkişer dolap aynı split üniteye bağlansın</label>` : ''}
-      ${diger.length ? `<div class="oz-sat"><span>Split ünite</span><select data-oz-esle aria-label="Split ünite"><option value="">Kendi ünitesi</option>${diger.map(g=>`<option value="${g[0].id}"${tekler[0][0].esle===g[0].id?' selected':''}>Ortak: ${escHtml(g[0].baslik||g[0].ad)}</option>`).join('')}</select></div>` : ''}
       ${rt && opts.length ? `<div class="oz-sat"><select data-oz-yan aria-label="Yan panel"><option value=""${cur===''?' selected':''}>Yan yok</option>${opts.map(o=>`<option value="${escHtml(o.ad)}"${o.ad===cur?' selected':''}>${escHtml(o.ad.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').trim())}</option>`).join('')}</select>${cur?`<input class="oz-kisa" data-oz-yanadet inputmode="numeric" value="${yanAdet}" aria-label="Yan panel adedi"><span>adet</span>`:''}</div>${yanSat?`<div class="oz-sat"><span class="oz-birim">${carpim(yanSat.miktar, yanSat.fiyat)}</span><em>${fmt(yanSat.fiyat*yanSat.miktar)}</em></div>`:''}` : ''}
       ${aks.map(l=>lineHtml(l,true)).join('')}</div>`; }).join('');
   const sog = planSat.filter(l=>l.tip==='sogutma');
   const sogHtml = ks.some(k=>k.mods[0].motor==='RT') ? `<div class="oz-k"><div class="oz-sat"><span>Soğutma</span><select data-oz-sog aria-label="Soğutma"><option value="split"${TK.sogMode==='merkezi'||TK.sogMode==='yok'?'':' selected'}>Split</option><option value="merkezi"${TK.sogMode==='merkezi'?' selected':''}>Merkezi</option><option value="yok"${TK.sogMode==='yok'?' selected':''}>Soğutma yok</option></select></div>
     <div class="oz-sat"><span>Ünite</span><select data-oz-iklim aria-label="Ünite"><option value="normal"${TK.iklim==='tropikal'?'':' selected'}>Normal (+45)</option><option value="tropikal"${TK.iklim==='tropikal'?' selected':''}>Tropikal (+55)</option></select></div>
+    ${spGr.length>1 ? `<div class="oz-unite"><div class="oz-sat"><span>Split üniteye bağlama</span><span class="oz-hizli"><button type="button" class="chip" data-unite-hepsi="tek">Hepsi tek</button><button type="button" class="chip" data-unite-hepsi="ayri">Hepsi ayrı</button></span></div>${spGr.map(g=>`<div class="oz-ur"><span>${escHtml(uniteAd(g))}</span>${tkUniteSec(g, us, `data-unite="${g[0].id}"`)}</div>`).join('')}</div>` : ''}
     ${sog.map(l=>`<div class="oz-sat"><span style="white-space:normal">${escHtml(l.ad)}</span><em>${fmt(l.fiyat*(l.miktar||1))}</em></div><div class="oz-not">${carpim(l.miktar||1, l.fiyat)}</div>`).join('')}${(plan.warn||[]).map(w=>`<div class="oz-uyari">${escHtml(w)}</div>`).join('')}</div>` : '';
   const digerHtml = TK.satirlar.filter(l=>!kullanilan.has(l)).map(l=>lineHtml(l,false)).join('');
   el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span>Teklif özeti · ${n} kalem</span><span>${fmt(t.genel)} <small>${el.classList.contains('acik')?'Kapat ▾':'Aç ▴'}</small></span></button>
@@ -3854,6 +3865,7 @@ function dlOzetCiz(){
 document.getElementById('dlOzet').addEventListener('click', e=>{
   const el = e.currentTarget;
   if (e.target.closest('[data-oz-ac]')){ el.classList.toggle('acik'); dlOzetCiz(); return; }
+  const uh = e.target.closest('[data-unite-hepsi]'); if (uh){ tkUniteHepsi(uh.dataset.uniteHepsi==='tek'); tkSave(); return; }
   if (e.target.id==='dlOzKaydet'){ document.getElementById('tkKaydet').click(); return; }
   if (e.target.id==='dlOzTemizle'){ if (confirm('Teklifteki tüm kalemler ve müşteri bilgileri silinsin mi?')){ TK = tkEmpty(); tkSave(); renderTeklif(); } return; }
   const lk = e.target.closest('[data-oz-l]');
@@ -3872,7 +3884,8 @@ document.getElementById('dlOzet').addEventListener('change', e=>{
   const t = e.target;
   if (t.id==='dlOzMusteri'){ TK.musteri = t.value; tkSave(); return; }
   if (t.id==='dlOzProje'){ TK.proje = t.value; tkSave(); return; }
-  if (t.matches('[data-oz-sog]')){ TK.sogMode = t.value; tkMods().forEach(m=>{ m.sog = t.value; if (t.value!=='split'){ delete m.esle; delete m.ikili; } }); tkSave(); return; }
+  if (t.matches('[data-oz-sog]')){ TK.sogMode = t.value; tkMods().forEach(m=>{ m.sog = t.value; if (t.value!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); return; }
+  if (t.matches('[data-unite]')){ tkUniteAta(t.dataset.unite, t.value); tkSave(); return; }
   if (t.matches('[data-oz-iklim]')){ TK.iklim = t.value; tkSave(); renderDolaplar(); return; }
   const lk = t.closest('[data-oz-l]');
   if (lk && t.matches('[data-oz-lmiktar]')){ const l = TK.satirlar.find(x=>x.id===lk.dataset.ozL); if (l){ l.miktar = Math.max(0, tkNum(t.value)) || 1; tkSave(); } return; }
@@ -3880,8 +3893,6 @@ document.getElementById('dlOzet').addEventListener('change', e=>{
   const k = tkKalemler().find(x=>x.id===kk.dataset.oz); if (!k) return;
   if (t.matches('[data-oz-adet]')) tkKalemAdet(k, parseInt(t.value,10));
   if (t.matches('[data-oz-bir]') && !tkBirlesimUygula(k, t.value)) showToast(`Toplam ${k.mods.length} etmeli. Örn. ${k.mods.length>1?(k.mods.length-1)+'+1':'1'}.`, true);
-  if (t.matches('[data-oz-ikili]')) tkKalemIkili(k, t.checked);
-  if (t.matches('[data-oz-esle]')){ const m = k.mods[0]; tkEsleCoz(m); if (t.value){ const o = tkMods().find(x=>x.id===t.value); if (o){ tkEsleCoz(o); m.esle = o.id; o.esle = m.id; } } }
   if (t.matches('[data-oz-yan]')) k.mods.forEach(m=>{ m.yan = t.value; });
   if (t.matches('[data-oz-yanadet]')) k.mods[0].yanElle = Math.max(0, parseInt(t.value,10)||0);
   tkSave();
@@ -4064,7 +4075,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '13a9700e3b97013c';
+const APP_SURUM = 'eba2addf18a7621f';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
