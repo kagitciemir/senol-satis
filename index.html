@@ -3759,6 +3759,53 @@ async function aktifBildir(){
 }
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
+// Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
+const APP_SURUM = '103f6e05067c1658';
+const SURUM_ARALIK = 5*60*1000;
+let yeniSurum = '', surumKirli = false;
+document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
+document.addEventListener('change', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
+document.addEventListener('click', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"] button')) surumKirli = true; }, true);
+async function surumYenile(){
+  if (!yeniSurum) return;
+  try{ sessionStorage.setItem('surum-denendi', yeniSurum); }catch(e){}
+  try{ await fetch(location.pathname, {cache:'reload'}); }catch(e){} // tarayıcının eski kopyası tazelensin
+  location.reload();
+}
+function surumDugmesi(){
+  if ($a('surumUyari')) return;
+  const d = document.createElement('div');
+  d.id = 'surumUyari';
+  d.style.cssText = 'position:fixed;left:10px;right:10px;bottom:10px;z-index:99998;max-width:520px;margin:0 auto;background:#134d80;color:#fff;padding:12px 14px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px';
+  d.innerHTML = `<span style="flex:1 1 200px">Yeni sürüm hazır. Yenilemeden önce oda bilgilerinizi kaydedin.</span>
+    <button type="button" data-yenile style="background:#fff;color:#134d80;border:0;border-radius:8px;padding:8px 12px;font:600 14px inherit;cursor:pointer">Yenile</button>
+    <button type="button" data-kapat aria-label="Kapat" style="background:none;border:0;color:#fff;font-size:20px;line-height:1;padding:4px 6px;cursor:pointer">×</button>`;
+  d.querySelector('[data-yenile]').onclick = surumYenile;
+  d.querySelector('[data-kapat]').onclick = ()=>d.remove();
+  document.body.appendChild(d);
+}
+function surumUygula(){
+  if (!yeniSurum || document.hidden) return;
+  const onizleme = $a('tkPrev') && !$a('tkPrev').hidden;
+  const yaziyor = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (surumKirli) surumDugmesi();
+  else if (!onizleme && !yaziyor) surumYenile();
+}
+async function surumKontrol(hemen){
+  if (APP_SURUM.startsWith('__') || !navigator.onLine) return;
+  try{
+    const r = await fetch('surum.json', {cache:'no-store'});
+    if (!r.ok) return;
+    const s = (await r.json()).surum;
+    let denendi = ''; try{ denendi = sessionStorage.getItem('surum-denendi')||''; }catch(e){}
+    if (s && s!==APP_SURUM && s!==denendi){ yeniSurum = s; if (hemen || surumKirli) surumUygula(); } // aynı sürüm için bir kez denenir; yenileme döngüsü olmaz
+  }catch(e){}
+}
+const surumDon = ()=>{ if (!document.hidden) surumKontrol(true); }; // uygulamaya geri dönünce
+document.addEventListener('visibilitychange', surumDon);
+window.addEventListener('focus', surumDon);
+window.addEventListener('hashchange', surumUygula);                 // ekran değiştirirken
+setInterval(()=>{ if (!document.hidden) surumKontrol(false); }, SURUM_ARALIK);
 // Hızlı açılışta arka plan kontrolü: onay kalktıysa kilitle; rol ya da fiyat listesi değiştiyse haber ver.
 async function arkaKontrol(user, eskiDamga){
   try{
