@@ -3599,7 +3599,7 @@ function tkUniteHepsi(tek){
 }
 function tkUniteSec(g, us, attr){
   const i = us.findIndex(u=>u.gruplar.includes(g));
-  return `<select ${attr} aria-label="Split ünite">${us.map((u,k)=>u.zone===g[0].zone?`<option value="${k+1}"${k===i?' selected':''}>Ünite ${k+1}${u.gruplar.length>1?' ('+u.gruplar.reduce((t,x)=>t+x.length,0)+' dolap)':''}</option>`:'').join('')}<option value="">Ayrı ünite</option></select>`;
+  return `<select ${attr} aria-label="Split ünite">${us.map((u,k)=>u.zone===g[0].zone?`<option value="${k+1}"${k===i?' selected':''}>Ünite ${k+1}</option>`:'').join('')}<option value="">Ayrı ünite</option></select>`;
 }
 function tkEsleCoz(m){ if (!m.esle) return; const o = tkMods().find(x=>x.id===m.esle); if (o && o.esle===m.id) delete o.esle; delete m.esle; }
 // tablo hücresi: grup soğutma seçimi; split ise aynı üniteye bağlanabilecek gruplar (aynı sıcaklık, iki tarafı da tek modül)
@@ -4075,7 +4075,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = 'eba2addf18a7621f';
+const APP_SURUM = 'd2738badafcc7bb0';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
