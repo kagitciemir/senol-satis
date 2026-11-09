@@ -513,6 +513,10 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .ptable tr.short td{color:#a3b0bf}
 .ptable tr.short td b{color:#a3b0bf}
 .ptable tr.best td{background:#eef8f2!important}
+.sg-eksik{color:#b45309;font-weight:600}
+.ptable tr.sg-diger td{color:#64748b}
+.ptable tr.sg-ayrac td{background:#f1f5f9;font-size:12px;font-weight:600;color:#4a5b6e;padding:5px 12px}
+.sg-card:has(.tag-best){border-color:#1f9d55;background:#f1fbf5}
 .tag-best{display:inline-block;background:#1f9d55;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600}
 .lnk{background:none;border:0;color:var(--acc);font:600 13px 'Inter',sans-serif;cursor:pointer;padding:0}
 .blk-sub{margin:16px 0 6px;font:600 13.5px 'Inter',sans-serif;color:#4a5b6e}
@@ -1025,7 +1029,7 @@ body.auth-locked #authOverlay{display:flex}
       <label class="disc-box"><span>İskonto %</span><input type="text" id="sgDisc" inputmode="decimal" placeholder="—"></label>
     </div>
     <div id="sgOneri"></div>
-    <details class="sg-more" id="sgPickBox"><summary>Tüm markalarla karşılaştır</summary><div id="sgPick"></div></details>
+    <details class="sg-more" id="sgPickBox"><summary>Seçenekler (gerekli gücün %10 altı ve üstü)</summary><div id="sgPick"></div></details>
   </section>
   <nav class="sg-tabs" id="sgTabs">
     <a href="#/sogutma" data-sgtab="kondenser">Soğutma Grubu (Split Unit)</a>
@@ -1039,7 +1043,7 @@ body.auth-locked #authOverlay{display:flex}
     <label class="sel" data-sgf="kondenser grup"><span>Marka</span><select id="sgBrand"></select></label>
     <label class="sel" data-sgf="scroll"><span>Yağlama</span><select id="sgLub"></select></label>
     <label class="sel" data-sgf="kondenser"><span>Kasa</span><select id="sgSS"><option value="0">Standart</option><option value="1">Sessiz (SS)</option></select></label>
-    <label class="sel" id="sgCapColBox"><span>Kapasite sütunu</span><select id="sgCapCol"></select></label>
+    <label class="sel" id="sgCapColBox"><span>Evaporasyon / Kondenzasyon</span><select id="sgCapCol"></select></label>
     <select id="sgZone" hidden><option value="POZ">Pozitif</option><option value="NEG">Negatif</option></select>
   </div>
   <section class="cat-sec" id="sgKond">
@@ -2781,7 +2785,7 @@ function renderDolapSog(p){
       <div class="sg-card-p" id="dlSogFiyat">${fmt(u.pUnit*fs)}<small>liste ${fmt(u.pUnit)}${isk?' · iskonto %'+escHtml(isk):''}</small></div>
       <button type="button" class="btn-tk" data-dlsog-ekle>+ Soğutma grubunu teklife ekle</button></div>`;
   } else if (need){
-    const mz = tkMerkeziPick(need, zone);
+    const mz = tkMerkeziPick(need, zone, zone==='NEG'?DOLAP_NEG_KOLON:undefined);
     res = `<p class="blk-w">${fmtNum(need,0)} W için tek split ünite yetmiyor${mz?` — merkezi sistem önerisi: <b>${escHtml(mz.r[0])}</b> (${fmtNum(mz.cap,0)} W), Soğutma Sistemleri sayfasından ekleyebilirsiniz`:''}.</p>`;
   }
   el.innerHTML = `<section class="cat-sec dl-sog"><h3 class="blk-h">Remote dolap için soğutma grubu</h3>
@@ -2790,7 +2794,7 @@ function renderDolapSog(p){
       <label class="disc-box"><span>İskonto %</span><input type="text" id="dlSogDisc" inputmode="decimal" placeholder="—" value="${escHtml(isk)}"></label>
       <label class="sel"><span>Boy</span><select id="dlSogBoy">${lens.map(x=>`<option value="${x.L}"${x.L===st.c?' selected':''}>${fmtNum(x.L,1)} cm</option>`).join('')}</select></label>
     </div>
-    ${need?`<p class="blk-n">Gerekli kapasite: <b>${fmtNum(need,0)} W</b> (${fmtNum(kap.wpm,0)} W/m × ${fmtNum(lc.L/100,2)} m · ${zone==='NEG'?'dondurucu, -25°C/+45°C':'pozitif, -10°C/+45°C'})</p>`:''}
+    ${need?`<p class="blk-n">Gerekli kapasite: <b>${fmtNum(need,0)} W</b> (${fmtNum(kap.wpm,0)} W/m × ${fmtNum(lc.L/100,2)} m · ${zone==='NEG'?'dondurucu, -35°C/+55°C':'pozitif, -10°C/+45°C'})</p>`:''}
     ${res}
     <p class="blk-n">Bir split üniteye en fazla 2 modül bağlanır. Dolabı fiyatına tıklayıp projeye eklerseniz soğutma grubu, tesisat, freon ve montaj Teklif Sepeti'nde otomatik hesaplanır.</p></section>`;
   el.querySelector('#dlSogModel').onchange = e=>{ st.k = +e.target.value; st.c = null; renderDolapSog(p); };
@@ -2802,7 +2806,7 @@ function renderDolapSog(p){
   };
   const ek = el.querySelector('[data-dlsog-ekle]');
   if (ek) ek.onclick = ()=> tkAdd({tip:'sogutma', ad:`Soğutma grubu (dış ünite) ${COOL_BRAND_LABEL[u.brand]} ${u.hp} HP · ${u.model}`, birim:'AD', liste:u.pUnit, isk:el.querySelector('#dlSogDisc').value.trim(),
-    aciklama:[`Bağlı dolap: ${sel.name} · ${fmtNum(lc.L,1)} cm`, `Gerekli kapasite: ${fmtNum(need,0)} W (${fmtNum(kap.wpm,0)} W/m × ${fmtNum(lc.L/100,2)} m) @ ${zone==='NEG'?'-25':'-10'}°C/+45°C`,
+    aciklama:[`Bağlı dolap: ${sel.name} · ${fmtNum(lc.L,1)} cm`, `Gerekli kapasite: ${fmtNum(need,0)} W (${fmtNum(kap.wpm,0)} W/m × ${fmtNum(lc.L/100,2)} m) @ ${zone==='NEG'?'-35°C/+55°C':'-10°C/+45°C'}`,
       `Ünite kapasitesi: ${fmtNum(u.cap,0)} W · Kompresör ${COOL_BRAND_LABEL[u.brand]} ${u.comp} · ${coolPhase(u.model)}`, 'Evaporatör ve dijital kontrol paneli dolabın üzerindedir.'].join('\n')});
 }
 // Bu dolabın aksesuarları: aksesuar tablosundan sadece dolabın boylarına karşılık gelen sütunlar
@@ -2841,11 +2845,32 @@ document.getElementById('dlDisc').addEventListener('input', renderDolaplar);
 document.getElementById('dlCats').addEventListener('click', e=>{ const b = e.target.closest('[data-dlcat]'); if (b){ DL_CAT = b.dataset.dlcat; renderDolapGrid(); } });
 
 const SG_OPT_LABEL = {pEvap:'Evaporatör + exp. valf', pPanel:'Dijital kontrol paneli', fan:'Fan hız kontrol', defrost:'Defrost kontaktör', accu:'Likit tutucu', oil:'Yağ ayırıcı', sol:'Solenoid vana', dual:'Dual basınç kontrol'};
+let SG_KART = null, SG_SATIRLAR = [];
 let SG_OPEN = '', SG_TAB = 'kondenser', SG_SEL = new Set(), SG_ONERI = {key:'', open:false, sel:new Set()}; // üstteki öneri kartının ekstra seçimi (tablodaki seçimden ayrı)
 const sgEl = id => document.getElementById(id);
 function sgNum(v){ const n = parseFloat(String(v||'').replace(/\./g,'').replace(',','.')); return n>0 ? n : 0; }
 function sgCapVal(v){ return typeof v==='number' ? v : sgNum(String(v||'').replace(/[^\d.,]/g,'')); }
 // gerekli kapasite: doğrudan W ya da oda hacminden (soğuk oda hesabındaki kapasite tablosu)
+// Seçili evaporasyon/kondenzasyon sütununa göre kapasite. kolon boşsa listedeki değer.
+function sgEkKap(r){ return ((SOGUTMA_LIST && SOGUTMA_LIST.kondenser) || {})[sgKey(r)]; }
+function sgKolonlar(series, zone){
+  return [...new Set(COOL_DATA.filter(r=>r.series===series && r.zone===zone).flatMap(r=>{ const e = sgEkKap(r); return e&&e[2] ? e[2].map(x=>x[0]) : []; }))];
+}
+function sgKolonVarsayilan(series, zone){ return {HRM:{POZ:'-10°C/+45°C',NEG:'-25°C/+45°C'}, TRP:{POZ:'-10°C/+55°C',NEG:'-35°C/+55°C'}}[series]?.[zone] || ''; }
+function sgKapBul(r, kolon){ if (!kolon) return r.cap; const e = sgEkKap(r), x = e && e[2] && e[2].find(y=>y[0]===kolon); return x ? x[1] : null; }
+function sgSatirlar(series, marka, ss, zone, kolon){
+  return (marka ? [marka] : COOL_BRANDS).flatMap(b=>coolCandidates(series, b, ss, zone)).map(r=>{ const w = sgKapBul(r, kolon); return w==null ? null : Object.assign({}, r, {cap:w, capLabel:kolon ? kolon.replace(/°C/g,'') : r.capLabel}); }).filter(Boolean).sort((a,b)=>a.cap-b.cap || a.pUnit-b.pUnit);
+}
+function sgAktifKolon(){ return (String(sgEl('sgCapCol').value).match(/([-+]?\d+°C\/\+?\d+°C)/)||[])[1]||''; }
+// Arama: gerekli gücün %10 altı ve üstü. En iyi tercih: gücü karşılayan en uygun fiyatlı. Pencerede yoksa bir üst model de gösterilir.
+function sgPencere(list, w, kap, fiyat){
+  const liste = list.filter(x=>kap(x)>=w*0.9 && kap(x)<=w*1.1);
+  const yeterli = liste.filter(x=>kap(x)>=w);
+  let iyi = yeterli.slice().sort((a,b)=>fiyat(a)-fiyat(b) || kap(a)-kap(b))[0] || null;
+  if (!iyi){ iyi = list.filter(x=>kap(x)>w*1.1).sort((a,b)=>kap(a)-kap(b) || fiyat(a)-fiyat(b))[0] || null; if (iyi) liste.push(iyi); }
+  return {liste, iyi};
+}
+function sgFarkYazi(cap, w){ const d = Math.round((cap/w-1)*100); return d===0 ? 'tam' : d>0 ? `%${d} fazla` : `<span class="sg-eksik">%${-d} eksik</span>`; }
 function sgRequired(){
   const w = sgNum(sgEl('sgReq').value), vol = parseFloat(String(sgEl('sgVol').value).replace(',','.'))||0;
   if (w) return {w, note:''};
@@ -2872,8 +2897,12 @@ function renderSgOneri(){
     <div class="sg-card-p">${fmt(fiyat)}${f!==1?`<small>liste ${fmt(liste)}</small>`:''}</div>${ek}${btn}</div>`;
   let h = req.note ? `<p class="blk-n">${req.note}</p>` : '';
   const cards = [];
-  let u = coolCandidates('HRM','EMBRACO',false,zone).find(c=>c.cap>=req.w);
-  if (!u) u = COOL_BRANDS.map(b=>coolCandidates('HRM',b,false,zone).find(c=>c.cap>=req.w)).filter(Boolean).sort((a,b)=>a.pUnit-b.pUnit)[0];
+  const seri = sgEl('sgSeries').value || 'HRM', ss = sgEl('sgSS').value==='1';
+  const markaSec = TK_UP(sgEl('sgBrand').value||''), marka = COOL_BRANDS.includes(markaSec) ? markaSec : '';
+  let kolon = sgAktifKolon(); if (!sgKolonlar(seri, zone).includes(kolon)) kolon = sgKolonVarsayilan(seri, zone);
+  const pen = sgPencere(sgSatirlar(seri, marka, ss, zone, kolon), req.w, x=>x.cap, x=>x.pUnit||0);
+  const u = pen.iyi; SG_KART = u;
+  if (!u && marka) h += `<p class="blk-w">${escHtml(COOL_BRAND_LABEL[marka])} için ${fmtNum(req.w,0)} W tek ünite yok. Diğer markalara aşağıdan bakın.</p>`;
   if (u){
     const key = sgKey(u);
     if (SG_ONERI.key!==key) SG_ONERI = {key, open:false, sel:new Set()}; // ihtiyaç değişip model değişince seçim sıfırlanır
@@ -2881,10 +2910,10 @@ function renderSgOneri(){
     const list = (u.pUnit||0)+[...sel].reduce((t,k)=>t+(u[k]||0),0);
     const ek = !opts.length ? '' : `<button type="button" class="sg-ek-ac" aria-expanded="${SG_ONERI.open}">${SG_ONERI.open?'Ekstraları gizle ▴':'Ekstra seç ▾'}${sel.size?' · '+sel.size+' seçili':''}</button>`+
       (SG_ONERI.open ? `<div class="opt-grid sg-ek">${opts.map(k=>`<button type="button" class="opt-card${sel.has(k)?' on':''}" data-oneri-opt="${k}"><span>${SG_OPT_LABEL[k]}${k==='pEvap'?' · '+escHtml(u.evap||'')+(u.qty>1?' ×'+u.qty:''):''}</span><b>${fmt(u[k]*f)}</b>${f!==1?`<small>Liste ${fmt(u[k])}</small>`:''}<i>${sel.has(k)?'✓ Eklendi':'+ Ekle'}</i></button>`).join('')}</div>` : '');
-    cards.push(kart('Soğutma Grubu (Split Unit) önerisi', u.model, `${COOL_BRAND_LABEL[u.brand]} · ${u.hp} HP · ${fmtNum(u.cap,0)} W · ${coolPhase(u.model)}<br>${sel.size?`Dış ünite + ${sel.size} ekstra.`:`Dış ünite fiyatı. Evaporatör (${escHtml(u.evap)}${u.qty>1?' ×'+u.qty:''}) ve dijital panel için karta dokunun.`}`, list*f, list,
+    cards.push(kart(`Soğutma Grubu (Split Unit) önerisi · <span class="tag-best">En iyi tercih</span>`, u.model, `${COOL_BRAND_LABEL[u.brand]} · ${u.hp} HP · ${fmtNum(u.cap,0)} W · ${coolPhase(u.model)} · ${escHtml(u.capLabel||'')}<br>${sgFarkYazi(u.cap, req.w)}. ${sel.size?`Dış ünite + ${sel.size} ekstra.`:`Dış ünite fiyatı. Evaporatör (${escHtml(u.evap)}${u.qty>1?' ×'+u.qty:''}) ve dijital panel için karta dokunun.`}`, list*f, list,
       `<button type="button" class="btn-tk" data-oneri-k="${escHtml(key)}">+ Teklife ekle</button>`, ek, opts.length?' data-oneri-kart':''));
   }
-  const m = tkMerkeziPick(req.w, zone);
+  const m = tkMerkeziPick(req.w, zone, kolon||undefined);
   if (m){
     const gi = SOGUTMA_LIST.gruplar.indexOf(m.g), si = m.g.bolumler.indexOf(m.s), ri = m.s.rows.indexOf(m.r);
     cards.push(kart(u ? 'Birden fazla oda / dolap için merkezi' : 'Tek ünite yetmiyor → merkezi sistem', m.r[0], `${m.g.marka?escHtml(m.g.marka)+' · ':''}${m.g.g==='scroll'?'Scroll':'Harici kondenserli'} · ${fmtNum(m.cap,0)} W @ ${escHtml((m.capCol.match(/(-?\d+°C\/\+?\d+°C)/)||[])[1]||m.capCol)}<br>Tesisat hariç`, m.price*f, m.price,
@@ -2896,16 +2925,15 @@ function renderSogutma(){
   const tab = routeParam() || 'kondenser';
   sgEl('sgTabInfo').textContent = SG_TAB_INFO[tab] || '';
   document.querySelectorAll('#sgZoneSeg [data-zone]').forEach(b=>b.classList.toggle('on', b.dataset.zone===sgEl('sgZone').value));
-  renderSgOneri();
   if (tab!==SG_TAB){ SG_OPEN=''; SG_TAB = tab; }
   document.querySelectorAll('#sgTabs a').forEach(a=>a.classList.toggle('on', a.dataset.sgtab===tab));
   const isK = tab==='kondenser';
   document.querySelectorAll('.sg-toolbar [data-sgf]').forEach(l=>{ const f = l.dataset.sgf.split(' ');
     l.hidden = !(isK ? f.includes('kondenser') : (f.includes('grup') && tab!=='soklama') || f.includes(tab)); });
-  sgEl('sgCapColBox').hidden = isK;
   sgEl('sgKond').hidden = !isK; sgEl('sgGroup').hidden = isK;
   if (SOGUTMA_LIST) sgEl('sgMeta').textContent = `Fiyat listesi · geçerlilik ${SOGUTMA_LIST.gecerlilik||'—'} · EUR · KDV hariç`;
   if (isK) renderSgKondenser(); else renderSgGroup(tab);
+  renderSgOneri();
 }
 
 // ---- kondenser üniteleri ----
@@ -2913,34 +2941,44 @@ function sgKey(r){ return `${r.series}|${r.brand}|${r.ss?1:0}|${r.zone}|${r.mode
 function renderSgKondenser(){
   const sSel = sgEl('sgSeries'), bSel = sgEl('sgBrand');
   if (!sSel.options.length) sgOptions(sSel, COOL_SERIES.map(x=>[x.key,x.label]));
-  sgOptions(bSel, COOL_BRANDS.filter(b=>COOL_DATA.some(r=>r.series===sSel.value && r.brand===b)).map(b=>[b,COOL_BRAND_LABEL[b]]));
+  sgOptions(bSel, [['','Tüm markalar'], ...COOL_BRANDS.filter(b=>COOL_DATA.some(r=>r.series===sSel.value && r.brand===b)).map(b=>[b,COOL_BRAND_LABEL[b]])]);
   const series = sSel.value, brand = bSel.value, zone = sgEl('sgZone').value, ss = sgEl('sgSS').value==='1';
+  // evaporasyon / kondenzasyon filtresi
+  const kSel = sgEl('sgCapCol'), kolonlar = sgKolonlar(series, zone), kOnce = kSel.value;
+  const vars = sgKolonVarsayilan(series, zone);
+  sgOptions(kSel, [...(vars?[]:[['','Liste değeri']]), ...kolonlar.map(k=>[k,k.replace(/°C/g,'')])], false);
+  kSel.value = kolonlar.includes(kOnce) ? kOnce : vars;
+  const kolon = kSel.value;
   const f = readDisc('sgDisc'), ext = (SOGUTMA_LIST && SOGUTMA_LIST.kondenser) || {};
   const req = sgRequired();
-  // seçim: her markada yeterli en küçük model
+  const hepsi = sgSatirlar(series, brand, ss, zone, kolon);
+  SG_SATIRLAR = hepsi;
+  const pen = req.w ? sgPencere(hepsi, req.w, x=>x.cap, x=>x.pUnit||0) : null;
   const pick = sgEl('sgPick');
-  if (!req.w) pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; seçili seri, oda tipi ve kasaya göre her markadan yeterli en küçük model listelenir.</p>';
+  sgEl('sgPickBox').open = !!req.w;
+  if (!req.w) pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; seçili filtrelere göre gücün %10 altı ve üstündeki modeller listelenir, en iyi tercih yeşil işaretlenir.</p>';
   else if (series==='ORT' && zone==='NEG') pick.innerHTML = '<p class="blk-w">Ortam serisinde negatif oda grubu yok — Hermetik veya Tropikal seçin.</p>';
   else {
-    const res = COOL_BRANDS.map(b=>coolCandidates(series,b,ss,zone).find(c=>c.cap>=req.w)).filter(Boolean)
-      .map(c=>({c, list:(c.pUnit||0)})).sort((a,b)=>a.list-b.list);
-    pick.innerHTML = (req.note?`<p class="blk-n">${req.note}</p>`:'') + (res.length ? `<div class="tbl-wrap"><table class="ptable"><thead><tr><th>Marka / model</th><th>Kapasite</th><th>Fazla</th><th>Dış ünite</th><th></th></tr></thead><tbody>${
-      res.map((x,k)=>`<tr${k===0?' class="best"':''}><td><b>${escHtml(x.c.model)}</b><small>${COOL_BRAND_LABEL[x.c.brand]} · ${escHtml(x.c.comp||'')} · ${x.c.hp??''} HP${k===0?' · <span class="tag-best">En uygun fiyat</span>':''}</small></td><td>${fmtNum(x.c.cap,0)} W<small>${escHtml(x.c.capLabel||'')}</small></td><td>%${fmtNum((x.c.cap/req.w-1)*100,0)}</td><td>${fmtP(x.list,f)}</td><td><button type="button" class="lnk" data-sgshow="${escHtml(x.c.brand)}|${escHtml(x.c.model)}">Tabloda göster</button></td></tr>`).join('')}</tbody></table></div>`
-      : `<p class="blk-w">Bu seride hiçbir markada ${fmtNum(req.w,0)} W için tek ünite yok — merkezi sistem sekmelerine bakın.</p>`);
+    const diger = brand ? sgPencere(sgSatirlar(series, '', ss, zone, kolon).filter(r=>r.brand!==brand), req.w, x=>x.cap, x=>x.pUnit||0).liste : [];
+    const satir = (c, isk) => `<tr class="${pen.iyi&&!isk&&c.model===pen.iyi.model?'best':''}${isk?' sg-diger':''}"><td><b>${escHtml(c.model)}</b><small>${COOL_BRAND_LABEL[c.brand]} · ${escHtml(c.comp||'')} · ${c.hp??''} HP${pen.iyi&&!isk&&c.model===pen.iyi.model?' · <span class="tag-best">En iyi tercih</span>':''}</small></td><td>${fmtNum(c.cap,0)} W<small>${escHtml(c.capLabel||'')}</small></td><td>${sgFarkYazi(c.cap, req.w)}</td><td>${fmtP(c.pUnit||0,f)}</td><td><button type="button" class="chip" data-sgshow="${escHtml(c.brand)}|${escHtml(c.model)}">Göster</button></td></tr>`;
+    const fark = (a,b)=>Math.abs(a.cap-req.w)-Math.abs(b.cap-req.w);
+    pick.innerHTML = (req.note?`<p class="blk-n">${req.note}</p>`:'') + (pen.liste.length||diger.length ? `<div class="tbl-wrap"><table class="ptable"><thead><tr><th>Marka / model</th><th>Kapasite</th><th>Fark</th><th>Dış ünite</th><th></th></tr></thead><tbody>${
+      pen.liste.slice().sort(fark).map(c=>satir(c,false)).join('')}${diger.length?`<tr class="sg-ayrac"><td colspan="5">Diğer markalar</td></tr>${diger.slice().sort(fark).map(c=>satir(c,true)).join('')}`:''}</tbody></table></div>`
+      : `<p class="blk-w">Bu seride ${fmtNum(req.w,0)} W için tek ünite yok — merkezi sistem sekmelerine bakın.</p>`);
   }
-  const rows = coolCandidates(series, brand, ss, zone);
-  sgEl('sgInfo').innerHTML = rows.length ? `<b>${rows.length}</b> model · ${escHtml(COOL_SERIES.find(x=>x.key===series).label)} · ${COOL_BRAND_LABEL[brand]} · ${zone==='POZ'?'Pozitif':'Negatif'}${ss?' · Sessiz kasa':''}${f!==1?` · <span class="disc-tag">iskontolu net (%${escHtml(sgEl('sgDisc').value)})</span>`:''} · satıra tıklayınca opsiyon fiyatları açılır`
+  const rows = pen ? pen.liste : hepsi;
+  sgEl('sgInfo').innerHTML = rows.length ? `<b>${rows.length}</b> model · ${escHtml(COOL_SERIES.find(x=>x.key===series).label)} · ${brand?COOL_BRAND_LABEL[brand]:'Tüm markalar'} · ${zone==='POZ'?'Pozitif':'Negatif'}${kolon?' · '+kolon.replace(/°C/g,''):''}${pen?' · gerekli gücün ±%10\'u':''}${ss?' · Sessiz kasa':''}${f!==1?` · <span class="disc-tag">iskontolu net (%${escHtml(sgEl('sgDisc').value)})</span>`:''} · satıra tıklayınca opsiyon fiyatları açılır`
     : (series==='ORT' && zone==='NEG' ? 'Ortam serisinde negatif oda grubu yok.' : 'Bu seçim için listede model yok.');
-  const capLabs = (rows.length && ext[sgKey(rows[0])]) ? ext[sgKey(rows[0])][2].map(x=>x[0]) : [];
   sgEl('sgTable').innerHTML = rows.length ? `<thead><tr><th>Model</th><th>HP</th><th>Oda hacmi</th><th>Kapasite</th><th>Ünite fiyatı<br><small>dış ünite</small></th><th></th></tr></thead><tbody>` +
     rows.map(r=>{
       const e = ext[sgKey(r)] || [null,null,[]], open = SG_OPEN===r.model, ok = req.w && r.cap>=req.w;
       const opts = Object.keys(SG_OPT_LABEL).filter(k=>r[k]>0);
       const secili = (r.pUnit||0)+[...SG_SEL].reduce((t,k)=>t+(r[k]||0),0);
       const tech = [`Kompresör: ${escHtml(COOL_BRAND_LABEL[r.brand]||'')} ${escHtml(r.comp||'')}`, e[1]?`Elektrik: ${escHtml(e[1])}`:'',
-        ...(capLabs.length ? capLabs.map((l,k)=>e[2][k]?`Kapasite ${escHtml(l)}: ${fmtNum(e[2][k][1],0)} W`:'') : [`Kapasite: ${fmtNum(r.cap,0)} W (${escHtml(r.capLabel||'')})`]),
+        ...(e[2].length ? e[2].map(x=>`Kapasite ${escHtml(x[0])}: ${fmtNum(x[1],0)} W`) : [`Kapasite: ${fmtNum(r.cap,0)} W (${escHtml(r.capLabel||'')})`]),
         `Eşleşen evaporatör: ${escHtml(r.evap||'')}${r.qty>1?' ×'+r.qty:''} · ${fmtNum(r.evapCap,0)} W`].filter(Boolean);
-      return `<tr class="sg-row${open?' open':''}${req.w?(ok?' fits':' short'):''}" data-sg="${escHtml(r.model)}"><td data-l="Model"><b>${escHtml(r.model)}</b><small>${coolPhase(r.model)}${req.w&&ok&&r===rows.find(x=>x.cap>=req.w)?' · <span class="tag-best">Yeterli en küçük</span>':''}</small></td><td data-l="HP">${r.hp??''}</td><td data-l="Oda hacmi">${e[0]!=null?fmtNum(e[0],0)+' m³':'—'}</td><td data-l="Kapasite">${fmtNum(r.cap,0)} W</td><td data-l="Ünite">${fmtP(r.pUnit,f)}</td><td class="opt-cell"><span class="sg-more-t">${open?'Kapat ▴':'Detay ▾'}</span></td></tr>` +
+      const iyiMi = pen && pen.iyi && pen.iyi.model===r.model;
+      return `<tr class="sg-row${open?' open':''}${req.w?(ok?' fits':' short'):''}${iyiMi?' best':''}" data-sg="${escHtml(r.model)}"><td data-l="Model"><b>${escHtml(r.model)}</b><small>${brand?'':COOL_BRAND_LABEL[r.brand]+' · '}${coolPhase(r.model)}${iyiMi?' · <span class="tag-best">En iyi tercih</span>':''}</small></td><td data-l="HP">${r.hp??''}</td><td data-l="Oda hacmi">${e[0]!=null?fmtNum(e[0],0)+' m³':'—'}</td><td data-l="Kapasite">${fmtNum(r.cap,0)} W</td><td data-l="Ünite">${fmtP(r.pUnit,f)}</td><td class="opt-cell"><span class="sg-more-t">${open?'Kapat ▴':'Detay ▾'}</span></td></tr>` +
         (open ? `<tr class="sg-opts"><td colspan="7"><div class="opt-panel"><div class="sg-tech">${tech.map(x=>`<span>${x}</span>`).join('')}</div><div class="opt-head">${escHtml(r.model)} için ekstralar — seçilenler ünite fiyatına eklenir${f!==1?' · iskontolu net fiyat':' · liste fiyatı'}</div><div class="opt-grid">${opts.length ? opts.map(k=>
           `<button type="button" class="opt-card${SG_SEL.has(k)?' on':''}" data-sgopt="${k}"><span>${SG_OPT_LABEL[k]}${k==='pEvap'?' · '+escHtml(r.evap||'')+(r.qty>1?' ×'+r.qty:''):''}</span><b>${fmt(r[k]*f)}</b>${f!==1?`<small>Liste ${fmt(r[k])}</small>`:''}<i aria-hidden="true">${SG_SEL.has(k)?'✓ Seçildi':'+ Seç'}</i></button>`).join('') : '<span class="blk-n">Bu modelde opsiyon yok.</span>'}</div>
           <div class="opt-add"><span>Dış ünite${SG_SEL.size?' + '+SG_SEL.size+' ekstra':''}: <b>${fmt(secili*f)}</b></span><button type="button" class="btn-tk" data-tksg="${escHtml(r.model)}">+ Teklif sepetine ekle</button></div></div></td></tr>` : '');
@@ -2952,24 +2990,27 @@ function renderSgGroup(tab){
   const all = (SOGUTMA_LIST && SOGUTMA_LIST.gruplar || []).filter(g=>g.g===tab);
   const zone = sgEl('sgZone').value, f = readDisc('sgDisc');
   const byZone = tab==='soklama' ? all : all.filter(g=>g.zone===zone);
-  sgOptions(sgEl('sgBrand'), [...new Set(byZone.map(g=>g.marka))].filter(Boolean).map(b=>[b,b]));
+  sgOptions(sgEl('sgBrand'), [['','Tüm markalar'], ...[...new Set(byZone.map(g=>g.marka))].filter(Boolean).map(b=>[b,b])]);
   sgOptions(sgEl('sgLub'), [...new Set(byZone.map(g=>g.yaglama))].filter(Boolean).map(b=>[b,b]));
-  const groups = byZone.filter(g=>(tab==='soklama' || g.marka===sgEl('sgBrand').value) && (tab!=='scroll' || g.yaglama===sgEl('sgLub').value));
+  const groups = byZone.filter(g=>(tab==='soklama' || !sgEl('sgBrand').value || g.marka===sgEl('sgBrand').value) && (tab!=='scroll' || g.yaglama===sgEl('sgLub').value));
   // kapasite sütunu seçimi
   const capLabs = [...new Set(groups.flatMap(g=>g.bolumler.flatMap(s=>s.cols.filter(c=>/kapasite/i.test(c) && !/kondenser/i.test(c)))))];
   const want = tab==='soklama' ? capLabs[0] : (zone==='POZ' ? capLabs.find(c=>/-10°C\/\+45/.test(c)) : capLabs.find(c=>/-25°C\/\+45/.test(c))) || capLabs[0];
   const prev = sgEl('sgCapCol').value;
-  sgOptions(sgEl('sgCapCol'), capLabs.map(c=>[c,c]), false);
+  sgOptions(sgEl('sgCapCol'), capLabs.map(c=>[c,(c.match(/([-+]?\d+°C\/\+?\d+°C)/)||[,c])[1].replace(/°C/g,'')]), false);
   sgEl('sgCapCol').value = capLabs.includes(prev) ? prev : (want||'');
   const capCol = sgEl('sgCapCol').value, req = sgRequired();
-  const picks = [];
+  // arama: gerekli gücün %10 altı ve üstü, en iyi tercih tek
+  const adayla = gs => gs.flatMap(g=>g.bolumler.flatMap(sb=>{ const ci = sb.cols.indexOf(capCol), pi = sb.price.find(j=>!/inverter/i.test(sb.cols[j])); return ci<0||pi==null ? [] : sb.rows.map(r=>({g, s:sb, r, ci, pi, w:sgCapVal(r[ci]), fiyat:typeof r[pi]==='number'?r[pi]:0})).filter(x=>x.w>0 && x.fiyat>0); }));
+  const pen = req.w ? sgPencere(adayla(groups), req.w, x=>x.w, x=>x.fiyat) : null;
+  const goster = new Set(pen ? pen.liste.map(x=>x.r) : []), iyiR = pen && pen.iyi ? pen.iyi.r : null;
   let h = '';
   groups.forEach(g=>{
+    if (pen && !g.bolumler.some(sb=>sb.rows.some(r=>goster.has(r)))) return;
     h += `<section class="cat-sec"><h3 class="blk-h">${escHtml(g.baslik)}</h3>`;
     g.bolumler.forEach(s=>{
+      if (pen && !s.rows.some(r=>goster.has(r))) return;
       const ci = s.cols.indexOf(capCol);
-      const best = (req.w && ci>=0) ? s.rows.findIndex(r=>sgCapVal(r[ci])>=req.w) : -1;
-      if (best>=0) picks.push({g, s, r:s.rows[best], ci});
       const gi = SOGUTMA_LIST.gruplar.indexOf(g), si = g.bolumler.indexOf(s);
       // sade tablo: Model, HP, Kapasite (seçili sütun), Fiyat, (harici) Kondenser, Ekle; diğer bilgiler satıra basınca açılır
       const hpI = s.cols.findIndex(c=>/HP/i.test(c)), cmpI = s.cols.findIndex((c,j)=>j>0 && /kompres|marka \/ model/i.test(c));
@@ -2979,10 +3020,10 @@ function renderSgGroup(tab){
       const capShort = ci>=0 ? (s.cols[ci].match(/(-?\d+°C\/\+?\d+°C)/)||[])[1]||s.cols[ci] : '';
       const ncol = 5 + (kndI!=null?1:0);
       h += `<h4 class="blk-sub">${escHtml(s.title)}</h4><div class="tbl-wrap"><table class="ptable sg-table sg-gtable"><thead><tr><th>Model</th><th>HP</th><th>Kapasite${capShort?'<br><small>'+escHtml(capShort)+'</small>':''}</th><th>Fiyat</th>${kndI!=null?'<th>Kondenser</th>':''}<th></th></tr></thead><tbody>${
-        s.rows.map((r,k)=>{ const key = `${gi}|${si}|${k}`, open = SG_OPEN==='g'+key;
+        s.rows.map((r,k)=>{ if (pen && !goster.has(r)) return ''; const best = r===iyiR; const key = `${gi}|${si}|${k}`, open = SG_OPEN==='g'+key;
           const v = (j)=> typeof r[j]==='number' ? fmtNum(r[j], r[j]%1?2:0) : escHtml(r[j]??'—');
           const det = s.cols.map((c,j)=>shown.has(j)||r[j]==null||r[j]==='' ? '' : `<span>${escHtml(c)}: <b>${s.price.includes(j)?fmt((typeof r[j]==='number'?r[j]:0)*f):v(j)}</b></span>`).filter(Boolean);
-          return `<tr class="sg-row ${req.w&&ci>=0?(sgCapVal(r[ci])>=req.w?'fits':'short'):''}${k===best?' best':''}${open?' open':''}" data-sgg="${key}"><td data-l="Model"><b>${escHtml(r[0])}</b><small>${cmpI>=0?v(cmpI):''}${k===best?' · <span class="tag-best">Önerilen</span>':''}</small></td><td data-l="HP">${hpI>=0?v(hpI):'—'}</td><td data-l="Kapasite">${ci>=0&&r[ci]!=null?v(ci)+' W':'—'}</td><td data-l="Fiyat">${fmtP(typeof r[pi]==='number'?r[pi]:null,f)}</td>${kndI!=null?`<td data-l="Kondenser">${fmtP(typeof r[kndI]==='number'?r[kndI]:null,f)}</td>`:''}<td class="opt-cell"><button type="button" class="btn-tk sm" data-tkg="${key}">+ Ekle</button><span class="sg-more-t">${open?'▴':'Detay ▾'}</span></td></tr>`
+          return `<tr class="sg-row ${req.w&&ci>=0?(sgCapVal(r[ci])>=req.w?'fits':'short'):''}${best?' best':''}${open?' open':''}" data-sgg="${key}"><td data-l="Model"><b>${escHtml(r[0])}</b><small>${cmpI>=0?v(cmpI):''}${best?' · <span class="tag-best">En iyi tercih</span>':''}</small></td><td data-l="HP">${hpI>=0?v(hpI):'—'}</td><td data-l="Kapasite">${ci>=0&&r[ci]!=null?v(ci)+' W':'—'}</td><td data-l="Fiyat">${fmtP(typeof r[pi]==='number'?r[pi]:null,f)}</td>${kndI!=null?`<td data-l="Kondenser">${fmtP(typeof r[kndI]==='number'?r[kndI]:null,f)}</td>`:''}<td class="opt-cell"><button type="button" class="btn-tk sm" data-tkg="${key}">+ Ekle</button><span class="sg-more-t">${open?'▴':'Detay ▾'}</span></td></tr>`
             + (open ? `<tr class="sg-opts"><td colspan="${ncol}"><div class="opt-panel"><div class="sg-tech">${det.join('')}</div></div></td></tr>` : '');
         }).join('')
       }</tbody></table></div>`;
@@ -2992,12 +3033,16 @@ function renderSgGroup(tab){
     }
     h += '</section>';
   });
-  sgEl('sgGroup').innerHTML = groups.length ? h : '<section class="cat-sec"><p class="blk-n">Bu seçim için listede ürün yok.</p></section>';
+  sgEl('sgGroup').innerHTML = h || '<section class="cat-sec"><p class="blk-n">Bu seçim için listede ürün yok.</p></section>';
   const pick = sgEl('sgPick');
-  if (!req.w) pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; her tabloda seçili kapasite sütununa göre yeterli en küçük model işaretlenir.</p>';
-  else pick.innerHTML = (req.note?`<p class="blk-n">${req.note}</p>`:'') + (picks.length ? `<div class="tbl-wrap"><table class="ptable"><thead><tr><th>Önerilen model</th><th>${escHtml(capCol)}</th><th>Fazla</th><th>Liste fiyatı</th></tr></thead><tbody>${
-      picks.sort((a,b)=>(a.r[a.s.price[0]]||0)-(b.r[b.s.price[0]]||0)).map((x,k)=>`<tr${k===0?' class="best"':''}><td><b>${escHtml(x.r[0])}</b><small>${escHtml(x.g.marka||'')} · ${escHtml(x.s.title)}${k===0?' · <span class="tag-best">En uygun fiyat</span>':''}</small></td><td>${fmtNum(sgCapVal(x.r[x.ci]),0)} W</td><td>%${fmtNum((sgCapVal(x.r[x.ci])/req.w-1)*100,0)}</td><td>${fmtP(typeof x.r[x.s.price[0]]==='number'?x.r[x.s.price[0]]:null, readDisc('sgDisc'))}</td></tr>`).join('')}</tbody></table></div>`
-      : `<p class="blk-w">${fmtNum(req.w,0)} W için bu seçimde yeterli model yok.</p>`);
+  sgEl('sgPickBox').open = !!req.w;
+  if (!req.w){ pick.innerHTML = '<p class="blk-n">Gerekli kapasiteyi (W) ya da oda hacmini yazın; seçili filtrelere göre gücün %10 altı ve üstündeki modeller listelenir, en iyi tercih yeşil işaretlenir.</p>'; return; }
+  const secili = sgEl('sgBrand').value;
+  const diger = secili && tab!=='soklama' ? sgPencere(adayla(byZone.filter(g=>g.marka!==secili && (tab!=='scroll' || g.yaglama===sgEl('sgLub').value))), req.w, x=>x.w, x=>x.fiyat).liste : [];
+  const satir = (x, isk) => `<tr class="${x.r===iyiR&&!isk?'best':''}${isk?' sg-diger':''}"><td><b>${escHtml(x.r[0])}</b><small>${escHtml(x.g.marka||'')} · ${escHtml(x.s.title)}${x.r===iyiR&&!isk?' · <span class="tag-best">En iyi tercih</span>':''}</small></td><td>${fmtNum(x.w,0)} W</td><td>${sgFarkYazi(x.w, req.w)}</td><td>${fmt(x.fiyat)}</td></tr>`;
+  const fark = (a,b)=>Math.abs(a.w-req.w)-Math.abs(b.w-req.w);
+  pick.innerHTML = (req.note?`<p class="blk-n">${req.note}</p>`:'') + (pen.liste.length||diger.length ? `<div class="tbl-wrap"><table class="ptable"><thead><tr><th>Model</th><th>${escHtml(sgAktifKolon().replace(/°C/g,''))}</th><th>Fark</th><th>Liste fiyatı</th></tr></thead><tbody>${pen.liste.slice().sort(fark).map(x=>satir(x,false)).join('')}${diger.length?`<tr class="sg-ayrac"><td colspan="4">Diğer markalar</td></tr>${diger.slice().sort(fark).map(x=>satir(x,true)).join('')}`:''}</tbody></table></div>`
+    : `<p class="blk-w">${fmtNum(req.w,0)} W için bu seçimde yeterli model yok.</p>`);
 }
 ['sgSeries','sgBrand','sgLub','sgZone','sgSS','sgCapCol'].forEach(id=>sgEl(id).addEventListener('change', ()=>{ SG_OPEN=''; renderSogutma(); }));
 ['sgDisc','sgReq','sgVol'].forEach(id=>sgEl(id).addEventListener('input', e=>{
@@ -3018,7 +3063,7 @@ sgEl('sgZoneSeg').addEventListener('click', e=>{
 });
 sgEl('sgOneri').addEventListener('click', e=>{
   const k = e.target.closest('[data-oneri-k]');
-  if (k){ const u = COOL_DATA.find(x=>sgKey(x)===k.dataset.oneriK); if (u) tkAddKondenser(u.model, u, SG_ONERI.sel); return; }
+  if (k){ if (SG_KART && sgKey(SG_KART)===k.dataset.oneriK) tkAddKondenser(SG_KART.model, SG_KART, SG_ONERI.sel); return; }
   const g = e.target.closest('[data-oneri-g]'); if (g){ tkAddGrup(g.dataset.oneriG); return; }
   const o = e.target.closest('[data-oneri-opt]');
   if (o){ const n = o.dataset.oneriOpt; SG_ONERI.sel.has(n) ? SG_ONERI.sel.delete(n) : SG_ONERI.sel.add(n); renderSgOneri(); return; }
@@ -3182,7 +3227,7 @@ function tkDolapLine(code){
   return {tip:'dolap', otv, ad:dolapBaslik(p, r, col), aciklama:dolapAciklama(p, r, col), liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p)};
 }
 function tkAddKondenser(model, satir, secim){
-  const r = satir || COOL_DATA.find(x=>x.model===model && x.series===sgEl('sgSeries').value && x.brand===sgEl('sgBrand').value) || COOL_DATA.find(x=>x.model===model);
+  const r = satir || SG_SATIRLAR.find(x=>x.model===model) || COOL_DATA.find(x=>x.model===model && x.series===sgEl('sgSeries').value) || COOL_DATA.find(x=>x.model===model);
   if (!r) return;
   const sel = [...(secim||SG_SEL)].filter(k=>r[k]>0);
   const list = (r.pUnit||0)+sel.reduce((t,k)=>t+r[k],0);
@@ -3472,23 +3517,28 @@ function tkJoinCheck(a, b){
   if (a.zone!==b.zone) return 'Sıcaklıkları farklı modüller birleştirilemez.';
   return '';
 }
+// Negatif dolaplar tropikal -35/+55'ten seçilir (patron 2026-11-09). Pozitif dolaplar Hermetik -10/+45.
+const DOLAP_NEG_KOLON = '-35°C/+55°C';
 function tkSplitPick(need, zone){
-  const c = COOL_DATA.filter(r=>r.series==='HRM' && !r.ss && r.zone===zone && r.cap>=need);
+  const c = zone==='NEG'
+    ? sgSatirlar('TRP', '', false, 'NEG', DOLAP_NEG_KOLON).filter(r=>r.cap>=need)
+    : COOL_DATA.filter(r=>r.series==='HRM' && !r.ss && r.zone===zone && r.cap>=need);
   const emb = c.filter(r=>r.brand==='EMBRACO').sort((a,b)=>a.cap-b.cap || a.pUnit-b.pUnit)[0];
   return emb || c.sort((a,b)=>a.pUnit-b.pUnit)[0] || null;
 }
-function tkMerkeziPick(need, zone){
-  const want = zone==='NEG' ? /-25°C\/\+45/ : /-10°C\/\+45/;
-  let best = null;
-  ['scroll','merkezi'].forEach(kind=>{
-    if (best) return;
-    (SOGUTMA_LIST && SOGUTMA_LIST.gruplar || []).filter(g=>g.g===kind && g.zone===zone).forEach(g=>g.bolumler.forEach(s=>{
-      const ci = s.cols.findIndex(c=>want.test(c)), pi = s.price.find(j=>!/inverter/i.test(s.cols[j]));
-      if (ci<0 || pi==null) return;
-      s.rows.forEach(r=>{ if (sgCapVal(r[ci])>=need && typeof r[pi]==='number' && (!best || r[pi]<best.price)) best = {g, s, r, cap:sgCapVal(r[ci]), price:r[pi], capCol:s.cols[ci]}; });
-    }));
-  });
-  return best;
+function tkMerkeziPick(need, zone, kolon){
+  const yedek = zone==='NEG' ? '-25°C/+45°C' : '-10°C/+45°C';
+  const bul = k => { let best = null;
+    ['scroll','merkezi'].forEach(kind=>{
+      if (best) return;
+      (SOGUTMA_LIST && SOGUTMA_LIST.gruplar || []).filter(g=>g.g===kind && g.zone===zone).forEach(g=>g.bolumler.forEach(s=>{
+        const ci = s.cols.findIndex(c=>c.includes(k)), pi = s.price.find(j=>!/inverter/i.test(s.cols[j]));
+        if (ci<0 || pi==null) return;
+        s.rows.forEach(r=>{ if (sgCapVal(r[ci])>=need && typeof r[pi]==='number' && (!best || r[pi]<best.price)) best = {g, s, r, cap:sgCapVal(r[ci]), price:r[pi], capCol:s.cols[ci]}; });
+      }));
+    });
+    return best; };
+  return bul(kolon||yedek) || (kolon && !(/^-35°C\/\+55/.test(kolon)) ? bul(yedek) : null);
 }
 // projeden teklif satırlarını üret (sepete eklenmeden önce de gösterilir)
 // Dolap projesi soğutma planı (patron 2026-11-06): her grup için Merkezi / Split / Yok; split'te isteğe bağlı eşleştirme
@@ -3541,7 +3591,7 @@ function tkModPlanHam(){
     if (!r){ warn.push(`${fmtNum(need,0)} W için tek split grup yok — merkezi sistem seçin.`); return; }
     lines.push({tip:'sogutma', ad:`Soğutma grubu (dış ünite) ${COOL_BRAND_LABEL[r.brand]} ${r.hp} HP · ${r.model}`, birim:'AD', liste:r.pUnit,
       aciklama:[`Bağlı modüller: ${mods.map(ad).join(' + ')}`,
-        `Gerekli kapasite: ${fmtNum(need,0)} W (${mods.map(m=>fmtNum(m.wpm,0)+' W/m × '+fmtNum(m.L/100,2)+' m').join(' + ')}) @ ${zone==='NEG'?'-25':'-10'}°C/+45°C`,
+        `Gerekli kapasite: ${fmtNum(need,0)} W (${mods.map(m=>fmtNum(m.wpm,0)+' W/m × '+fmtNum(m.L/100,2)+' m').join(' + ')}) @ ${zone==='NEG'?'-35°C/+55°C':'-10°C/+45°C'}`,
         `Ünite kapasitesi: ${fmtNum(r.cap,0)} W · Kompresör ${COOL_BRAND_LABEL[r.brand]} ${r.comp} · ${coolPhase(r.model)}`,
         'Evaporatör ve dijital kontrol paneli dolabın üzerindedir.'].join('\n')});
   });
@@ -3553,7 +3603,7 @@ function tkModPlanHam(){
     const od = odalar.filter(o=>o.bagli && o.zone===zone);
     if (!mods.length && !od.length) return;
     const need = Math.round(mods.reduce((t,m)=>t+m.wpm*m.L/100, 0) + od.reduce((t,o)=>t+o.req, 0));
-    const b = tkMerkeziPick(need, zone);
+    const b = tkMerkeziPick(need, zone, zone==='NEG'?DOLAP_NEG_KOLON:undefined);
     units.push({tur:'merkezi', need, zone, merkezi:b, mods, odalar:od});
     if (!b){ warn.push(`${fmtNum(need,0)} W (${zone==='NEG'?'negatif':'pozitif'}) için listede merkezi sistem yok.`); return; }
     lines.push({tip:'sogutma', ad:`${b.g.marka||''} ${b.g.g==='scroll'?'scroll':'harici kondenserli'} merkezi sistem (${zone==='NEG'?'negatif':'pozitif'}) · ${b.r[0]}`.trim(), birim:'AD', liste:b.price,
@@ -3959,7 +4009,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '415f564a0bca0782';
+const APP_SURUM = '4b21d77e1de0174f';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
