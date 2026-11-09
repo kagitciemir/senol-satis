@@ -595,6 +595,46 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .grv-k b{color:#132a43;font-size:15px;overflow-wrap:anywhere}
 .grv-k p{margin:4px 0 0;font-size:14px;color:#4a5b6e;white-space:pre-wrap;overflow-wrap:anywhere}
 .grv-gec{color:#e3342b;font-weight:600}
+.dl-duzen.ozetli{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.dl-ana{min-width:0}
+.dl-ozet{position:sticky;top:16px;background:#fff;border:1px solid #dfe5ec;border-radius:16px;padding:14px;max-height:calc(100vh - 100px);overflow:auto;font-size:13.5px;color:#132a43}
+.dl-ozet[hidden]{display:none}
+.oz-bas{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:15px;width:100%;background:none;border:0;padding:0;color:inherit;font-family:inherit;text-align:left}
+.oz-bas small{display:none}
+.oz-musteri{display:grid;gap:6px;margin:10px 0}
+.oz-musteri input,.oz-k select,.oz-k input{height:34px;border:1px solid #cbd5e1;border-radius:8px;padding:0 8px;font:13.5px 'Inter',sans-serif;background:#fff;width:100%;min-width:0}
+.oz-k{border-top:1px solid #eef2f6;padding:10px 0}
+.oz-ad{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.oz-ad b{font-size:13.5px;line-height:1.3;overflow-wrap:anywhere}
+.oz-ad button{border:0;background:none;color:#94a3b8;font-size:15px;cursor:pointer;padding:0 2px;flex:none}
+.oz-sat{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.oz-sat>span{color:#4a5b6e;font-size:12.5px;white-space:nowrap}
+.oz-sat em{font-style:normal;font-weight:600;white-space:nowrap}
+.oz-step{display:inline-flex;align-items:center;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;flex:none}
+.oz-step button{width:30px;height:32px;border:0;background:#f1f5f9;font-size:16px;cursor:pointer;color:#134d80}
+.oz-step input{width:42px;height:32px;border:0;border-radius:0;text-align:center;padding:0}
+.oz-kisa{width:72px!important;flex:none;text-align:center}
+.oz-not{font-size:12px;color:#64748b;margin-top:4px}
+.oz-uyari{font-size:12px;color:#b45309;margin-top:6px}
+.oz-top{border-top:1px solid #dfe5ec;margin-top:4px;padding-top:8px}
+.oz-top div{display:flex;justify-content:space-between;padding:2px 0}
+.oz-top .g{font-weight:700;font-size:15.5px;border-top:1px solid #eef2f6;margin-top:4px;padding-top:6px}
+.oz-btn{display:grid;gap:8px;margin-top:10px}
+.oz-btn button{width:100%}
+.tk-adet-o{position:fixed;inset:0;z-index:120;background:rgba(19,42,67,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.tk-adet-k{background:#fff;border-radius:16px;padding:18px;width:min(360px,100%);display:grid;gap:10px;box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.tk-adet-k b{font-size:15.5px;color:#132a43;line-height:1.3}
+.tk-adet-k small{font-size:13px;color:#4a5b6e}
+.tk-adet-s{display:flex;justify-content:center;align-items:center;gap:10px}
+.tk-adet-s button{width:44px;height:44px;border-radius:10px;border:1px solid #cbd5e1;background:#f1f5f9;font-size:22px;color:#134d80;cursor:pointer}
+.tk-adet-s input{width:84px;height:44px;text-align:center;font:700 20px 'Inter',sans-serif;border:1px solid #cbd5e1;border-radius:10px}
+.tk-adet-b{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:900px){
+  .dl-duzen.ozetli{display:block;padding-bottom:70px}
+  .dl-ozet{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:18px 18px 0 0;border-width:1px 0 0;max-height:82vh;box-shadow:0 -8px 24px rgba(19,77,128,.14);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+  .dl-ozet:not(.acik) .oz-ic{display:none}
+  .oz-bas small{display:inline;font-weight:500;font-size:12px;color:var(--acc)}
+}
 .onr-yaz{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .onr-yaz textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font:15px 'Inter',sans-serif;resize:vertical}
 .onr-k{background:#fff;border:1px solid #e3e9f0;border-radius:14px;padding:12px 14px;margin-top:10px}
@@ -711,7 +751,7 @@ body:not(.auth-locked) .view > header:first-child,body:not(.auth-locked) .view >
 .online-pop .op-r .av{width:28px;height:28px;font-size:11px;background:#e6f1fb;color:var(--accd)}
 .online-pop .op-r .me{margin-left:auto;font-size:11.5px;color:var(--muted)}
 #btnLogout{border-radius:8px;padding:8px 14px}
-@media (min-width:901px){body:not(.auth-locked) .so-side{top:72px}}
+@media (min-width:901px){body:not(.auth-locked) .so-side,body:not(.auth-locked) .dl-ozet{top:72px}}
 @media (max-width:640px){#appBar .who small,#appBar .who .nm{display:none}.online-chip{padding:7px 12px}.online-chip .txt-l{display:none}.oneri-chip{padding:7px 10px}#appBar{gap:8px}}
 #authOverlay{position:fixed;inset:0;z-index:1000;background:var(--bg);display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
 body.auth-locked #authOverlay{display:flex}
@@ -961,11 +1001,13 @@ body.auth-locked #authOverlay{display:flex}
     <input type="search" id="dlSearch" placeholder="Model ara (ör. Apella HD, Rose, 93/200)" autocomplete="off">
     <label class="disc-box"><span>İskonto %</span><input type="text" id="dlDisc" inputmode="decimal" placeholder="—"></label>
   </div>
+  <div class="dl-duzen" id="dlDuzen"><div class="dl-ana">
   <div id="dlList">
     <div class="cat-chips" id="dlCats"></div>
     <div class="prod-grid" id="dlGrid"></div>
   </div>
   <div id="dlDetail" hidden></div>
+  </div><aside class="dl-ozet" id="dlOzet" hidden></aside></div>
 </div>
 
 <div class="view cat-view" data-view="sogutma" hidden>
@@ -3007,7 +3049,7 @@ const TK_KEY = 'teklif:taslak';
 function tkEmpty(){ return {musteri:'', ilgili:'', iletisim:'', proje:'', not:'', kdv:true, satirlar:[]}; }
 function tkLoad(){ try{ const v = JSON.parse(localStorage.getItem(TK_KEY)); if (v && Array.isArray(v.satirlar)) return Object.assign(tkEmpty(), v); }catch(e){} return tkEmpty(); }
 let TK = tkLoad();
-function tkSave(){ try{ localStorage.setItem(TK_KEY, JSON.stringify(TK)); }catch(e){} tkBadge(); }
+function tkSave(){ try{ localStorage.setItem(TK_KEY, JSON.stringify(TK)); }catch(e){} tkBadge(); dlOzetCiz(); }
 function tkBadge(){ const n = TK.satirlar.length + (Array.isArray(TK.moduller) ? TK.moduller.length : 0); document.querySelectorAll('[data-tkcount]').forEach(el=>{ el.textContent = n; el.hidden = !n; }); }
 function tkRound(v){ return Math.round((+v||0)*100)/100; }
 // kategori iskontoları (varsayılan; satırda değiştirilebilir). Liste fiyatı olan satırda fiyat = liste × iskonto, elle yazılırsa 'manuel'
@@ -3121,6 +3163,7 @@ function dolapAciklama(p, r, col){
   const kapi = (String(col).split(' · ')[1]||'');
   return [`Model: ${r.name}${kapi?' · '+kapi:''}`, p.sub, ...tkFeats(p)].filter(Boolean).join('\n');
 }
+function tkDolapOtv(p, nm){ return !(/\b(HP|CS|BM|PZ)\b/.test(TK_UP(nm)) || /^(ISITMALI TABLA|KASA DOLABI|BENMAR|PIZZA ISITMALI)/.test(TK_UP(p.sub))); }
 // dolap ve aksesuar fiyat hücresi
 function tkDolapLine(code){
   const [pid, bi, ri, ci, parent] = code.split('|');
@@ -3135,7 +3178,7 @@ function tkDolapLine(code){
   }
   const nm = r.name.toLocaleUpperCase('tr').startsWith(p.name.toLocaleUpperCase('tr')) ? r.name : `${p.name} ${r.name}`;
   // ısıtmalı, benmari, pizza ve kasa dolabı soğutmalı değil: ÖTV kapalı gelir, satırdan açılabilir
-  const otv = !(/\b(HP|CS|BM|PZ)\b/.test(TK_UP(nm)) || /^(ISITMALI TABLA|KASA DOLABI|BENMAR|PIZZA ISITMALI)/.test(TK_UP(p.sub)));
+  const otv = tkDolapOtv(p, nm);
   return {tip:'dolap', otv, ad:dolapBaslik(p, r, col), aciklama:dolapAciklama(p, r, col), liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p)};
 }
 function tkAddKondenser(model, satir, secim){
@@ -3172,9 +3215,10 @@ const TK_QUICK = {
 // ÖTV (patron 2026-11-09): sadece soğutmalı dolaplarda %6,7, yurt içi. KDV matrahına dahildir. Soğuk oda, soğutma grubu, aksesuar ve hizmette yok.
 const TK_OTV = 0.067;
 function tkOtvVar(l){ return l.tip==='dolap' && l.otv!==false; }
-function tkTotals(){
-  const ara = TK.satirlar.reduce((t,l)=>t+(+l.miktar||0)*(+l.fiyat||0), 0);
-  const otv = TK.kdv ? TK.satirlar.filter(tkOtvVar).reduce((t,l)=>t+(+l.miktar||0)*(+l.fiyat||0), 0)*TK_OTV : 0;
+function tkTotals(satirlar){
+  const lst = satirlar || TK.satirlar;
+  const ara = lst.reduce((t,l)=>t+(+l.miktar||0)*(+l.fiyat||0), 0);
+  const otv = TK.kdv ? lst.filter(tkOtvVar).reduce((t,l)=>t+(+l.miktar||0)*(+l.fiyat||0), 0)*TK_OTV : 0;
   const kdv = TK.kdv ? (ara+otv)*0.20 : 0;
   return {ara, otv, kdv, genel: ara+otv+kdv};
 }
@@ -3351,12 +3395,61 @@ function tkDolapModule(code){
   const motor = /\bPG\b|plug|İÇTEN/i.test(txt) ? 'PG' : (/\bRT\b|remote|DIŞTAN/i.test(txt) ? 'RT' : '');
   const nm = TK_UP(r.name).startsWith(TK_UP(p.name)) ? r.name : `${p.name} ${r.name}`;
   const kap = dolapKap(p, H);
-  return {id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pid, ad:`${nm} · ${col}`, baslik:dolapBaslik(p, r, col), L, D, H, motor,
+  return {id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pid, ad:`${nm} · ${col}`, baslik:dolapBaslik(p, r, col), otv:tkDolapOtv(p, nm), L, D, H, motor,
     liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p),
     aciklama:dolapAciklama(p, r, col), wpm: kap ? kap.wpm : null, zone: kap ? kap.zone : (/\bLT\b/.test(TK_UP(p.name)) ? 'NEG' : 'POZ'),
     birlesik:false, yan:null};
 }
-function tkModAdd(mod){ tkMods().push(mod); tkSave(); showToast(`"${mod.ad}" dolap projesine eklendi (Teklif Sepeti).`); }
+function tkYeniId(){ return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function tkModAdd(mod, adet){
+  const n = Math.max(1, adet||1), mods = tkMods();
+  const var0 = mods.filter(x=>x.kalem && x.ad===mod.ad);
+  const kalem = var0.length ? var0[0].kalem : tkYeniId();
+  const kopya = Array.from({length:n}, ()=>Object.assign({}, mod, {id:tkYeniId(), kalem, birlesik:false}));
+  if (var0.length){ mods.splice(mods.lastIndexOf(var0[var0.length-1])+1, 0, ...kopya); delete var0[0].birlesim; delete var0[0].yanElle; tkBirlesimUygula(tkKalemler().find(k=>k.id===kalem), ''); }
+  else mods.push(...kopya);
+  tkSave(); showToast(`${n} adet "${mod.baslik||mod.ad}" teklife eklendi.`);
+}
+// Aynı dolaptan girilen adetler tek kalemdir: arka planda her biri ayrı modül (soğutma hesabı için)
+function tkKalemler(){
+  const out = [];
+  tkMods().forEach(m=>{ const id = m.kalem||m.id, son = out[out.length-1]; if (son && son.id===id) son.mods.push(m); else out.push({id, mods:[m]}); });
+  return out;
+}
+// "3+2": ilk 3 dolap birleşik, sonraki 2 dolap birleşik. Boş: hepsi ayrı.
+function tkBirlesimUygula(k, yazi){
+  const parca = (String(yazi).match(/\d+/g)||[]).map(Number);
+  if (parca.length && (parca.some(x=>x<1) || parca.reduce((t,x)=>t+x,0)!==k.mods.length)) return false;
+  const list = parca.length ? parca : k.mods.map(()=>1);
+  let i = 0;
+  list.forEach(p=>{ for (let j=0;j<p;j++,i++){ if (i>0) k.mods[i].birlesik = j>0; } });
+  k.mods.forEach(tkEsleCoz);
+  if (parca.length) k.mods[0].birlesim = parca.join('+'); else delete k.mods[0].birlesim;
+  delete k.mods[0].yanElle;
+  return true;
+}
+function tkKalemAdet(k, n){
+  n = Math.max(1, Math.min(99, n||1));
+  const mods = tkMods(), bas = mods.indexOf(k.mods[0]);
+  if (n>k.mods.length){
+    const son = k.mods[k.mods.length-1];
+    mods.splice(mods.indexOf(son)+1, 0, ...Array.from({length:n-k.mods.length}, ()=>Object.assign({}, son, {id:tkYeniId(), birlesik:false})));
+  } else if (n<k.mods.length){ k.mods.slice(n).forEach(tkEsleCoz); mods.splice(bas+n, k.mods.length-n); }
+  tkMods().slice(bas, bas+n).forEach((m,i)=>{ if (i>0) m.birlesik = false; m.kalem = m.kalem||k.id; });
+  delete mods[bas].birlesim; delete mods[bas].yanElle;
+}
+// plan satırları: aynı dolap, aynı yan ve aynı soğutma grubu tek kalem olur
+function tkPlanBirlestir(lines){
+  const out = [], yer = new Map(), kal = new Map(tkKalemler().map(k=>[k.id,k]));
+  lines.forEach(l=>{
+    const key = l.tip==='dolap' ? 'd|'+l.kalem : l.tip==='yan' ? 'y|'+l.kalem+'|'+l.ad : l.tip==='sogutma' ? 's|'+l.ad+'|'+l.aciklama : null;
+    const var0 = key && yer.get(key);
+    if (var0){ var0.miktar = (var0.miktar||1)+(l.miktar||1); if (l.tip==='yan') var0.aciklama = `${String(var0.kisa)} için uçlara`; return; }
+    const y = Object.assign({}, l); if (key) yer.set(key, y); out.push(y);
+  });
+  out.forEach(y=>{ if (y.tip==='yan'){ const k = kal.get(y.kalem), e = k && k.mods[0].yanElle; if (e!=null) y.miktar = e; } delete y.kalem; delete y.kisa; });
+  return out.filter(y=>y.tip!=='yan' || y.miktar>0);
+}
 // yan panel seçenekleri: ürünün kendi listesindeki 'yan' satırları (fark satırları hariç)
 function tkYanOpts(pid){
   const p = DOLAP_LIST.urunler.find(x=>x.id===pid); if (!p) return [];
@@ -3414,18 +3507,19 @@ function tkSogHucre(m, groups){
 }
 function tkGrupSog(g){ return g[0].motor!=='RT' ? '' : (g[0].sog || TK.sogMode || 'split'); }
 function tkOdaSatirlari(){ return TK.satirlar.filter(l=>l.odaMerk); }
-function tkModPlan(){
+function tkModPlan(){ const p = tkModPlanHam(); p.lines = tkPlanBirlestir(p.lines); return p; }
+function tkModPlanHam(){
   const groups = tkGroups();
   const yurtIci = TK.kdv!==false;
   const lines = [], warn = [], units = [];
   groups.forEach(g=>{
     const head = g[0];
-    g.forEach(m=>lines.push({tip:'dolap', ad:m.baslik||m.ad, aciklama:m.aciklama, liste:m.liste, isk:m.isk, img:m.img, birim:'AD'}));
+    g.forEach(m=>lines.push({tip:'dolap', kalem:m.kalem||m.id, otv:m.otv, ad:m.baslik||m.ad, aciklama:m.aciklama, liste:m.liste, isk:m.isk, img:m.img, birim:'AD'}));
     if (head.motor==='RT'){
       const yanAd = head.yan==null ? tkYanDefault(head.pid) : head.yan;
       const y = tkYanOpts(head.pid).find(x=>x.ad===yanAd);
       // listedeki 'Takım' fiyatı 2 yan içindir; teklife 2 adet yan panel olarak yazılır
-      if (y) lines.push({tip:'yan', ad:y.ad.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').replace(/\s{2,}/g,' ').trim(), aciklama:`${g.map(m=>m.ad.split(' · ')[0]).join(' + ')} ${g.length>1?'(birleşik grup) ':''}için uçlara`, miktar:2, liste:y.fiyat/2, birim:'AD'});
+      if (y) lines.push({tip:'yan', kalem:head.kalem||head.id, kisa:head.baslik||head.ad, ad:y.ad.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').replace(/\s{2,}/g,' ').trim(), aciklama:`${g.map(m=>m.ad.split(' · ')[0]).join(' + ')} ${g.length>1?'(birleşik grup) ':''}için uçlara`, miktar:2, liste:y.fiyat/2, birim:'AD'});
     }
   });
   const remote = groups.filter(g=>g[0].motor==='RT');
@@ -3535,7 +3629,8 @@ document.getElementById('tkMod').addEventListener('click', e=>{
   tkSave(); renderTkMod();
 });
 document.getElementById('tkModClear').addEventListener('click', ()=>{ if (confirm('Dolap projesindeki modüller silinsin mi?')){ TK.moduller = []; tkSave(); renderTkMod(); } });
-document.getElementById('tkModGo').addEventListener('click', ()=>{
+document.getElementById('tkModGo').addEventListener('click', ()=>tkModAktar());
+function tkModAktar(){
   const plan = tkModPlan();
   if (!plan.lines.length) return;
   const bagliZ = new Set(plan.units.filter(u=>u.tur==='merkezi' && u.merkezi).map(u=>u.zone));
@@ -3550,7 +3645,7 @@ document.getElementById('tkModGo').addEventListener('click', ()=>{
   plan.lines.forEach(l=>TK.satirlar.push(tkPrep(l)));
   TK.moduller = []; TK.odaBag = {}; tkSave(); renderTeklif();
   showToast(`${plan.lines.length} kalem teklife aktarıldı.`);
-});
+}
 
 function tkPrintHtml(){
   const t = tkTotals(), Y = tkYazi(), today = new Date().toLocaleDateString(TK_ENG()?'en-GB':'tr-TR');
@@ -3598,14 +3693,93 @@ document.getElementById('tkPrint').addEventListener('click', ()=>{
 window.addEventListener('afterprint', ()=>document.body.classList.remove('tk-printing'));
 // modüllerden ekleme
 document.getElementById('btnTkRooms').addEventListener('click', ()=>{ const l = tkRoomLines(); if (l.length) tkAdd(l); else showToast('Önce oda ekleyin.', true); });
-document.getElementById('dlDetail').addEventListener('click', e=>{
+document.getElementById('dlDetail').addEventListener('click', async e=>{
   const c = e.target.closest('[data-tk]'); if (!c) return;
   const parts = c.dataset.tk.split('|');
   const mod = parts.length===4 && +parts[3]>=0 ? tkDolapModule(c.dataset.tk) : null;
   const tkAday = mod || tkDolapLine(c.dataset.tk); if (!tkAday) return;
-  if (!confirm(`"${tkAday.baslik||tkAday.ad}" sepete eklensin mi?`)) return;
-  if (mod) tkModAdd(mod); else tkAdd(tkAday);
+  const adet = await tkAdetSor(tkAday.baslik||tkAday.ad); if (!adet) return;
+  if (mod) tkModAdd(mod, adet); else tkAdd(Object.assign(tkAday, {miktar:adet}));
+  dlOzetCiz();
   c.classList.add('added'); setTimeout(()=>c.classList.remove('added'), 900);
+});
+// Fiyata tıklayınca: kaç adet?
+function tkAdetSor(baslik){
+  return new Promise(y=>{
+    const d = document.createElement('div'); d.className = 'tk-adet-o'; d.id = 'tkAdetKutu';
+    d.innerHTML = `<div class="tk-adet-k" role="dialog" aria-modal="true"><b>${escHtml(baslik)}</b><small>Kaç adet eklensin?</small>
+      <div class="tk-adet-s"><button type="button" data-d="-1" aria-label="Azalt">−</button><input id="tkAdetDeger" inputmode="numeric" value="1" aria-label="Adet"><button type="button" data-d="1" aria-label="Artır">+</button></div>
+      <div class="tk-adet-b"><button class="btn-ghost" type="button" id="tkAdetIptal">Vazgeç</button><button class="btn-primary" type="button" id="tkAdetEkle">Sepete ekle</button></div></div>`;
+    document.body.appendChild(d);
+    const g = d.querySelector('#tkAdetDeger'), bit = n=>{ d.remove(); y(n); }, deger = ()=>Math.min(99, Math.max(0, parseInt(g.value,10)||0));
+    g.focus(); g.select();
+    d.addEventListener('click', e=>{
+      const a = e.target.closest('[data-d]');
+      if (a){ g.value = Math.max(1, Math.min(99, deger()+ +a.dataset.d)); return; }
+      if (e.target.id==='tkAdetEkle') bit(deger());
+      if (e.target.id==='tkAdetIptal' || e.target===d) bit(0);
+    });
+    d.addEventListener('keydown', e=>{ if (e.key==='Enter') bit(deger()); if (e.key==='Escape') bit(0); });
+  });
+}
+// Süpermarket dolapları sağ yan: teklif özeti (teklif bitene kadar kalır)
+function dlOzetCiz(){
+  const el = document.getElementById('dlOzet'); if (!el) return;
+  const ks = tkKalemler(), n = ks.length + TK.satirlar.length, duzen = document.getElementById('dlDuzen');
+  el.hidden = !n; duzen.classList.toggle('ozetli', !!n);
+  if (!n){ el.innerHTML = ''; return; }
+  const plan = ks.length ? tkModPlan() : {lines:[], units:[], warn:[]};
+  const planSat = plan.lines.map(l=>tkPrep(Object.assign({}, l)));
+  const t = tkTotals([...TK.satirlar, ...planSat]);
+  const satirFiyat = kid => { const k = ks.find(x=>x.id===kid), s = planSat.find(l=>l.tip==='dolap' && l.ad===(k.mods[0].baslik||k.mods[0].ad)); return s ? s.fiyat*s.miktar : 0; };
+  const kalemHtml = ks.map(k=>{ const m = k.mods[0], rt = m.motor==='RT', opts = rt ? tkYanOpts(m.pid) : [], cur = m.yan==null ? tkYanDefault(m.pid) : m.yan;
+    const grup = 1 + k.mods.slice(1).filter(x=>!x.birlesik).length;
+    const yanAd = cur ? cur.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').replace(/\s{2,}/g,' ').trim() : '';
+    const yanSat = planSat.filter(l=>l.tip==='yan' && l.ad===yanAd)[0];
+    const yanAdet = m.yanElle!=null ? m.yanElle : grup*2;
+    return `<div class="oz-k" data-oz="${k.id}"><div class="oz-ad"><b>${escHtml(m.baslik||m.ad)}</b><button type="button" data-oz-sil aria-label="Çıkar">✕</button></div>
+      <div class="oz-sat"><span class="oz-step"><button type="button" data-oz-d="-1" aria-label="Azalt">−</button><input data-oz-adet inputmode="numeric" value="${k.mods.length}" aria-label="Adet"><button type="button" data-oz-d="1" aria-label="Artır">+</button></span><em>${fmt(satirFiyat(k.id))}</em></div>
+      ${rt && k.mods.length>1 ? `<div class="oz-sat"><span>Birleşen</span><input class="oz-kisa" data-oz-bir value="${escHtml(m.birlesim||'')}" placeholder="Örn. 3+2" aria-label="Birleşen dolaplar"></div><div class="oz-not">${m.birlesim?`${grup} grup`:'Boş bırakılırsa hepsi ayrı durur.'}</div>` : ''}
+      ${rt && opts.length ? `<div class="oz-sat"><select data-oz-yan aria-label="Yan panel"><option value=""${cur===''?' selected':''}>Yan yok</option>${opts.map(o=>`<option value="${escHtml(o.ad)}"${o.ad===cur?' selected':''}>${escHtml(o.ad.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').trim())}</option>`).join('')}</select>${cur?`<input class="oz-kisa" data-oz-yanadet inputmode="numeric" value="${yanAdet}" aria-label="Yan panel adedi"><span>adet</span>`:''}</div>${yanSat?`<div class="oz-not">Yan paneller: ${fmt(yanSat.fiyat*yanSat.miktar)}</div>`:''}` : ''}</div>`; }).join('');
+  const sog = planSat.filter(l=>l.tip==='sogutma');
+  const sogHtml = ks.some(k=>k.mods[0].motor==='RT') ? `<div class="oz-k"><div class="oz-sat"><span>Soğutma</span><select data-oz-sog aria-label="Soğutma"><option value="split"${TK.sogMode==='merkezi'||TK.sogMode==='yok'?'':' selected'}>Split</option><option value="merkezi"${TK.sogMode==='merkezi'?' selected':''}>Merkezi</option><option value="yok"${TK.sogMode==='yok'?' selected':''}>Soğutma yok</option></select></div>${sog.map(l=>`<div class="oz-sat"><span style="white-space:normal">${fmtNum(l.miktar||1,0)} × ${escHtml(l.ad)}</span><em>${fmt(l.fiyat*(l.miktar||1))}</em></div>`).join('')}${(plan.warn||[]).map(w=>`<div class="oz-uyari">${escHtml(w)}</div>`).join('')}</div>` : '';
+  const digerHtml = TK.satirlar.map(l=>`<div class="oz-k" data-oz-l="${l.id}"><div class="oz-ad"><b>${escHtml(l.ad)}</b><button type="button" data-oz-lsil aria-label="Çıkar">✕</button></div><div class="oz-sat"><span class="oz-step"><button type="button" data-oz-ld="-1" aria-label="Azalt">−</button><input data-oz-lmiktar inputmode="decimal" value="${escHtml(String(l.miktar))}" aria-label="Miktar"><button type="button" data-oz-ld="1" aria-label="Artır">+</button></span><em>${fmt((+l.miktar||0)*(+l.fiyat||0))}</em></div></div>`).join('');
+  el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span>Teklif özeti · ${n} kalem</span><span>${fmt(t.genel)} <small>${el.classList.contains('acik')?'Kapat ▾':'Aç ▴'}</small></span></button>
+    <div class="oz-ic"><div class="oz-musteri"><input id="dlOzMusteri" placeholder="Müşteri" value="${escHtml(TK.musteri||'')}" aria-label="Müşteri"><input id="dlOzProje" placeholder="Proje adı" value="${escHtml(TK.proje||'')}" aria-label="Proje adı"></div>
+    ${kalemHtml}${sogHtml}${digerHtml}
+    <div class="oz-top"><div><span>Toplam (KDV hariç)</span><b>${fmt(t.ara)}</b></div>${t.otv?`<div><span>ÖTV %6,7</span><b>${fmt(t.otv)}</b></div>`:''}${TK.kdv?`<div><span>KDV %20</span><b>${fmt(t.kdv)}</b></div>`:''}<div class="g"><span>Genel toplam</span><span>${fmt(t.genel)}</span></div></div>
+    <div class="oz-btn"><button class="btn-primary" type="button" id="dlOzKaydet">Teklifi kaydet</button><button class="btn-ghost" type="button" data-go="teklif">Teklif Sepeti'ne git</button></div></div>`;
+}
+document.getElementById('dlOzet').addEventListener('click', e=>{
+  const el = e.currentTarget;
+  if (e.target.closest('[data-oz-ac]')){ el.classList.toggle('acik'); dlOzetCiz(); return; }
+  if (e.target.id==='dlOzKaydet'){ document.getElementById('tkKaydet').click(); return; }
+  const kk = e.target.closest('[data-oz]');
+  if (kk){ const k = tkKalemler().find(x=>x.id===kk.dataset.oz); if (!k) return;
+    const d = e.target.closest('[data-oz-d]');
+    if (d){ tkKalemAdet(k, k.mods.length + +d.dataset.ozD); tkSave(); return; }
+    if (e.target.closest('[data-oz-sil]') && confirm(`"${k.mods[0].baslik||k.mods[0].ad}" çıkarılsın mı?`)){ k.mods.forEach(tkEsleCoz); TK.moduller = tkMods().filter(m=>!k.mods.includes(m)); if (TK.moduller[0]) TK.moduller[0].birlesik = false; tkSave(); }
+    return; }
+  const lk = e.target.closest('[data-oz-l]');
+  if (lk){ const l = TK.satirlar.find(x=>x.id===lk.dataset.ozL); if (!l) return;
+    const d = e.target.closest('[data-oz-ld]');
+    if (d){ l.miktar = Math.max(1, (+l.miktar||1) + +d.dataset.ozLd); tkSave(); return; }
+    if (e.target.closest('[data-oz-lsil]')){ TK.satirlar = TK.satirlar.filter(x=>x!==l); tkSave(); } }
+});
+document.getElementById('dlOzet').addEventListener('change', e=>{
+  const t = e.target;
+  if (t.id==='dlOzMusteri'){ TK.musteri = t.value; tkSave(); return; }
+  if (t.id==='dlOzProje'){ TK.proje = t.value; tkSave(); return; }
+  if (t.matches('[data-oz-sog]')){ TK.sogMode = t.value; tkMods().forEach(m=>{ m.sog = t.value; if (t.value!=='split') delete m.esle; }); tkSave(); return; }
+  const lk = t.closest('[data-oz-l]');
+  if (lk && t.matches('[data-oz-lmiktar]')){ const l = TK.satirlar.find(x=>x.id===lk.dataset.ozL); if (l){ l.miktar = Math.max(0, tkNum(t.value)) || 1; tkSave(); } return; }
+  const kk = t.closest('[data-oz]'); if (!kk) return;
+  const k = tkKalemler().find(x=>x.id===kk.dataset.oz); if (!k) return;
+  if (t.matches('[data-oz-adet]')) tkKalemAdet(k, parseInt(t.value,10));
+  if (t.matches('[data-oz-bir]') && !tkBirlesimUygula(k, t.value)) showToast(`Toplam ${k.mods.length} etmeli. Örn. ${k.mods.length>1?(k.mods.length-1)+'+1':'1'}.`, true);
+  if (t.matches('[data-oz-yan]')) k.mods.forEach(m=>{ m.yan = t.value; });
+  if (t.matches('[data-oz-yanadet]')) k.mods[0].yanElle = Math.max(0, parseInt(t.value,10)||0);
+  tkSave();
 });
 document.getElementById('sgGroup').addEventListener('click', e=>{ const b = e.target.closest('[data-tkg]'); if (b){ tkAddGrup(b.dataset.tkg); return; } const tr = e.target.closest('[data-sgg]'); if (tr){ const k = 'g'+tr.dataset.sgg; SG_OPEN = SG_OPEN===k ? '' : k; renderSogutma(); } });
 tkBadge();
@@ -3629,7 +3803,7 @@ function showView(){
   document.querySelectorAll('.view').forEach(el=>{ el.hidden = el.dataset.view!==v; });
   window.scrollTo(0,0);
   if (v==='soguk-oda') liveCalc();
-  if (v==='dolaplar') renderDolaplar();
+  if (v==='dolaplar'){ renderDolaplar(); dlOzetCiz(); }
   if (v==='sogutma') renderSogutma();
   if (v==='teklif') renderTeklif();
   if (v==='takvim') renderTakvim();
@@ -3785,7 +3959,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '0cf2b28b815d3504';
+const APP_SURUM = '415f564a0bca0782';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
@@ -3989,15 +4163,17 @@ const TKL_DURUM = {taslak:'Hazırlanıyor', gonderildi:'Teklif gönderildi', sip
 const TKL_NEDEN = ['İletişim eksikliği','Fiyatta anlaşamadık','Rakip firmayı seçti','Teslim süresi uymadı','Proje iptal oldu','Diğer'];
 let tklKayit = [];
 $a('tkKaydet').onclick = async ()=>{
-  if (!TK.satirlar.length){ showToast('Önce sepete kalem ekleyin.', true); return; }
+  if (!TK.satirlar.length && !tkMods().length){ showToast('Önce sepete kalem ekleyin.', true); return; }
   const ad = [TK.musteri, TK.proje].map(x=>String(x||'').trim()).filter(Boolean).join(' · ');
-  if (!ad){ showToast('Kaydetmek için müşteri veya proje adı yazın.', true); $a('tkMusteri').focus(); return; }
+  if (!ad){ showToast('Kaydetmek için müşteri veya proje adı yazın.', true); const yer = currentView()==='dolaplar' ? 'dlOzMusteri' : 'tkMusteri'; if ($a(yer)) $a(yer).focus(); return; }
+  if (tkMods().length) tkModAktar();
   const veri = JSON.parse(JSON.stringify(TK)); delete veri.kayitId;
   const alan = {ad, toplam:tkTotals().genel, veri, guncelleme:new Date().toISOString()};
   const r = TK.kayitId ? await SB.from('teklifler').update(alan).eq('id', TK.kayitId)
     : await (async()=>{ const id = crypto.randomUUID(); const q = await SB.from('teklifler').insert({id, user_id:CUR.id, yazan:CUR.full_name||CUR.email, durum:'taslak', ...alan}); if (!q.error) TK.kayitId = id; return q; })();
   if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); return; }
   tkSave(); showToast('Teklif kaydedildi. Kayıtlı Projeler sayfasında görünür.');
+  if (currentView()==='dolaplar') location.hash = '#/teklif';
 };
 renderTeklifler = async function(){
   const el = $a('tklListe'), oz = $a('tklOzet');
