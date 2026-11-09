@@ -4032,6 +4032,23 @@ async function pushKartiCiz(){
   };
 }
 
+// Samsung Internet ana ekrana eklerken eski tip paket üretiyor, Google Play Protect engelliyor → Chrome'a yönlendir
+function samsungUyarisi(){
+  if (!/SamsungBrowser/i.test(navigator.userAgent)) return;
+  if (matchMedia('(display-mode: standalone)').matches || $a('samsungUyari')) return;
+  try{ if (sessionStorage.getItem('samsung-uyari-kapali')) return; }catch(e){}
+  const yol = location.host + location.pathname;
+  const yedek = encodeURIComponent('https://play.google.com/store/apps/details?id=com.android.chrome');
+  const d = document.createElement('div');
+  d.id = 'samsungUyari';
+  d.style.cssText = 'position:fixed;left:10px;right:10px;bottom:10px;z-index:99999;background:#134d80;color:#fff;padding:12px 14px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);font:500 14px/1.4 Inter,sans-serif;display:flex;flex-wrap:wrap;gap:10px;align-items:center';
+  d.innerHTML = `<span style="flex:1 1 200px">Ana ekrana eklemek için bu sayfayı <b>Chrome</b>'da açın. Samsung Internet'ten eklerken Google engel gösterebilir.</span>
+    <a data-chrome style="background:#fff;color:#134d80;border-radius:8px;padding:8px 12px;font-weight:600;text-decoration:none;white-space:nowrap" href="intent://${yol}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${yedek};end">Chrome'da aç</a>
+    <button type="button" data-kapat aria-label="Kapat" style="background:none;border:0;color:#fff;font-size:20px;line-height:1;padding:4px 6px">×</button>`;
+  d.querySelector('[data-kapat]').onclick = ()=>{ try{ sessionStorage.setItem('samsung-uyari-kapali','1'); }catch(e){} d.remove(); };
+  document.body.appendChild(d);
+}
+samsungUyarisi();
 (async function boot(){
   if ('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
   if (!window.supabase){ authMsg('Bağlantı kütüphanesi yüklenemedi. İnternetinizi kontrol edip sayfayı yenileyin.','err'); return; }
