@@ -521,6 +521,9 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .oz-g input{width:100%;min-width:0;height:34px;border:1px solid #cbd5e1;border-radius:8px;padding:0 8px;font:13.5px 'Inter',sans-serif;text-align:right;background:#fff}
 .oz-otv{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#4a5b6e;margin-left:auto;margin-right:8px}
 .oz-otv input{width:auto!important;height:auto!important}
+.oz-sog{background:#fbfcfe;border:1px solid #e3e9f0;border-radius:12px;padding:10px;margin-top:10px}
+.oz-baslik{font-weight:700;font-size:13.5px;color:#134d80;margin-bottom:4px}
+.oz-baslik2{font-weight:600;font-size:12.5px;color:#4a5b6e;margin-bottom:2px}
 .oz-yansec{margin-top:8px}
 .oz-yansec select{flex:1}
 .oz-k .oz-alt{margin:8px 0 0 0}
@@ -2807,15 +2810,15 @@ function renderDolapSog(p){
       <div class="sg-card-p" id="dlSogFiyat">${fmt(u.pUnit*fs)}<small>liste ${fmt(u.pUnit)}${isk?' · iskonto %'+escHtml(isk):''}</small></div>
       <button type="button" class="btn-tk" data-dlsog-ekle>+ Soğutma grubunu teklife ekle</button></div>`;
   } else if (need){
-    const mz = tkMerkeziPick(need, zone, dolapKolon(zone), TK.sogMarka||'');
+    const mz = tkMerkeziPick(need, zone, dolapKolon(zone), sogAyar(zone).marka);
     res = `<p class="blk-w">${fmtNum(need,0)} W için tek split ünite yetmiyor${mz?` — merkezi sistem önerisi: <b>${escHtml(mz.r[0])}</b> (${fmtNum(mz.cap,0)} W), Soğutma Sistemleri sayfasından ekleyebilirsiniz`:''}.</p>`;
   }
   el.innerHTML = `<section class="cat-sec dl-sog"><h3 class="blk-h">Remote dolap için soğutma grubu</h3>
     <div class="cat-toolbar">
       <label class="sel"><span>Model</span><select id="dlSogModel">${rows.map((x,k)=>`<option value="${k}"${k===st.k?' selected':''}>${escHtml(x.name)}</option>`).join('')}</select></label>
       <label class="disc-box"><span>İskonto %</span><input type="text" id="dlSogDisc" inputmode="decimal" placeholder="—" value="${escHtml(isk)}"></label>
-      <label class="sel"><span>Kompresör</span><select id="dlSogMarka">${tkMarkaSecenek()}</select></label>
-      <label class="sel"><span>Ünite</span><select id="dlSogIklim"><option value="normal"${TK.iklim==='tropikal'?'':' selected'}>Normal (+45)</option><option value="tropikal"${TK.iklim==='tropikal'?' selected':''}>Tropikal (+55)</option></select></label>
+      <label class="sel"><span>Kompresör</span><select id="dlSogMarka">${tkMarkaSecenek(zone)}</select></label>
+      <label class="sel"><span>Ünite</span><select id="dlSogIklim">${tkIklimSecenek(zone)}</select></label>
       <label class="sel"><span>Boy</span><select id="dlSogBoy">${lens.map(x=>`<option value="${x.L}"${x.L===st.c?' selected':''}>${fmtNum(x.L,1)} cm</option>`).join('')}</select></label>
     </div>
     ${need?`<p class="blk-n">Gerekli kapasite: <b>${fmtNum(need,0)} W</b> (${fmtNum(kap.wpm,0)} W/m × ${fmtNum(lc.L/100,2)} m · ${zone==='NEG'?'dondurucu':'pozitif'}, ${dolapKolon(zone)})</p>`:''}
@@ -2823,8 +2826,8 @@ function renderDolapSog(p){
     <p class="blk-n">Bir split üniteye en fazla 2 modül bağlanır. Dolabı fiyatına tıklayıp projeye eklerseniz soğutma grubu, tesisat, freon ve montaj Teklif Sepeti'nde otomatik hesaplanır.</p></section>`;
   el.querySelector('#dlSogModel').onchange = e=>{ st.k = +e.target.value; st.c = null; renderDolapSog(p); };
   el.querySelector('#dlSogBoy').onchange = e=>{ st.c = +e.target.value; renderDolapSog(p); };
-  el.querySelector('#dlSogMarka').onchange = e=>{ TK.sogMarka = e.target.value; tkSave(); renderDolapSog(p); };
-  el.querySelector('#dlSogIklim').onchange = e=>{ TK.iklim = e.target.value; tkSave(); renderDolapSog(p); };
+  el.querySelector('#dlSogMarka').onchange = e=>{ sogAyarYaz(zone,'marka',e.target.value); tkSave(); renderDolapSog(p); };
+  el.querySelector('#dlSogIklim').onchange = e=>{ sogAyarYaz(zone,'iklim',e.target.value); tkSave(); renderDolapSog(p); };
   el.querySelector('#dlSogDisc').oninput = e=>{ // sadece fiyat güncellenir; yazarken kutu odağını kaybetmez
     const v = e.target.value.trim(); try{ localStorage.setItem('disc:dlSogDisc', v); }catch(_){}
     const fp = el.querySelector('#dlSogFiyat');
@@ -3192,7 +3195,7 @@ function tkRoomLines(){
       if (c.panelList>0) cl.push('Dijital kontrol paneli dahil');
       c.opts.filter(o=>o.on).forEach(o=>cl.push(o.label+' dahil'));
       out.push({tip:'sogutma', ad:`${room.name} ${c.nG>1?'2 adet ':''}soğutma grubu ${COOL_BRAND_LABEL[u.brand]} ${u.hp} HP (${neg?'negatif':'pozitif'}${c.nE>c.nG?', 2 evaporatör':''})`, aciklama:cl.join('\n'), fiyat:x.coolNet.total, birim:'TK',
-        odaMerk:{oda:room.name, zone:c.zone, req:c.req, evapAd:`${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W`, evapList:ev.price, panelList:c.panelList}});
+        odaMerk:{oda:room.name, zone:c.zone, req:c.req, evapAd:`${ev.evap}${ev.qty>1?' ×'+ev.qty:''} · ${fmtNum(ev.cap,0)} W`, evapList:ev.price, panelList:c.panelList, kurNG:x.kurulum?x.kurulum.nG:0}});
     }
   });
   (pr.merkezi||[]).forEach(m=>{
@@ -3206,9 +3209,9 @@ function tkRoomLines(){
   });
   const nK = pr.roomResults.reduce((t,x)=>t+(x.kurulum?x.kurulum.nG:0), 0); // grup sayısı
   if (nK){
-    out.push({tip:'hizmet', ad:'Tesisat bedeli', aciklama:'Bakır boru, kablo, izolasyon ve ara tesisat malzemeleri', miktar:KURULUM.tesisatM*nK, birim:'M', fiyat:KURULUM.tesisatEUR, manuel:true});
-    out.push({tip:'hizmet', ad:'Freon gaz', aciklama:'', miktar:nK, birim:'AD', fiyat:KURULUM.freon, manuel:true});
-    out.push({tip:'hizmet', ad:'Soğutma grubu montajı', aciklama:'Soğutma grubu montajı ve devreye alma\nNakliye hariçtir.', miktar:nK, birim:'AD', fiyat:KURULUM.montaj, manuel:true});
+    out.push({tip:'hizmet', odaKur:KURULUM.tesisatM, ad:'Tesisat bedeli', aciklama:'Bakır boru, kablo, izolasyon ve ara tesisat malzemeleri', miktar:KURULUM.tesisatM*nK, birim:'M', fiyat:KURULUM.tesisatEUR, manuel:true});
+    out.push({tip:'hizmet', odaKur:1, ad:'Freon gaz', aciklama:'', miktar:nK, birim:'AD', fiyat:KURULUM.freon, manuel:true});
+    out.push({tip:'hizmet', odaKur:1, ad:'Soğutma grubu montajı', aciklama:'Soğutma grubu montajı ve devreye alma\nNakliye hariçtir.', miktar:nK, birim:'AD', fiyat:KURULUM.montaj, manuel:true});
   }
   if (pr.yurtIci) out.push({tip:'hizmet', ad:'Nakliye bedeli', aciklama:'', miktar:1, birim:'AD', fiyat:0, manuel:true});
   return out;
@@ -3489,7 +3492,8 @@ function tkSirala(){
     TK.satirlar.splice(i+1,0,a);
   });
 }
-function tkMarkaSecenek(){ return `<option value="">${TK.sogMode==='merkezi'?'En uygun fiyat (varsayılan)':'Embraco (varsayılan)'}</option>${COOL_BRANDS.filter(b=>TK.sogMode==='merkezi'||b!=='EMBRACO').map(b=>`<option value="${b}"${TK.sogMarka===b?' selected':''}>${COOL_BRAND_LABEL[b]}</option>`).join('')}`; }
+function tkMarkaSecenek(zone){ const a = sogAyar(zone), mz = a.mod==='merkezi'; return `<option value="">${mz?'En uygun fiyat (varsayılan)':'Embraco (varsayılan)'}</option>${COOL_BRANDS.filter(b=>mz||b!=='EMBRACO').map(b=>`<option value="${b}"${a.marka===b?' selected':''}>${COOL_BRAND_LABEL[b]}</option>`).join('')}`; }
+function tkIklimSecenek(zone){ const t = sogAyar(zone).iklim==='tropikal'; return `<option value="normal"${t?'':' selected'}>Normal (+45)</option><option value="tropikal"${t?' selected':''}>Tropikal (+55)</option>`; }
 function tkYeniId(){ return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function tkModAdd(mod, adet){
   const n = Math.max(1, adet||1), mods = tkMods();
@@ -3530,6 +3534,24 @@ function tkKalemAdet(k, n){
   delete mods[bas].birlesim; delete mods[bas].yanElle;
 }
 // plan satırları: aynı dolap, aynı yan ve aynı soğutma grubu tek kalem olur
+function tkElleUygula(y){
+  const o = (TK.elle||{})[y.elleKey];
+  if (o){ if (o.ad) y.ad = o.ad; if (o.miktar!=null) y.miktar = o.miktar; if (o.isk!=null) y.isk = o.isk; if (o.fiyat!=null){ y.fiyat = o.fiyat; y.manuel = true; } }
+  return y;
+}
+// Merkeziye bağlanan soğuk oda: grubu düşer, evaporatör + dijital panel kalır
+function tkOdaBagliSatir(l){
+  const mm = l.odaMerk;
+  return tkPrep(tkElleUygula({tip:'sogutma', elleKey:'o|'+l.id, ad:`${mm.oda} evaporatör + dijital panel (${mm.zone==='NEG'?'negatif':'pozitif'}, merkezi sisteme bağlı)`,
+    aciklama:[`Evaporatör: ${mm.evapAd}, exp. valf dahil`, `Oda ihtiyacı: ${fmtNum(mm.req,0)} W`, mm.panelList>0?'Dijital kontrol paneli dahil':'', 'Dolap projesindeki merkezi sisteme bağlanır'].filter(Boolean).join('\n'),
+    liste:(mm.evapList||0)+(mm.panelList||0), birim:'TK'}));
+}
+// Oda merkeziye bağlanınca kendi grubunun tesisat, freon ve grup montajı düşer (merkezide tesisat eklenmez; freon ve montaj sistem başına)
+function tkOdaKurulumDus(satirlar, bagliMi){
+  const ng = satirlar.filter(bagliMi).reduce((t,l)=>t+(l.odaMerk.kurNG||0), 0);
+  if (!ng) return satirlar;
+  return satirlar.map(l=>l.odaKur ? Object.assign({}, l, {miktar:(+l.miktar||0)-l.odaKur*ng}) : l).filter(l=>!l.odaKur || l.miktar>0);
+}
 function tkPlanBirlestir(lines){
   const out = [], yer = new Map(), kal = new Map(tkKalemler().map(k=>[k.id,k]));
   lines.forEach(l=>{
@@ -3541,8 +3563,7 @@ function tkPlanBirlestir(lines){
   // Yan özette elle yazılanlar: ad, miktar, iskonto, birim fiyat
   out.forEach(y=>{
     if (y.tip==='yan'){ const k = kal.get(y.kalem), e = k && k.mods[0].yanElle; if (e!=null) y.miktar = e; }
-    const o = (TK.elle||{})[y.elleKey];
-    if (o){ if (o.ad) y.ad = o.ad; if (o.miktar!=null) y.miktar = o.miktar; if (o.isk!=null) y.isk = o.isk; if (o.fiyat!=null){ y.fiyat = o.fiyat; y.manuel = true; } }
+    tkElleUygula(y);
     delete y.kalem; delete y.kisa;
   });
   return out.filter(y=>y.tip!=='yan' || y.miktar>0);
@@ -3571,9 +3592,12 @@ function tkJoinCheck(a, b){
 }
 // Dolap soğutma sütunu (patron 2026-11-09): negatif dolap -35 °C, pozitif dolap -10 °C. Normal ünite +45, tropikal ünite +55.
 // Negatif odalarda -25/+45 (normal), -25/+55 (tropikal): oda hesabı seri seçiminden gelir.
-function dolapKolon(zone){ return (zone==='NEG' ? '-35°C' : '-10°C') + '/' + (TK.iklim==='tropikal' ? '+55°C' : '+45°C'); }
+// Soğutma ayarı sıcaklığa göre ayrı: pozitif dolaplar merkezi, negatif dolaplar split olabilir (patron 2026-11-09)
+function sogAyar(zone){ const a = (TK.sogB||{})[zone]||{}; return {mod:a.mod||TK.sogMode||'split', marka:a.marka!=null?a.marka:(TK.sogMarka||''), iklim:a.iklim||TK.iklim||'normal'}; }
+function sogAyarYaz(zone, alan, deger){ TK.sogB = TK.sogB||{}; TK.sogB[zone] = Object.assign({}, TK.sogB[zone], {[alan]:deger}); }
+function dolapKolon(zone){ return (zone==='NEG' ? '-35°C' : '-10°C') + '/' + (sogAyar(zone).iklim==='tropikal' ? '+55°C' : '+45°C'); }
 function tkSplitPick(need, zone){
-  const c = sgSatirlar(TK.iklim==='tropikal' ? 'TRP' : 'HRM', TK.sogMarka||'', false, zone, dolapKolon(zone)).filter(r=>r.cap>=need);
+  const ay = sogAyar(zone), c = sgSatirlar(ay.iklim==='tropikal' ? 'TRP' : 'HRM', ay.marka, false, zone, dolapKolon(zone)).filter(r=>r.cap>=need);
   const emb = c.filter(r=>r.brand==='EMBRACO').sort((a,b)=>a.cap-b.cap || a.pUnit-b.pUnit)[0];
   return emb || c.sort((a,b)=>a.pUnit-b.pUnit)[0] || null;
 }
@@ -3612,8 +3636,8 @@ function tkUniteAta(mid, no){
   u.gruplar.forEach(x=>{ tkEsleCoz(x[0]); x[0].unite = id; });
   g[0].unite = id;
 }
-function tkUniteHepsi(tek){
-  const us = tkSplitUniteler(), ids = {};
+function tkUniteHepsi(tek, zone){
+  const us = tkSplitUniteler().filter(u=>!zone || u.zone===zone), ids = {};
   us.flatMap(u=>u.gruplar).forEach(g=>{ tkEsleCoz(g[0]); if (tek) g[0].unite = ids[g[0].zone] || (ids[g[0].zone] = tkYeniId()); else delete g[0].unite; });
 }
 function tkUniteSec(g, us, attr){
@@ -3628,7 +3652,7 @@ function tkSogHucre(m, groups){
   if (sog==='split'){ const us = tkSplitUniteler(groups); if (us.flatMap(u=>u.gruplar).length>1) h += tkUniteSec(g, us, 'data-munite class="tk-esle"'); }
   return h;
 }
-function tkGrupSog(g){ return g[0].motor!=='RT' ? '' : (g[0].sog || TK.sogMode || 'split'); }
+function tkGrupSog(g){ return g[0].motor!=='RT' ? '' : (g[0].sog || sogAyar(g[0].zone).mod); }
 function tkOdaSatirlari(){ return TK.satirlar.filter(l=>l.odaMerk); }
 function tkModPlan(){ const p = tkModPlanHam(); p.lines = tkPlanBirlestir(p.lines); return p; }
 function tkModPlanHam(){
@@ -3656,8 +3680,8 @@ function tkModPlanHam(){
     if (mods.length>2) warn.push(`${mods.map(ad).join(' + ')}: bir split üniteye en fazla 2 modül önerilir — merkezi düşünün.`);
     const r = tkSplitPick(need, zone);
     units.push({tur:'split', need, zone, r, mods, gruplar:pg.length});
-    if (!r){ warn.push(`${TK.sogMarka?COOL_BRAND_LABEL[TK.sogMarka]+' ile ':''}${fmtNum(need,0)} W için tek split grup yok — ${TK.sogMarka?'başka marka ya da ':''}merkezi sistem seçin.`); return; }
-    lines.push({tip:'sogutma', ad:`Soğutma grubu (dış ünite) ${COOL_BRAND_LABEL[r.brand]} ${r.hp} HP · ${r.model}`, birim:'AD', liste:r.pUnit,
+    if (!r){ warn.push(`${sogAyar(zone).marka?COOL_BRAND_LABEL[sogAyar(zone).marka]+' ile ':''}${fmtNum(need,0)} W için tek split grup yok — ${sogAyar(zone).marka?'başka marka ya da ':''}merkezi sistem seçin.`); return; }
+    lines.push({tip:'sogutma', zone, ad:`Soğutma grubu (dış ünite) ${COOL_BRAND_LABEL[r.brand]} ${r.hp} HP · ${r.model}`, birim:'AD', liste:r.pUnit,
       aciklama:[`Bağlı modüller: ${mods.map(ad).join(' + ')}`,
         `Gerekli kapasite: ${fmtNum(need,0)} W (${mods.map(m=>fmtNum(m.wpm,0)+' W/m × '+fmtNum(m.L/100,2)+' m').join(' + ')}) @ ${dolapKolon(zone)}`,
         `Ünite kapasitesi: ${fmtNum(r.cap,0)} W · Kompresör ${COOL_BRAND_LABEL[r.brand]} ${r.comp} · ${coolPhase(r.model)}`,
@@ -3671,10 +3695,10 @@ function tkModPlanHam(){
     const od = odalar.filter(o=>o.bagli && o.zone===zone);
     if (!mods.length && !od.length) return;
     const need = Math.round(mods.reduce((t,m)=>t+m.wpm*m.L/100, 0) + od.reduce((t,o)=>t+o.req, 0));
-    const b = tkMerkeziPick(need, zone, dolapKolon(zone), TK.sogMarka||'');
+    const b = tkMerkeziPick(need, zone, dolapKolon(zone), sogAyar(zone).marka);
     units.push({tur:'merkezi', need, zone, merkezi:b, mods, odalar:od});
     if (!b){ warn.push(`${fmtNum(need,0)} W (${zone==='NEG'?'negatif':'pozitif'}) için listede merkezi sistem yok.`); return; }
-    lines.push({tip:'sogutma', ad:`${b.g.marka||''} ${b.g.g==='scroll'?'scroll':'harici kondenserli'} merkezi sistem (${zone==='NEG'?'negatif':'pozitif'}) · ${b.r[0]}`.trim(), birim:'AD', liste:b.price,
+    lines.push({tip:'sogutma', zone, ad:`${b.g.marka||''} ${b.g.g==='scroll'?'scroll':'harici kondenserli'} merkezi sistem (${zone==='NEG'?'negatif':'pozitif'}) · ${b.r[0]}`.trim(), birim:'AD', liste:b.price,
       aciklama:[b.s.title, `Bağlı: ${[...mods.map(ad), ...od.map(o=>o.ad+' (soğuk oda)')].join(' + ')}`,
         `Gerekli kapasite: ${fmtNum(need,0)} W · Sistem: ${fmtNum(b.cap,0)} W (${b.capCol})`, 'Tesisat hariçtir (proje planına göre metrajı çıkarılır).'].join('\n')});
   });
@@ -3740,7 +3764,7 @@ document.getElementById('tkMod').addEventListener('change', e=>{
 });
 document.getElementById('tkMod').addEventListener('click', e=>{
   const all = e.target.closest('[data-sog-all]');
-  if (all){ TK.sogMode = all.dataset.sogAll; tkMods().forEach(m=>{ m.sog = TK.sogMode; if (TK.sogMode!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); renderTkMod(); return; }
+  if (all){ TK.sogMode = all.dataset.sogAll; ['POZ','NEG'].forEach(z=>sogAyarYaz(z,'mod',all.dataset.sogAll)); tkMods().forEach(m=>{ m.sog = TK.sogMode; if (TK.sogMode!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); renderTkMod(); return; }
   const d = e.target.closest('[data-mdel]'); if (!d) return;
   const mods = tkMods(), i = mods.findIndex(m=>m.id===d.closest('[data-mid]').dataset.mid);
   mods.splice(i,1); if (mods[i] && i===0) mods[i].birlesik = false;
@@ -3752,13 +3776,12 @@ function tkModAktar(){
   const plan = tkModPlan();
   if (!plan.lines.length) return;
   const bagliZ = new Set(plan.units.filter(u=>u.tur==='merkezi' && u.merkezi).map(u=>u.zone));
+  const bagliIdler = new Set(plan.odalar.filter(o=>o.bagli && bagliZ.has(o.zone)).map(o=>o.id));
+  { const yeni = tkOdaKurulumDus(TK.satirlar, l=>bagliIdler.has(l.id) && l.odaMerk);
+    TK.satirlar = TK.satirlar.filter(l=>yeni.some(y=>y.id===l.id)); yeni.forEach(y=>{ const l = TK.satirlar.find(x=>x.id===y.id); if (l) l.miktar = y.miktar; }); }
   plan.odalar.filter(o=>o.bagli && bagliZ.has(o.zone)).forEach(o=>{
     const l = TK.satirlar.find(x=>x.id===o.id); if (!l) return;
-    const mm = l.odaMerk;
-    Object.assign(l, tkPrep({tip:'sogutma', ad:`${mm.oda} evaporatör + dijital panel (${mm.zone==='NEG'?'negatif':'pozitif'}, merkezi sisteme bağlı)`,
-      aciklama:[`Evaporatör: ${mm.evapAd}, exp. valf dahil`, `Oda ihtiyacı: ${fmtNum(mm.req,0)} W`, mm.panelList>0?'Dijital kontrol paneli dahil':'', 'Dolap projesindeki merkezi sisteme bağlanır'].filter(Boolean).join('\n'),
-      liste:(mm.evapList||0)+(mm.panelList||0), birim:'TK'}), {id:l.id});
-    delete l.odaMerk;
+    Object.assign(l, tkOdaBagliSatir(l), {id:l.id}); delete l.odaMerk; delete l.elleKey;
   });
   plan.lines.forEach(l=>TK.satirlar.push(tkPrep(l)));
   tkSirala();
@@ -3856,7 +3879,10 @@ function dlOzetCiz(){
   const odak = !od ? '' : od.id ? '#'+od.id : od.dataset.ozF && odSat ? `[data-oz-s="${odSat.dataset.ozS}"][data-id="${CSS.escape(odSat.dataset.id)}"][data-key="${CSS.escape(odSat.dataset.key)}"] [data-oz-f="${od.dataset.ozF}"]` : '';
   const plan = ks.length ? tkModPlan() : {lines:[], units:[], warn:[]};
   const planSat = plan.lines.map(l=>tkPrep(Object.assign({}, l)));
-  const t = tkTotals([...TK.satirlar, ...planSat]);
+  const bagliZ = new Set((plan.units||[]).filter(u=>u.tur==='merkezi' && u.merkezi).map(u=>u.zone));
+  const odaBagli = l => l.odaMerk && (TK.odaBag||{})[l.id] && bagliZ.has(l.odaMerk.zone);
+  const satirlarG = tkOdaKurulumDus(TK.satirlar, odaBagli);
+  const t = tkTotals([...satirlarG.map(l=>odaBagli(l) ? tkOdaBagliSatir(l) : l), ...planSat]);
   // tek satır: kullanıcının gördüğü her kalem aynı biçimde
   const satir = ({tur, id, key, l, sil, miktarAttr, altMi, ek})=>`<div class="${altMi?'oz-alt':'oz-r'}" data-oz-s="${tur}" data-id="${escHtml(id||'')}" data-key="${escHtml(key||'')}">
     <div class="oz-ad"><input class="oz-adin" data-oz-f="ad" value="${escHtml(l.ad)}" aria-label="Kalem adı">${sil?`<button type="button" ${sil} aria-label="Çıkar">✕</button>`:''}</div>
@@ -3880,13 +3906,23 @@ function dlOzetCiz(){
       ${rt && opts.length ? `<div class="oz-sat oz-yansec"><span>Yan panel</span><select data-oz-yan aria-label="Yan panel"><option value=""${cur===''?' selected':''}>Yan yok</option>${opts.map(o=>`<option value="${escHtml(o.ad)}"${o.ad===cur?' selected':''}>${escHtml(o.ad.replace(/\s*takım\s*/i,' ').replace(/\s+-\s*$/,'').trim())}</option>`).join('')}</select></div>`:''}
       ${yanSat?satir({tur:'y', id:k.id, key:yanSat.elleKey, l:yanSat, miktarAttr:'data-oz-yanadet', altMi:true}):''}
       ${aks.map(l=>satir({tur:'l', id:l.id, l, sil:'data-oz-lsil', miktarAttr:'data-oz-lmiktar', altMi:true})).join('')}</div>`; }).join('');
-  const digerPlan = planSat.filter(l=>l.tip!=='dolap' && l.tip!=='yan');
-  const sogHtml = ks.some(k=>k.mods[0].motor==='RT') ? `<div class="oz-k"><div class="oz-sat"><span>Soğutma</span><select data-oz-sog aria-label="Soğutma"><option value="split"${TK.sogMode==='merkezi'||TK.sogMode==='yok'?'':' selected'}>Split</option><option value="merkezi"${TK.sogMode==='merkezi'?' selected':''}>Merkezi</option><option value="yok"${TK.sogMode==='yok'?' selected':''}>Soğutma yok</option></select></div>
-    <div class="oz-sat"><span>Kompresör</span><select data-oz-marka aria-label="Kompresör markası">${tkMarkaSecenek()}</select></div>
-    <div class="oz-sat"><span>Ünite</span><select data-oz-iklim aria-label="Ünite"><option value="normal"${TK.iklim==='tropikal'?'':' selected'}>Normal (+45)</option><option value="tropikal"${TK.iklim==='tropikal'?' selected':''}>Tropikal (+55)</option></select></div>
-    ${spGr.length>1 ? `<div class="oz-unite"><div class="oz-sat"><span>Split üniteye bağlama</span><span class="oz-hizli"><button type="button" class="chip" data-unite-hepsi="tek">Hepsi tek</button><button type="button" class="chip" data-unite-hepsi="ayri">Hepsi ayrı</button></span></div>${spGr.map(g=>`<div class="oz-ur"><span>${escHtml(uniteAd(g))}</span>${tkUniteSec(g, us, `data-unite="${g[0].id}"`)}</div>`).join('')}</div>` : ''}
-    ${digerPlan.map(l=>satir({tur:'s', key:l.elleKey, l, altMi:false})).join('')}${(plan.warn||[]).map(w=>`<div class="oz-uyari">${escHtml(w)}</div>`).join('')}</div>` : '';
-  const digerHtml = TK.satirlar.filter(l=>!kullanilan.has(l)).map(l=>`<div class="oz-k">${satir({tur:'l', id:l.id, l, sil:'data-oz-lsil', miktarAttr:'data-oz-lmiktar'})}</div>`).join('');
+  const hizmet = planSat.filter(l=>l.tip!=='dolap' && l.tip!=='yan' && l.tip!=='sogutma');
+  const zonelar = ['POZ','NEG'].filter(z=>ks.some(k=>k.mods[0].motor==='RT' && k.mods[0].zone===z));
+  const sogHtml = zonelar.map(z=>{
+    const a = sogAyar(z), usZ = us.filter(u=>u.zone===z), spZ = usZ.flatMap(u=>u.gruplar);
+    const modlar = new Set(gruplar.filter(g=>g[0].motor==='RT' && g[0].zone===z).map(g=>tkGrupSog(g))), karisik = modlar.size>1, mod = karisik ? 'karisik' : [...modlar][0];
+    const odalar = (plan.odalar||[]).filter(o=>o.zone===z);
+    return `<div class="oz-k oz-sog"><div class="oz-baslik">${z==='NEG'?'Negatif dolaplar':'Pozitif dolaplar'}</div>
+      <div class="oz-sat"><span>Soğutma</span><select data-oz-sog data-zone="${z}" aria-label="Soğutma">${karisik?'<option value="karisik" selected disabled>Karışık (Teklif Sepeti)</option>':''}<option value="split"${mod==='split'?' selected':''}>Split</option><option value="merkezi"${mod==='merkezi'?' selected':''}>Merkezi</option><option value="yok"${mod==='yok'?' selected':''}>Soğutma yok</option></select></div>
+      ${mod==='yok'?'':`<div class="oz-sat"><span>Kompresör</span><select data-oz-marka data-zone="${z}" aria-label="Kompresör markası">${tkMarkaSecenek(z)}</select></div>
+      <div class="oz-sat"><span>Ünite</span><select data-oz-iklim data-zone="${z}" aria-label="Ünite">${tkIklimSecenek(z)}</select></div>`}
+      ${spZ.length>1 ? `<div class="oz-unite"><div class="oz-sat"><span>Split üniteye bağlama</span><span class="oz-hizli"><button type="button" class="chip" data-unite-hepsi="tek" data-zone="${z}">Hepsi tek</button><button type="button" class="chip" data-unite-hepsi="ayri" data-zone="${z}">Hepsi ayrı</button></span></div>${spZ.map(g=>`<div class="oz-ur"><span>${escHtml(uniteAd(g))}</span>${tkUniteSec(g, us, `data-unite="${g[0].id}"`)}</div>`).join('')}</div>` : ''}
+      ${odalar.length ? (mod==='merkezi'||karisik&&modlar.has('merkezi') ? `<div class="oz-unite"><div class="oz-baslik2">Bu merkeziye bağlanacak soğuk odalar</div>${odalar.map(o=>`<label class="oz-tik"><input type="checkbox" data-oz-oda="${o.id}"${o.bagli?' checked':''}> ${escHtml(o.ad)} · ${fmtNum(o.req,0)} W</label>`).join('')}</div>` : `<div class="oz-not">${odalar.map(o=>escHtml(o.ad)).join(', ')}: merkezi seçilirse bu sisteme bağlanabilir.</div>`) : ''}
+      ${planSat.filter(l=>l.tip==='sogutma' && l.zone===z).map(l=>satir({tur:'s', key:l.elleKey, l})).join('')}
+      ${TK.satirlar.filter(l=>odaBagli(l) && l.odaMerk.zone===z).map(l=>satir({tur:'s', key:'o|'+l.id, l:tkOdaBagliSatir(l), altMi:true})).join('')}
+      ${(plan.warn||[]).filter(w=>z==='NEG'?/LT|negatif|DG|-25|-35/.test(w):!/LT|negatif|DG|-25|-35/.test(w)).map(w=>`<div class="oz-uyari">${escHtml(w)}</div>`).join('')}</div>`; }).join('')
+    + hizmet.map(l=>`<div class="oz-k">${satir({tur:'s', key:l.elleKey, l})}</div>`).join('');
+  const digerHtml = satirlarG.filter(l=>!kullanilan.has(l) && !odaBagli(l)).map(l=>`<div class="oz-k">${satir({tur:'l', id:l.id, l, sil:'data-oz-lsil', miktarAttr:'data-oz-lmiktar'})}</div>`).join('');
   el.innerHTML = `<button type="button" class="oz-bas" data-oz-ac><span>Teklif özeti · ${n} kalem</span><span>${fmt(t.genel)} <small>${el.classList.contains('acik')?'Kapat ▾':'Aç ▴'}</small></span></button>
     <div class="oz-ic"><div class="oz-musteri"><input id="dlOzMusteri" placeholder="Müşteri" value="${escHtml(TK.musteri||'')}" aria-label="Müşteri"><input id="dlOzProje" placeholder="Proje adı" value="${escHtml(TK.proje||'')}" aria-label="Proje adı"></div>
     ${n ? kalemHtml+digerHtml+sogHtml+`<div class="oz-top"><div><span>Toplam (KDV hariç)</span><b>${fmt(t.ara)}</b></div>${t.otv?`<div><span>ÖTV %6,7</span><b>${fmt(t.otv)}</b></div>`:''}${TK.kdv?`<div><span>KDV %20</span><b>${fmt(t.kdv)}</b></div>`:''}<div class="g"><span>Genel toplam</span><span>${fmt(t.genel)}</span></div></div>
@@ -3900,7 +3936,7 @@ document.getElementById('dlOzet').addEventListener('change', ()=>{ OZ_DEGISIM = 
 document.getElementById('dlOzet').addEventListener('click', e=>{
   const el = e.currentTarget;
   if (e.target.closest('[data-oz-ac]')){ el.classList.toggle('acik'); dlOzetCiz(); return; }
-  const uh = e.target.closest('[data-unite-hepsi]'); if (uh){ tkUniteHepsi(uh.dataset.uniteHepsi==='tek'); tkSave(); return; }
+  const uh = e.target.closest('[data-unite-hepsi]'); if (uh){ tkUniteHepsi(uh.dataset.uniteHepsi==='tek', uh.dataset.zone); tkSave(); return; }
   if (e.target.id==='dlOzKaydet'){ document.getElementById('tkKaydet').click(); return; }
   if (e.target.id==='dlOzTemizle'){ if (confirm('Teklifteki tüm kalemler ve müşteri bilgileri silinsin mi?')){ TK = tkEmpty(); tkSave(); renderTeklif(); } return; }
   if (e.target.closest('[data-oz-lsil]')){ const id = e.target.closest('[data-oz-s]').dataset.id; TK.satirlar = TK.satirlar.filter(x=>x.id!==id); tkSave(); return; }
@@ -3910,10 +3946,11 @@ document.getElementById('dlOzet').addEventListener('change', e=>{
   const t = e.target;
   if (t.id==='dlOzMusteri'){ TK.musteri = t.value; tkSave(); return; }
   if (t.id==='dlOzProje'){ TK.proje = t.value; tkSave(); return; }
-  if (t.matches('[data-oz-sog]')){ TK.sogMode = t.value; tkMods().forEach(m=>{ m.sog = t.value; if (t.value!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); return; }
-  if (t.matches('[data-oz-marka]')){ TK.sogMarka = t.value; tkSave(); renderDolaplar(); return; }
+  if (t.matches('[data-oz-sog]')){ const z = t.dataset.zone; sogAyarYaz(z,'mod',t.value); tkMods().filter(m=>m.zone===z).forEach(m=>{ m.sog = t.value; if (t.value!=='split'){ delete m.esle; delete m.unite; } }); tkSave(); return; }
+  if (t.matches('[data-oz-oda]')){ TK.odaBag = Object.assign({}, TK.odaBag, {[t.dataset.ozOda]:t.checked}); tkSave(); return; }
+  if (t.matches('[data-oz-marka]')){ sogAyarYaz(t.dataset.zone,'marka',t.value); tkSave(); renderDolaplar(); return; }
   if (t.matches('[data-unite]')){ tkUniteAta(t.dataset.unite, t.value); tkSave(); return; }
-  if (t.matches('[data-oz-iklim]')){ TK.iklim = t.value; tkSave(); renderDolaplar(); return; }
+  if (t.matches('[data-oz-iklim]')){ sogAyarYaz(t.dataset.zone,'iklim',t.value); tkSave(); renderDolaplar(); return; }
   const f = t.dataset.ozF, w = t.closest('[data-oz-s]');
   if (f && w){ const v = t.value.trim(), tur = w.dataset.ozS;
     if (tur==='l'){ const l = TK.satirlar.find(x=>x.id===w.dataset.id); if (!l) return;
@@ -4115,7 +4152,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '4114bc0176b010b9';
+const APP_SURUM = '66da1c9f19f9f1f2';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
