@@ -3008,7 +3008,7 @@ function sgKey(r){ return `${r.series}|${r.brand}|${r.ss?1:0}|${r.zone}|${r.mode
 function renderSgKondenser(){
   const sSel = sgEl('sgSeries'), bSel = sgEl('sgBrand');
   if (!sSel.options.length) sgOptions(sSel, COOL_SERIES.map(x=>[x.key,x.label]));
-  sgOptions(bSel, [['','Tüm markalar'], ...COOL_BRANDS.filter(b=>COOL_DATA.some(r=>r.series===sSel.value && r.brand===b)).map(b=>[b,COOL_BRAND_LABEL[b]])]);
+  sgOptions(bSel, [['','Tümü'], ...COOL_BRANDS.filter(b=>COOL_DATA.some(r=>r.series===sSel.value && r.brand===b)).map(b=>[b,COOL_BRAND_LABEL[b]])]);
   const series = sSel.value, brand = bSel.value, zone = sgEl('sgZone').value, ss = sgEl('sgSS').value==='1';
   // evaporasyon / kondenzasyon filtresi
   const kSel = sgEl('sgCapCol'), kolonlar = sgKolonlar(series, zone), kOnce = kSel.value;
@@ -3057,7 +3057,7 @@ function renderSgGroup(tab){
   const all = (SOGUTMA_LIST && SOGUTMA_LIST.gruplar || []).filter(g=>g.g===tab);
   const zone = sgEl('sgZone').value, f = readDisc('sgDisc');
   const byZone = tab==='soklama' ? all : all.filter(g=>g.zone===zone);
-  sgOptions(sgEl('sgBrand'), [['','Tüm markalar'], ...[...new Set(byZone.map(g=>g.marka))].filter(Boolean).map(b=>[b,b])]);
+  sgOptions(sgEl('sgBrand'), [['','Tümü'], ...[...new Set(byZone.map(g=>g.marka))].filter(Boolean).map(b=>[b,b])]);
   sgOptions(sgEl('sgLub'), [...new Set(byZone.map(g=>g.yaglama))].filter(Boolean).map(b=>[b,b]));
   const groups = byZone.filter(g=>(tab==='soklama' || !sgEl('sgBrand').value || g.marka===sgEl('sgBrand').value) && (tab!=='scroll' || g.yaglama===sgEl('sgLub').value));
   // kapasite sütunu seçimi
@@ -4236,7 +4236,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = 'a48bdbe769f30efc';
+const APP_SURUM = 'd879db488ae4e607';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
