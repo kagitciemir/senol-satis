@@ -3691,7 +3691,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = '1501c1c213a3620f';
+const APP_SURUM = 'ce769737e0d2dd73';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
@@ -4056,6 +4056,17 @@ async function pushAbonelik(){
   const reg = await swKayit();
   return reg ? reg.pushManager.getSubscription() : null;
 }
+// Bu hesapta bildirim alacak cihazlar: telefon listede yoksa o telefona bildirim gitmez.
+function cihazAdi(ua){ ua = String(ua||''); return /iphone/i.test(ua)?'iPhone':/ipad/i.test(ua)?'iPad':/android/i.test(ua)?'Android telefon':/macintosh/i.test(ua)?'Mac bilgisayar':/windows/i.test(ua)?'Windows bilgisayar':'Cihaz'; }
+async function cihazListesi(){
+  const el = $a('pushCihazlar'); if (!el || !CUR) return;
+  try{
+    const [r, sub] = await Promise.all([SB.from('push_abonelik').select('endpoint,cihaz,olusturma').eq('user_id', CUR.id), pushAbonelik().catch(()=>null)]);
+    if (r.error) return;
+    const l = r.data||[];
+    el.innerHTML = l.length ? 'Bildirim alan cihazlarınız: ' + l.map(x=>`<b>${cihazAdi(x.cihaz)}</b>${sub&&sub.endpoint===x.endpoint?' (bu cihaz)':''} · ${new Date(x.olusturma).toLocaleDateString('tr-TR')}`).join(' &nbsp;|&nbsp; ') : 'Bu hesapta bildirim alan cihaz yok.';
+  }catch(e){}
+}
 async function pushKartiCiz(){
   const el = $a('tkvBildirim'); if (!el) return;
   let html;
@@ -4066,10 +4077,11 @@ async function pushKartiCiz(){
   } else {
     const sub = await pushAbonelik().catch(()=>null);
     if (Notification.permission==='denied') html = `<div>🔕 Bildirimler bu cihazda engelli. Telefon ayarlarından Şenol uygulamasına bildirim izni verin.</div>`;
-    else if (sub && Notification.permission==='granted') html = `<div>🔔 <b>Bildirimler açık.</b> Her akşam 18:00'de ertesi günün, her sabah 08:30'da o günün yüklemeleri; fuar hatırlatmaları sabah gelir.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn-primary" id="pushTest">Bana test bildirimi gönder</button><button type="button" class="btn-ghost" id="pushKapat">Kapat</button></div>`;
+    else if (sub && Notification.permission==='granted') html = `<div>🔔 <b>Bildirimler açık.</b> Her akşam 18:00'de ertesi günün, her sabah 09:00'da o günün yüklemeleri; fuar hatırlatmaları sabah gelir.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn-primary" id="pushTest">Bana test bildirimi gönder</button><button type="button" class="btn-ghost" id="pushKapat">Kapat</button></div>`;
     else html = `<div>🔔 Sevkiyat ve fuar hatırlatmalarını telefonuna bildirim olarak al.</div><button type="button" class="btn-primary" id="pushAc">Bildirimleri aç</button>`;
   }
-  el.innerHTML = `<div class="tkv-bil">${html}</div>`;
+  el.innerHTML = `<div class="tkv-bil">${html}</div><div id="pushCihazlar" style="font-size:13px;color:var(--muted);margin:6px 2px 0"></div>`;
+  cihazListesi();
   const ac = $a('pushAc'), kp = $a('pushKapat'), ts = $a('pushTest');
   if (ts) ts.onclick = async ()=>{
     ts.disabled = true;
@@ -4083,7 +4095,7 @@ async function pushKartiCiz(){
       // GitHub Pages'te sunucu yok: cihaz kaydı tamamlanır ve bildirim bu cihazda gösterilir (sunucu gönderimi her sabah/akşam zamanlı görevle)
       const reg = await swKayit();
       if (!reg) throw new Error('Uygulama tam yüklenmedi; sayfayı yenileyip tekrar deneyin.');
-      await reg.showNotification('Test bildirimi', {body:'Bu cihaz bildirim alıyor. Yükleme hatırlatmaları 08:30 ve 18:00\'de gelir.', icon:'icon-192.png', tag:'test'});
+      await reg.showNotification('Test bildirimi', {body:'Bu cihaz bildirim alıyor. Yükleme hatırlatmaları 09:00 ve 18:00\'de gelir.', icon:'icon-192.png', tag:'test'});
       showToast(sub ? 'Cihaz kaydı tamam, test bildirimi gösterildi.' : 'Test bildirimi gösterildi.');
     }catch(e){ showToast(trErr(e), true); }
     ts.disabled = false;
