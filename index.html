@@ -573,6 +573,28 @@ details.rc-sec>.opt-accessories,details.rc-sec>.cool-box{margin:0;border:0;borde
 .tk-kdv{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#132a43}
 .tk-kdv select{height:34px;border:1px solid #cbd5e1;border-radius:8px;padding:0 8px;font:inherit;background:#fff}
 .tk-otv{display:flex;align-items:center;gap:5px;font-size:12.5px;color:#4a5b6e;align-self:end;padding-bottom:9px}
+.tkl-ozet{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px;font-size:13px;color:#4a5b6e}
+.tkl-ozet b{color:#132a43}
+.tkl-ozet span{background:#f1f5f9;border-radius:999px;padding:4px 12px}
+.tkl-k{border:1px solid #e3e9f0;border-radius:12px;padding:12px 14px;margin-top:10px;background:#fff}
+.tkl-u{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tkl-u b{color:#132a43;font-size:15px}
+.tkl-u small{display:block;color:#64748b;font-size:12.5px;margin-top:2px}
+.tkl-t{font-weight:700;color:#132a43;white-space:nowrap}
+.tkl-a{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.tkl-a select,#grvKime,.grv-yeni input,.grv-yeni textarea{height:36px;border:1px solid #cbd5e1;border-radius:8px;padding:0 8px;font:14px 'Inter',sans-serif;background:#fff;max-width:100%}
+.tkl-d-gonderildi{border-left:4px solid #2070b0}.tkl-d-siparis{border-left:4px solid #1f9d55;background:#f1fbf5}.tkl-d-kaybedildi{border-left:4px solid #e3342b;background:#fff7f6}.tkl-d-taslak{border-left:4px solid #cbd5e1}
+.grv-yeni{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.grv-yeni[hidden]{display:none}
+.grv-yeni label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:#4a5b6e;width:100%}
+.grv-yeni input,.grv-yeni textarea,#grvKime{width:100%}
+.grv-yeni textarea{height:auto;padding:8px;resize:vertical}
+.grv-alan{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;width:100%}
+.grv-k{border:1px solid #e3e9f0;border-radius:12px;padding:12px 14px;margin-top:10px;background:#fff}
+.grv-k.yapildi{background:#f1fbf5;border-color:#bfe6cd}
+.grv-k b{color:#132a43;font-size:15px;overflow-wrap:anywhere}
+.grv-k p{margin:4px 0 0;font-size:14px;color:#4a5b6e;white-space:pre-wrap;overflow-wrap:anywhere}
+.grv-gec{color:#e3342b;font-weight:600}
 .onr-yaz{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .onr-yaz textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font:15px 'Inter',sans-serif;resize:vertical}
 .onr-k{background:#fff;border:1px solid #e3e9f0;border-radius:14px;padding:12px 14px;margin-top:10px}
@@ -638,8 +660,15 @@ body.tk-prev-open{overflow:hidden}
 .tk-adrow{display:flex;gap:10px;align-items:center}
 .tk-adrow .tk-ad{flex:1;min-width:0}
 .tk-img{width:52px;height:40px;object-fit:contain;border:1px solid #eef2f6;border-radius:6px;background:#fff;flex:none}
-.pf-img{float:left;width:70px;height:56px;object-fit:contain;margin:0 10px 4px 0}
-.pf-lines td:nth-child(2)::after{content:"";display:block;clear:both}
+.pf-k{display:flex;gap:14px;align-items:flex-start}
+.pf-img{flex:0 0 130px;width:130px;height:130px;object-fit:contain}
+.pf-m{flex:1;min-width:0}
+.pf-m>b{display:block;font-size:10.5pt;line-height:1.3;color:#132a43}
+.pf-lines ul{list-style:disc outside;margin:5px 0 0;padding-left:16px;line-height:1.35}
+.pf-lines ul.cok{columns:2;column-gap:22px}
+.pf-lines li{break-inside:avoid;margin-bottom:2px}
+.pf-lines th:nth-child(1),.pf-lines td:nth-child(1){width:22px}
+@media (max-width:560px){.pf-k{flex-direction:column}.pf-img{flex:none;width:100%;height:150px}.pf-lines ul.cok{columns:1}}
 
 .tk-modopt{display:flex;flex-wrap:wrap;align-items:center;gap:14px;font-size:13px;color:#4a5b6e}
 .tk-modopt label{display:flex;align-items:center;gap:6px;color:#132a43;font-weight:500}
@@ -745,6 +774,7 @@ body.auth-locked #authOverlay{display:flex}
       <button class="hcard" type="button" data-go="takvim"><span class="hc-go" aria-hidden="true">↗</span><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16M8 15h2v2H8z"/></svg></span><h3>Takvim</h3><p>Yükleme listesi ve fuarlar</p></button>
       <button class="hcard" type="button" data-go="projeler"><span class="hc-go" aria-hidden="true">↗</span><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/></svg></span><h3>Kayıtlı Projeler</h3><p>Kaydettiğin hesaplar</p></button>
       <button class="hcard" type="button" data-go="oneriler"><span class="hc-go" aria-hidden="true">↗</span><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3"/></svg></span><h3>Önerileriniz</h3><p>Uygulama için istekler</p></button>
+      <button class="hcard" type="button" data-go="gorevler" id="homeGorevCard"><span class="hc-go" aria-hidden="true">↗</span><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></span><h3>Görevler</h3><p>Sana atanan işler</p></button>
       <button class="hcard is-soon" type="button" data-soon="1" aria-disabled="true"><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1-4 0V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a3 3 0 0 0 3 3h11M8 8h4M8 12h4M8 16h4"/></svg></span><h3>Haberler</h3><p>Sektörden önemli gelişmeler</p><span class="soon">Yakında</span></button>
       <button class="hcard is-soon" type="button" data-soon="1" aria-disabled="true"><span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span><h3>3D Yerleşim</h3><p>Yerleşim, sepet ve teklif</p><span class="soon">Yakında</span></button>
   </div>
@@ -876,6 +906,28 @@ body.auth-locked #authOverlay{display:flex}
     <input type="text" id="projHistSearch" class="hist-search" placeholder="Müşteri / proje adına göre ara...">
     <div id="projHistList"><div class="empty-hist">Henüz kayıtlı proje yok.</div></div>
   </section>
+  <section>
+    <h2>Kayıtlı Teklifler</h2>
+    <div id="tklOzet" class="tkl-ozet"></div>
+    <div id="tklListe"><div class="empty-hist">Teklifler girişli sürümde görünür.</div></div>
+  </section>
+</div>
+<div class="view" data-view="gorevler" hidden>
+  <header class="mod-head">
+    <button class="back-btn hdr-back" type="button" data-go="home" aria-label="Ana Sayfa">←<span> Ana Sayfa</span></button>
+    <div><h1>Görevler</h1><p>Atanan işler ve durumları</p></div>
+  </header>
+  <section class="cat-sec grv-yeni" id="grvYeni" hidden>
+    <h3 class="blk-h" style="margin:0">Yeni görev ata</h3>
+    <div class="grv-alan">
+      <label><span>Kime</span><select id="grvKime"></select></label>
+      <label><span>Son tarih (isteğe bağlı)</span><input type="date" id="grvTarih"></label>
+    </div>
+    <label><span>Görev</span><input type="text" id="grvBaslik" maxlength="200" placeholder="Örn. ABC Market'e teklif hazırla"></label>
+    <label><span>Açıklama (isteğe bağlı)</span><textarea id="grvAciklama" rows="2" maxlength="2000"></textarea></label>
+    <button class="btn-primary" type="button" id="grvAta">Görevi ata</button>
+  </section>
+  <div id="grvListe"><div class="empty-hist">Görevler girişli sürümde görünür.</div></div>
 </div>
 <div class="view" data-view="oneriler" hidden>
   <header class="mod-head">
@@ -1007,6 +1059,7 @@ body.auth-locked #authOverlay{display:flex}
       <label class="tk-kdv"><input type="checkbox" id="tkKdv" checked> Yurt içi (KDV %20, dolapta ÖTV %6,7)</label>
       <label class="tk-kdv">Teklif dili <select id="tkDil"><option value="tr">Türkçe</option><option value="en">İngilizce</option></select></label>
       <span class="sp"></span>
+      <button class="btn-ghost" type="button" id="tkKaydet">Teklifi kaydet</button>
       <button class="btn-ghost" type="button" id="tkCopy">Metni kopyala</button>
       <button class="btn-ghost" type="button" id="tkPreview">Önizle</button>
       <button class="btn-primary" type="button" id="tkPrint">Yazdır / PDF</button>
@@ -3043,6 +3096,28 @@ function tkRoomLines(){
   if (pr.yurtIci) out.push({tip:'hizmet', ad:'Nakliye bedeli', aciklama:'', miktar:1, birim:'AD', fiyat:0, manuel:true});
   return out;
 }
+// Teklif başlığı (patron 2026-11-09): "Rose FG 375x110x125cm Reyon Dolabı". Yükseklik adda yoksa DOLAP_H tablosundan.
+const DOLAP_TUR = {'DİKEY KABİNLER':'Dikey Kabin','REYON DOLAPLARI':'Reyon Dolabı','YARI DİKEY KABİNLER':'Yarı Dikey Kabin','ADA TİPİ DOLAPLAR':'Ada Tipi Dolap','PASTA REYONLARI':'Pasta Reyonu'};
+const DOLAP_H = {'ROSE FG':125};
+function dolapAdYaz(s){ return String(s).trim().split(/\s+/).map((w,i)=> i===0 ? w.charAt(0)+w.slice(1).replace(/İ/g,'i').toLowerCase() : w).join(' '); }
+function dolapBaslik(p, r, col){
+  const m = r.name.match(/(\d+)\s*\/\s*(\d+)/), n = r.name.match(/\b(\d{2,3})\b/);
+  const D = m ? +m[1] : (n ? +n[1] : null);
+  const ilk = TK_UP(p.name).split(/\s+/)[0], satirli = TK_UP(r.name).startsWith(ilk);
+  let seri = p.name;
+  if (satirli && (m||n)){
+    const yer = (m||n).index, kuyruk = r.name.slice(yer+(m||n)[0].length).split('/')[0];
+    const kod = kuyruk.trim().split(/\s+/).filter(w=>/^[A-ZİÇŞĞÜÖ&]{2,4}$/.test(w) && w!=='RT' && w!=='PG');
+    seri = [r.name.slice(0,yer).trim(), ...kod].join(' ');
+  }
+  const H = m ? +m[2] : (DOLAP_H[TK_UP(seri)]||null);
+  const L = dlLen(col), olcu = L!=null ? [fmtNum(L, L%1?1:0), D, H].filter(x=>x!=null).join('x')+'cm' : String(col||'').split(' · ')[0];
+  return [dolapAdYaz(seri), olcu, DOLAP_TUR[p.cat]||''].filter(Boolean).join(' ');
+}
+function dolapAciklama(p, r, col){
+  const kapi = (String(col).split(' · ')[1]||'');
+  return [`Model: ${r.name}${kapi?' · '+kapi:''}`, p.sub, ...tkFeats(p)].filter(Boolean).join('\n');
+}
 // dolap ve aksesuar fiyat hücresi
 function tkDolapLine(code){
   const [pid, bi, ri, ci, parent] = code.split('|');
@@ -3056,10 +3131,9 @@ function tkDolapLine(code){
     return {tip:'aksesuar', ad:`${r.name}${col?' · '+col:''}`, aciklama:`${par?par.name:p.name} aksesuarı`, liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined};
   }
   const nm = r.name.toLocaleUpperCase('tr').startsWith(p.name.toLocaleUpperCase('tr')) ? r.name : `${p.name} ${r.name}`;
-  const feats = tkFeats(p);
   // ısıtmalı, benmari, pizza ve kasa dolabı soğutmalı değil: ÖTV kapalı gelir, satırdan açılabilir
   const otv = !(/\b(HP|CS|BM|PZ)\b/.test(TK_UP(nm)) || /^(ISITMALI TABLA|KASA DOLABI|BENMAR|PIZZA ISITMALI)/.test(TK_UP(p.sub)));
-  return {tip:'dolap', otv, ad:`${nm}${col?' · '+col:''}`, aciklama:[p.sub, ...feats].filter(Boolean).join('\n'), liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p)};
+  return {tip:'dolap', otv, ad:dolapBaslik(p, r, col), aciklama:dolapAciklama(p, r, col), liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p)};
 }
 function tkAddKondenser(model, satir, secim){
   const r = satir || COOL_DATA.find(x=>x.model===model && x.series===sgEl('sgSeries').value && x.brand===sgEl('sgBrand').value) || COOL_DATA.find(x=>x.model===model);
@@ -3103,7 +3177,7 @@ function tkTotals(){
 }
 // Teklif dili: İngilizce metinler (fiyat içermez). Müşteri adı, notlar ve elle yazılan satırlar yazıldığı gibi kalır.
 const TK_EN = {"ÖNÜ AÇIK DİKEY KABİNLER":"Open-front vertical cabinets","ÇARPMA KAPILI DİKEY KABİNLER":"Vertical cabinets with hinged doors","MANAV DİKEY KABİNLERİ":"Vertical fruit & vegetable cabinets","DİKEY DONDURUCULAR":"Vertical freezers","APELLA LT COMBI":"Apella LT combi","ÇARPMA KAPILI SÜTLÜK DOLABI":"Dairy cabinet with hinged doors","DİKEY KABİNLER":"Vertical cabinets","SÜTLÜK DOLABI":"Dairy cabinet","ÇARPMA KAPILI DİKEY KABİN":"Vertical cabinet with hinged doors","ÖNÜ AÇIK MEYVE & SEBZE DİKEY KABİN":"Open-front vertical fruit & vegetable cabinet","DİKEY DONDURUCU KABİNLER":"Vertical freezer cabinets","Length / Uzunluk (cm)":"Length (cm)","KOMBİ DONDURUCU":"Combi freezer","ŞARAP DOLABI":"Wine cabinet","ET YAŞLANDIRMA DOLABI":"Meat ageing cabinet","ET YAŞLANDIRMA DOLAPLARI":"Meat ageing cabinets","ÖNÜ AÇIK DEPOLU SÜTLÜK DOLAPLARI":"Open-front dairy cabinets with storage","REYON DOLAPLARI":"Serve-over counters","YARIM CAMLI (HALF GLASS)":"Half glass","STATİK (STATIC)":"Static","YARIM CAMLI, STATİK VE GRAVITY REYON DOLAPLARI":"Half glass, static and gravity serve-over counters","ISITMALI TABLA (HOT PLATE)":"Hot plate","SALATBAR VE ZEYTİNLİK (SALADBAR & OLIVES)":"Saladbar & olives","DONDURUCU (FREEZER)":"Freezer","YÜKSEK REYON (HIGH COUNTER)":"High counter","HAREKETLİ CAMLI (CONVERTIBLE GLASS)":"Convertible glass","PASTA REYONU (PASTRY COUNTER)":"Pastry counter","KASA DOLABI (CASHIER UNIT)":"Cashier unit","TAM CAMLI (FLAT GLASS)":"Flat glass","SELF SERVİS (SELF SERVICE)":"Self service","BENMARİ (BAIN-MARIE)":"Bain-marie","TÜM REYON DOLABI MODELLERİ İÇİN AKSESUAR FİYAT LİSTESİ":"Accessories for all serve-over counter models","KISA REYON (MINI COUNTER)":"Mini counter","PİZZA ISITMALI TABLA (PIZZA HOT PLATE)":"Pizza hot plate","SALATBAR (SALADBAR)":"Saladbar","STATİK REYON DOLAPLARI":"Static serve-over counters","BALIK TEŞHİR DOLAPLARI":"Fish display counters","KISA SÜTLÜK DOLABI":"Low dairy cabinet","KISA SÜTLÜK DOLAPLARI":"Low dairy cabinets","KISA SÜTLÜK DOLAPLARI / DONDURUCULAR":"Low dairy cabinets / freezers","AKSESUAR FİYATLARI":"Accessories","HAVUZ DOLABI / HAVUZ DONDURUCU":"Island cabinet / island freezer","HAVUZ DONDURUCU":"Island freezer","HAVUZ DOLABI":"Island cabinet","PASTA TEŞHİR DOLAPLARI":"Pastry display cabinets","KURABİYE, ISITMALI, ET TEŞHİR VE KASA":"Cookies, heated, meat display and cashier","DONDURMA (ICE CREAM)":"Ice cream","PASTA (PASTRIES)":"Pastries","KURABİYE (COOKIES)":"Cookies","ISITMALI VE KASA":"Heated and cashier","PASTA, DONDURMA VE KASA DOLAPLARI":"Pastry, ice cream and cashier cabinets","DİKEY PASTA DOLABI":"Vertical pastry cabinet","Dıştan motorlu":"Remote","Şarküteri ve meşrubat için kullanılabilir":"Suitable for delicatessen and beverages","Fanlı soğutma":"Fan-assisted refrigeration","Elektronik termostat":"Electronic thermostat","Poliüretan gövde":"Polyurethane body","Boyalı sac zemin tepsileri":"Painted steel base trays","Elektrostatik toz boyalı raflar ve arka üfleme panelleri":"Electrostatic powder-coated shelves and rear air panels","Gece perdesi":"Night blind","Plastik etiketlik":"Plastic price holder","Aydınlatma sistemi":"Lighting system","Paket et, şarküteri ve meşrubat için kullanılabilir":"Suitable for packaged meat, delicatessen and beverages","Isıcamlı çarpma kapı":"Double-glazed hinged door","Meyve ve sebze için kullanılabilir":"Suitable for fruit and vegetables","Paketli donmuş ürün için kullanılabilir":"Suitable for packaged frozen products","3'lü 'Isıcamlı çarpma kapı":"Triple-glazed hinged door","Opsiyonel tel zemin tepsileri":"Optional wire base trays","Opsiyonel tel sepet":"Optional wire basket","Description / Açıklama":"","İçten motorlu":"Plug-in","Meyve ve sebze teşhiri için kullanılabilir":"Suitable for fruit and vegetable display","Night Blind":"Night blind","Aydınlatma Sistemi":"Lighting system","3'lü 'Isıcamlı yarım kapı":"Triple-glazed half door","Alt ve üst farklı derecelerde ayarlanabilir":"Upper and lower sections adjustable to different temperatures","Tel ara bölücü":"Wire divider","Dikey aydınlatma sistemi":"Vertical lighting system","Üst kat: 250 watt/mt · Alt kat: 400 watt/mt  (-35°C)":"Upper section: 250 W/m · Lower section: 400 W/m (-35°C)","Kırmızı ve beyaz şarap teşhir için kullanılabilir":"Suitable for red and white wine display","Ahşap raflar opsiyonel":"Wooden shelves optional","Et yaşlandırma için kullanılabilir":"Suitable for meat ageing","Yüksekliği ayarlanabilir paslanmaz tel raflar":"Height-adjustable stainless steel wire shelves","Isıcamlı çerçevesiz çarpma kapı":"Frameless double-glazed hinged door","Nem kontrol sistemi":"Humidity control system","Et yaşlandırma için kullanılır":"Used for meat ageing","Elektronik thermostat":"Electronic thermostat","Paslanmaz iç kaplama":"Stainless steel interior","4 sıra tel raflı":"4 rows of wire shelves","Elektronik nem kontrol sistemi":"Electronic humidity control system","Isıcam kapılı":"Double-glazed doors","Opsiyonel yüksek verimli raf altı aydınlatma":"Optional high-efficiency under-shelf lighting","Çarpma kapılı alt soğutma haznesi":"Lower refrigerated storage with hinged doors","İçten / Dıştan motorlu":"Plug-in / Remote","Paketli et ve şarküteri için kullanılabilir":"Suitable for packaged meat and delicatessen","Paslanmaz çelik iç kaplama":"Stainless steel interior","Paslanmaz çelik çalışma tezgahı":"Stainless steel worktop","Amortisörlü açılabilir temperli camlar sayesinde yükleme ve temizlik kolaylığı":"Gas-spring opening tempered glass for easy loading and cleaning","Dıştan motorlu   —   RT modellerde soğutma grubu fiyata dahil değildir / Condensing unit is not included":"Remote — condensing unit is not included in RT models","İçten motorlu   —   Aksesuar fiyatları için ► REYON AKSESUAR sayfasına bakınız":"Plug-in","Yarım camlı ön yüzey, fanlı soğutma":"Half glass front, fan-assisted refrigeration","Statik soğutma, düz camlı ön yüzey":"Static refrigeration, flat glass front","Antifog fan sistemi, sürgülü arka cam":"Anti-fog fan system, sliding rear glass","Isıtmalı ünite":"Heated unit","Salatbar ve zeytinlik teşhiri":"Saladbar and olive display","Dondurucu, donmuş ürün teşhiri için":"Freezer, for frozen product display","Yüksek camlı, 360° görünürlük":"High glass, 360° visibility","Hareketli sürgülü ön cam":"Movable sliding front glass","Pasta teşhiri için kullanılabilir":"Suitable for pastry display","Soğutmasız kasa ünitesi":"Non-refrigerated cashier unit","Taze balık ürünleri için kullanılabilir":"Suitable for fresh fish products","Serpantinli zemin soğutma":"Coil-cooled base","Yıkanabilir AISI 304 paslanmaz zemin tablası":"Washable AISI 304 stainless steel base tray","Aksesuar fiyatları için ► REYON AKSESUAR sayfasına bakınız":"","Açık önlü self servis kullanım":"Open-front self service","Isıtmalı benmari ünitesi":"Heated bain-marie unit","İK: Dış köşe / İç köşe   —   Outside corner / Inside corner":"Outside corner / inside corner","Alt soğutma haznesi":"Lower refrigerated storage","Alt hazne  •  RT: Remote   —   RT modellerde soğutma grubu fiyata dahil değildir / Condensing unit is not included":"Lower storage • RT: Remote — condensing unit is not included in RT models","Kavisli camlı ön yüzey":"Curved glass front","Tek raflı":"Single shelf","İki raflı":"Two shelves","Condensing unit is not included   —   Aksesuar fiyatları için ► REYON AKSESUAR sayfasına bakınız":"Condensing unit is not included","Pasta ve çikolata teşhiri için kullanılabilir":"Suitable for pastry and chocolate display","Yüksek camlı teşhir":"High glass display","POLO L sayfasına bakınız":"","Kısa boylu kompakt reyon":"Compact low counter","Isıtmalı pizza teşhir ünitesi":"Heated pizza display unit","Statik soğutma":"Static refrigeration","Enerji tasarrufu":"Energy saving","Eti soğuk odaya taşımaya gerek kalmadan 24 saat muhafaza edebilme":"Keeps meat for 24 hours without moving it to the cold room","Nemlendirici buhar sistemi":"Humidifying steam system","Gece kapağı":"Night cover","Isıcamlı sürgülü kapı":"Double-glazed sliding door","Şarküteri, meşrubat ve sandviç için kullanılabilir":"Suitable for delicatessen, beverages and sandwiches","Isıcamlı üçlü çarpma kapı":"Triple double-glazed hinged doors","Şarküteri için kullanılabilir":"Suitable for delicatessen","Opsiyonel gece tasarruf kapakları":"Optional night saving covers","Opsiyonel üst sürgü cam":"Optional upper sliding glass","Donmuş ürünler için kullanılabilir":"Suitable for frozen products","Üst sürgü cam":"Upper sliding glass","Boyalı iç kaplama":"Painted interior","Opsiyonel tel ara bölücüler":"Optional wire dividers","Dondurulmuş ürünler için kullanılabilir":"Suitable for frozen products","Opsiyonel sürgü sistemi uygulaması":"Optional sliding system","Kolay taşınabilirlik için tekerlekli":"Wheels for easy moving","Mekanik termostat":"Mechanical thermostat","Boyalı sac iç kaplama":"Painted steel interior","3 rows glass shelves  •  Led aydınlatma sistemi — Led light system":"3 rows glass shelves • LED lighting system","Standart ön dekor boyalı sactır (opsiyonel dekor uygulaması)":"Standard front decor is painted steel (optional decor available)","Fan assisted refrigeration  •  Yaş pasta için kullanılabilir — Used for storing cake":"Fan-assisted refrigeration • Used for storing cake","Salata teşhiri için kullanılır":"Used for salad display","Sıcak yemekleri güvenli servis sıcaklığında muhafaza eder":"Keeps hot food at a safe serving temperature","Su banyosu (bain-marie) sistemi ile hijyenik ısıtma":"Hygienic heating with water bath (bain-marie) system","Kolay temizlenebilir paslanmaz iç yüzey":"Easy-to-clean stainless steel interior","Soğutmasız (nötr) teşhir":"Non-refrigerated (neutral) display","Isıtmalı cam üstü teşhir tablası":"Heated glass-top display plate","İçten motorlu  •  Statik soğutma — Static refrigeration":"Plug-in • Static refrigeration","2 sıra paslanmaz delikli raf":"2 rows of perforated stainless steel shelves","Led aydınlatma sistemi":"LED lighting system","Granit üst kaplama":"Granite top","İçten motorlu  •  Dondurma teşhiri için özel tasarım — Designed for ice cream display":"Plug-in • Designed for ice cream display","İçten motorlu  •  Soğutmalı model — Refrigerated model":"Plug-in • Refrigerated model","Electronic thermostat  •  Poliüretan gövde — Polyurethane injected body":"Electronic thermostat • Polyurethane injected body","1 row glass shelves  •  Düz, ısıcamlı ön cam — Double-glazed, flat front glass":"1 row glass shelves • Double-glazed, flat front glass","Led aydınlatma sistemi — Led light system  •  PS: Pastries":"LED lighting system • PS: Pastries","İçten motorlu  •  Soğutmasız (nötr) model — Non-refrigerated (neutral) model":"Plug-in • Non-refrigerated (neutral) model","1 row glass shelves  •  Led aydınlatma sistemi — Led light system":"1 row glass shelves • LED lighting system","Standart ön dekor boyalı sactır — Standard front decor is painted steel  •  CK: Cookies":"Standard front decor is painted steel • CK: Cookies","İçten motorlu  •  Isıtmalı model — Heated model":"Plug-in • Heated model","Electronic thermostat  •  Led aydınlatma sistemi — Led light system":"Electronic thermostat • LED lighting system","İçten Motorlu":"Plug-in","Soğutmalı, soğutmasız ve ısıtmalı model":"Refrigerated, non-refrigerated and heated models","1 sıra cam raf":"1 row of glass shelves","Standart ön dekor boyalı sactır":"Standard front decor is painted steel","Yaş pasta ürünleri için kullanılabilir":"Suitable for fresh cakes","Soğutmalı ve soğutmasız model":"Refrigerated and non-refrigerated models","4 sıra cam raf":"4 rows of glass shelves","Yaş pasta ve çikolata için kullanılabilir":"Suitable for fresh cakes and chocolate","Soğutmalı model":"Refrigerated model","Dışı ve içi boyalı sac":"Painted steel inside and outside","3 sıra cam raf":"3 rows of glass shelves","Otomatik su buharlaştırma":"Automatic water evaporation","Yaş pasta ve çikolata ürünleri için kullanılabilir":"Suitable for fresh cakes and chocolate products","Çalışma derecesi pasta için: +4/+6°C":"Operating temperature for pastry: +4/+6°C","Yaş pasta, kuru pasta ve çikolata ürünleri için kullanılabilir":"Suitable for fresh and dry pastry and chocolate products","Montaj bedeli":"Installation","Nakliye bedeli":"Transport","Tesisat bedeli":"Piping","Freon gaz":"Refrigerant gas","Soğutma grubu montajı":"Condensing unit installation","Merkezi sistem montajı":"Central system installation","Bakır boru, kablo, izolasyon ve ara tesisat malzemeleri":"Copper pipe, cable, insulation and piping materials","Panel kurulum işçiliği":"Panel installation labour","Bakır boru tesisat ve elektrik kablo işçiliği":"Copper piping and electrical cabling labour","Soğutma gruplarının montajı ve devreye alma":"Installation and commissioning of condensing units","Soğutma grubu montajı ve devreye alma":"Condensing unit installation and commissioning","Merkezi sistem montajı ve devreye alma":"Central system installation and commissioning","Tesisat ve nakliye hariçtir.":"Piping and transport are excluded.","Nakliye hariçtir.":"Transport is excluded.","Paneller, iki metal sac arasına ahşap malzeme kullanılmadan, 40 (±2) kg/m³ yoğunlukta poliüretan köpük enjeksiyonu ile üretilmektedir.":"Panels are made by injecting polyurethane foam at 40 (±2) kg/m³ density between two metal sheets, without any wood.","Kilit sistemi, panellerin kolay sökülüp yeniden montaj yapılmasına olanak sağlar; birleşim yerleri hijyenik profillerle kapatılır.":"The cam-lock system allows panels to be easily dismantled and reinstalled; joints are closed with hygienic profiles.","Panel montaj aksesuarları":"Panel installation accessories","PVC şerit perde":"PVC strip curtain","Denge basınç ventili":"Pressure relief valve","LED aydınlatma":"LED lighting","Acil stop butonu":"Emergency stop button","Acil durum sireni":"Emergency siren","Montaj dahil":"Installation included","Montaj hariç":"Installation excluded","Evaporatör ve dijital kontrol paneli hariç":"Evaporator and digital control panel excluded","Evaporatör ve dijital kontrol paneli dolabın üzerindedir.":"Evaporator and digital control panel are on the cabinet.","Dijital kontrol paneli dahil":"Digital control panel included","Dolap projesindeki merkezi sisteme bağlanır":"Connected to the central system of the cabinet project"};
-const TK_EN_KURAL = [["^.*sayfasına bakınız.*$",""],["RT modellerde soğutma grubu fiyata dahil değildir[^\\n]*","condensing unit is not included in RT models"],["^Gece perdesi ya da cam sürgü seçeneği$","Night blind or sliding glass option"],["^NOVA OP'ta maksimum 3 sıra raf aydınlatma seçeneği bulunur\\.$","NOVA OP has a maximum of 3 rows of shelf lighting."],["^Dekoratif ön alın altı aydınlatma$","Decorative lower front lighting"],["^Camlı$","Glass"],["^Düz cam$","Flat glass"],["For displaying hot items such as baklava, börek, croissants","For displaying hot items such as baklava, pastries, croissants"],["Siyah granit tezgahlı  /  Black granite top","Black granite top"],["Corian tezgahlı  /  Corian top","Corian top"],["4 Floor Wire Shelf /4 Katlı Tel Raf","4-floor wire shelf"],["Tam Cam Kapı Fiyat Farkı","Full glass door surcharge"],["Transparan kapı fiyat farkı / Transparent door difference","Transparent door surcharge"],["Full Glass kapı fiyat farkı / Full glass door difference","Full glass door surcharge"],["Alt Havuz Sürgü farkı","Lower tray sliding surcharge"],["Boyalı Tel Zemin Bölücü","Painted wire base divider"],["Boyalı Tel Zemin","Painted wire base"],["Paslanmaz dış kaplama farkı","Stainless exterior surcharge"],["Himalaya Tuzu Farkı","Himalayan salt surcharge"],["Sabit Et Askı Demir 1 Kapı","Fixed meat rail, 1 door"],["Dönerli Askı demiri \\(1 Kapı\\)","Rotating meat rail (1 door)"],["Arka Cam Farkı","Rear glass surcharge"],["Ahşap [Kk]apalı [Ss]andık","Closed wooden crate"],["Kapalı [Ss]andık( [Ff]iyatı)?","Closed crate"],["[Bb]oyalı [Ss]ürgü farkı","Painted sliding surcharge"],["Opsiyonel tekerlek seçeneği","Optional wheels"],["Tekerlek seçeneği","Wheels option"],["Tekerlek farkı","Wheels surcharge"],["Üst sürgü kapı farkı","Upper sliding door surcharge"],["Sürgü farkı","Sliding surcharge"],["(\\d) sıra üst raf farkı","$1 row upper shelf surcharge"],["Defrost farkı","Defrost surcharge"],["Lake ahşap dekor","Lacquered wood decor"],["Ahşap dekor \\(([A-Z/]+)\\)","Wooden decor ($1)"],["Lake ahşap Ön Dekor","Lacquered wood front decor"],["Ahşap Ön Dekor","Wooden front decor"],["Corian ön dekor","Corian front decor"],["Paslanmaz iç sac farkı","Stainless interior sheet surcharge"],["Paslanmaz dış sac farkı","Stainless exterior sheet surcharge"],["DIŞ ÜNİTE MEKANİK EKİPMAN LİSTESİ","Outdoor unit mechanical equipment"],["MERKEZİ KULLANILAN EKİPMANLAR","Central system equipment"],["REMOTE KONDENSER ÖZELLİKLERİ","Remote condenser features"],["İÇ ÜNİTE MEKANİK EKİPMAN LİSTESİ","Indoor unit mechanical equipment"],["Şoklama grupları","Blast chiller units"],["Oda ölçüleri:","Room dimensions:"],["kalınlığında endüstriyel kilitli tip duvar, tavan, zemin paneli","thick industrial cam-lock wall, ceiling and floor panels"],["kalınlığında endüstriyel kilitli tip duvar, tavan paneli","thick industrial cam-lock wall and ceiling panels"],["Dondurucu oda \\(-18°C\\)","Freezer room (-18°C)"],["Soğuk oda \\(0/\\+5°C\\)","Cold room (0/+5°C)"],["Tavan askı rayı","Ceiling hanging rail"],["(\\d+) adet (\\S+) net geçişli ısıtıcılı ","$1 pcs $2 clear opening heated "],["(\\d+) adet (\\S+) net geçişli ","$1 pcs $2 clear opening "],["menteşeli","hinged"],["sürgülü","sliding"],["özel kapı","custom door"],[" kapı(?=\\s|$|,)"," door"],["Soğutma grubu modeli:","Condensing unit model:"],["Kompresör:","Compressor:"],["Soğutma kapasitesi:","Cooling capacity:"],["Oda ihtiyacı:","Room requirement:"],["Gerekli kapasite:","Required capacity:"],["Ünite kapasitesi:","Unit capacity:"],["Sistem:","System:"],["Bağlı dolap:","Connected cabinet:"],["Bağlı modüller:","Connected modules:"],["Bağlı odalar:","Connected rooms:"],["Bağlı:","Connected:"],["\\(soğuk oda\\)","(cold room)"],["Evaporatör: ","Evaporator: "],["exp\\. valf dahil","expansion valve included"],[" \\(her biri\\)"," (each)"],["\\(2 adet, oda gücü iki gruba bölünür\\)","(2 pcs, room load split between two units)"],["Evaporatör \\+ exp\\. valf","Evaporator + expansion valve"],["Fan hız kontrol","Fan speed control"],["Defrost kontaktör","Defrost contactor"],["Likit tutucu","Liquid receiver"],["Yağ ayırıcı","Oil separator"],["Solenoid vana","Solenoid valve"],["Dual basınç kontrol","Dual pressure control"],[" dahil\\b"," included"],["Tesisat hariçtir[^\\n]*","Piping excluded"],["(\\d+)°C/\\+","$1°C/+"],["evaporatör \\+ dijital panel \\(","evaporator + digital panel ("],[", merkezi sisteme bağlı\\)",", connected to central system)"],[", 2 evaporatör\\)",", 2 evaporators)"],["2 adet soğutma grubu","2 condensing units"],["soğutma grubu","condensing unit"],["Soğutma grubu \\(dış ünite\\)","Condensing unit (outdoor)"],["Soğutma Grubu","Condensing unit"],["Soğutma grubu","Condensing unit"],["\\bnegatif\\b","low temp."],["\\bpozitif\\b","medium temp."],["harici kondenserli merkezi sistem","central system with remote condenser"],["scroll merkezi sistem","scroll central system"],["Scroll merkezi sistem","Scroll central system"],["Harici kondenserli merkezi sistem","Central system with remote condenser"],["Şoklama grubu","Blast chiller unit"],["Şoklama grup","Blast chiller unit"],["için uçlara","for both ends"],["\\(birleşik grup\\)","(joined group)"],[" aksesuarı$"," accessory"],["(\\d) KOMPRESÖRLÜ - (\\d+) RPM KONDENSERLİ[^\\n]*","$1 compressors - $2 RPM condenser"],["(\\d) KOMPRESÖRLÜ & HARICI KONDENSERLI MERKEZI SOGUTMA SISTEMI","$1 compressors, central cooling system with remote condenser"],["ŞOKLAMA GRUPLARI","Blast chiller units"],["Kompresör Model","Compressor model"],["Kompresör Miktar \\(Adet\\)","Compressor quantity"],["Adet x HP","Qty x HP"],["Soğutma Kapasitesi","Cooling capacity"],["Kapasite \\(","Capacity ("],["Kondenser Tip","Condenser type"],["Bağlantı Çapları","Connection sizes"],["Kompressör Model","compressor model"],["Toplam Güç \\(HP\\)","Total power (HP)"],["Condenser Capacity Kondenser Kapasitesi","Condenser capacity"],["Kondenser Fanı Adet x Çap","Condenser fan qty x diameter"],["Marka / Model","Brand / model"],["Kompressör Gücü \\(HP\\)","Compressor power (HP)"],["Evaporatör Modeli","Evaporator model"],["Miktar \\(adet\\)","Quantity"],["Dış Ünite Birim Liste Fiyatı","Outdoor unit list price"],["Liste Fiyatı","List price"],["Kondenser Birim Fiyatı","Condenser unit price"],["Evaporatör & Exp\\.Valf Fıyatı","Evaporator & expansion valve price"],["Dijital Kontrol Paneli Fiyatı","Digital control panel price"],["\\(ayrıca\\)","(separate)"],["\\bAdet\\b","Qty"],["Ekipman:","Equipment:"],["Elektrik Panosu \\(Siemens ya da ABB Şalt Malzeme\\)","Electrical panel (Siemens or ABB switchgear)"],["Elektrik Panosu","Electrical panel"],["Emiş-Basma Hattı Titreşim Alıcılar","Suction-discharge line vibration absorbers"],["Titrelşim Alıcılar","Vibration absorbers"],["Titreşim Alıcı","Vibration absorber"],["Likit Tankı","Liquid tank"],["Basma Hattı Çek Valf","Discharge line check valve"],["Kompresör Basma Hattı Çek Valf","Compressor discharge check valve"],["Fan Kontrol","Fan control"],["Bakır Borulu Kondenser","Copper tube condenser"],["Senol Kondenser","Senol condenser"],["Kondenser","Condenser"],["Kombine Presostat","Combined pressure switch"],["Kombine Basınç Presostat","Combined pressure switch"],["Kombine Basınç Kontrol","Combined pressure control"],["Merkezi Şase - Açık Tip","Central open-type frame"],["Senol Şase","Senol frame"],["Şase","Frame"],["Alçak Basınç-Yüksek Basınç Manometre","Low-high pressure gauge"],["Alçak-Yüksek Basınç Manometreleri","Low-high pressure gauges"],["Alçak-Yüksek Basınç Manometre","Low-high pressure gauge"],["Scroll Kompresör","Scroll compressor"],["Yarı Hermetik Kompresör","Semi-hermetic compressor"],["Kompresör Rotolog Vana","Compressor rotalock valve"],["Küresel Vanalar","Ball valves"],["Küresel Vana","Ball valve"],["Yağ Dengeleme","Oil equalisation"],["Gözetleme Camı","Sight glass"],["Yağlama Hattı Ara Vanaları","Oil line shut-off valves"],["Yağlama Hattı Ara Vanalar","Oil line shut-off valves"],["Yağlama Hattı Sight glass","Oil line sight glass"],["Yağlama Hattı Rotolog Vana","Oil line rotalock valve"],["Yağlama Hattı Çek Valf","Oil line check valve"],["K\\. ?Filtre","Filter drier"],["Kurutucu Filtre","Filter drier"],["Yağ Ayırıcı","Oil separator"],["Dönüş Hattı Akümülatör \\(Likit Tutucu\\)","Suction accumulator (liquid receiver)"],["Likit Tutucu","Liquid receiver"],["Merkezi Kontrol","Central control"],["Elektronik Yağ Seviye Regülatörü","Electronic oil level regulator"],["Yüksek Basınç Kontrol","High pressure control"],["Yağ Filtresi","Oil filter"],["Yağ Deposu","Oil reservoir"],["Z\\.Abegg ya da EBM Marka Fan","Z.Abegg or EBM fan"],["Selenoid Valf\\+bobin","Solenoid valve + coil"],["Isıtıcı Rezistans","Heater"],["Fan Hız Kontrol","Fan speed control"],["Susturucu","Muffler"],["\\bKompresör\\b","Compressor"],["^([A-Za-z][^/\\n]*?)\\s+/\\s+.+$","$1"],["İlave boyalı tel raf","Additional painted wire shelf"],["İlave paslanmaz tel raf","Additional stainless wire shelf"],["İlave boyalı raf","Additional painted shelf"],["İlave paslanmaz raf","Additional stainless shelf"],["Raf aydınlatma","Shelf lighting"],["Paslanmaz [İi]ç Yüzey Farkı|Paslanmaz iç yüzey farkı","Stainless interior surcharge"],["Paslanmaz [Dd]avlumbaz [Aa]ltı [Hh]avuzu","Stainless under-hood tray"],["Paslanmaz [Öö]n [Dd]elikli [Ss]ac","Stainless perforated front sheet"],["Paslanmaz [Ff]an [Dd]avlumbazı farkı","Stainless fan hood surcharge"],["Paslanmaz [Ff]an [Dd]avlumbazı","Stainless fan hood"],["Enerji tasarruflu fan farkı","Energy-saving fan surcharge"],["Boyalı Sürgü farkı","Painted sliding surcharge"],["Dolap bölücü - plexi","Cabinet divider - plexi"],["Dolap bölücü","Cabinet divider"],["Ahşap palet","Wooden pallet"],["Ahşap manav sepeti \\(adet\\)","Wooden produce basket (each)"],["Ürün durdurucu pleksi adedi","Product stopper plexi (each)"],["Raf etiketliği adedi","Shelf price holder (each)"],["Epoksi boyalı evaporatör","Epoxy-coated evaporator"],["Pleksi arka sürgü","Plexi rear sliding door"],["Cam ara raf aydınlatmalı","Lit glass shelf"],["Cam ara raf","Glass shelf"],["Et için pembe LED","Pink LED for meat"],["Modüler saladbar - benmari aparatı","Modular saladbar - bain-marie insert"],["Ön lazer sac dekorasyon - LEDli","Laser-cut front decor with LED"],["Kapalı sandık fiyatı","Closed crate"],["Ara bölücü cam","Glass divider"],["Modül bölücü cam","Module glass divider"],["Poşetlik","Bag holder"],["Polietilen kesme tahtası","Polyethylene cutting board"],["Kesme tahtası","Cutting board"],["Bıçaklık","Knife holder"],["GN Küvet","GN pan"],["Kapalı Aynalı Yan Panel Takım","Closed mirrored side panel set"],["Kapalı Aynalı Yan Panel","Closed mirrored side panel"],["Aynalı Yan Panel","Mirrored side panel"],["Kapalı Yan Panel Takım","Closed side panel set"],["Kapalı Yan Panel","Closed side panel"],["Isıcamlı Yan Panel Takım","Double-glazed side panel set"],["Isıcamlı Yan Panel","Double-glazed side panel"],["Isıcamlı yan farkı - fitilli kenar","Double-glazed side surcharge - sealed edge"],["Isıcamlı yan farkı - alüminyum kenar","Double-glazed side surcharge - aluminium edge"],["Isıcamlı yan fiyat farkı","Double-glazed side surcharge"],["Yan Panel Takım - Isıcamlı yan farkı","Side panel set - double-glazed surcharge"],["Yan Panel Takım - Isıcamlı","Side panel set - double-glazed"],["Yan Panel Takım - 8mm tek camlı","Side panel set - 8mm single glass"],["Yan Panel Cam Farkı","Side panel glass surcharge"],["Yan Panel Takım","Side panel set"],["Yan Panel","Side panel"],["Tek Yan Cam Farkı","Single side glass surcharge"],["PS yan panel dekor takımı \\(2 taraf\\)","PS side panel decor set (2 sides)"],["Yan panel dekor takımı \\(2 taraf\\)","Side panel decor set (2 sides)"],["Corian yan takım dekor","Corian side decor set"],["Ahşap dekor \\(ön \\+ yanlar\\)","Wooden decor (front + sides)"],["Lake ahşap 2 Yan Dekor","Lacquered wood 2-side decor"],["Ahşap 2 Yan Dekor","Wooden 2-side decor"],["(\\d) sıra(?=\\s|$|,)","$1 row"],["(\\d) Sıra(?=\\s|$|,)","$1 row"],["\\b(\\d+) kapı(?=\\s|$|,)","$1 doors"],["\\((\\d) adet\\)","($1 pcs)"],["(\\d) adet\\b","$1 pcs"],["DK\\b","outer corner"],["İK\\b","inner corner"],["\\b([2-9]) door\\b","$1 doors"],["(\\d)\\.(\\d{3}) W\\b","$1,$2 W"]].map(([p,r])=>[new RegExp(p,'g'),r]);
+const TK_EN_KURAL = [["Yarı Dikey Kabin$","Semi-vertical Cabinet"],["Dikey Kabin$","Vertical Cabinet"],["Reyon Dolabı$","Serve-over Counter"],["Ada Tipi Dolap$","Island Cabinet"],["Pasta Reyonu$","Pastry Counter"],["^.*sayfasına bakınız.*$",""],["RT modellerde soğutma grubu fiyata dahil değildir[^\\n]*","condensing unit is not included in RT models"],["^Gece perdesi ya da cam sürgü seçeneği$","Night blind or sliding glass option"],["^NOVA OP'ta maksimum 3 sıra raf aydınlatma seçeneği bulunur\\.$","NOVA OP has a maximum of 3 rows of shelf lighting."],["^Dekoratif ön alın altı aydınlatma$","Decorative lower front lighting"],["^Camlı$","Glass"],["^Düz cam$","Flat glass"],["For displaying hot items such as baklava, börek, croissants","For displaying hot items such as baklava, pastries, croissants"],["Siyah granit tezgahlı  /  Black granite top","Black granite top"],["Corian tezgahlı  /  Corian top","Corian top"],["4 Floor Wire Shelf /4 Katlı Tel Raf","4-floor wire shelf"],["Tam Cam Kapı Fiyat Farkı","Full glass door surcharge"],["Transparan kapı fiyat farkı / Transparent door difference","Transparent door surcharge"],["Full Glass kapı fiyat farkı / Full glass door difference","Full glass door surcharge"],["Alt Havuz Sürgü farkı","Lower tray sliding surcharge"],["Boyalı Tel Zemin Bölücü","Painted wire base divider"],["Boyalı Tel Zemin","Painted wire base"],["Paslanmaz dış kaplama farkı","Stainless exterior surcharge"],["Himalaya Tuzu Farkı","Himalayan salt surcharge"],["Sabit Et Askı Demir 1 Kapı","Fixed meat rail, 1 door"],["Dönerli Askı demiri \\(1 Kapı\\)","Rotating meat rail (1 door)"],["Arka Cam Farkı","Rear glass surcharge"],["Ahşap [Kk]apalı [Ss]andık","Closed wooden crate"],["Kapalı [Ss]andık( [Ff]iyatı)?","Closed crate"],["[Bb]oyalı [Ss]ürgü farkı","Painted sliding surcharge"],["Opsiyonel tekerlek seçeneği","Optional wheels"],["Tekerlek seçeneği","Wheels option"],["Tekerlek farkı","Wheels surcharge"],["Üst sürgü kapı farkı","Upper sliding door surcharge"],["Sürgü farkı","Sliding surcharge"],["(\\d) sıra üst raf farkı","$1 row upper shelf surcharge"],["Defrost farkı","Defrost surcharge"],["Lake ahşap dekor","Lacquered wood decor"],["Ahşap dekor \\(([A-Z/]+)\\)","Wooden decor ($1)"],["Lake ahşap Ön Dekor","Lacquered wood front decor"],["Ahşap Ön Dekor","Wooden front decor"],["Corian ön dekor","Corian front decor"],["Paslanmaz iç sac farkı","Stainless interior sheet surcharge"],["Paslanmaz dış sac farkı","Stainless exterior sheet surcharge"],["DIŞ ÜNİTE MEKANİK EKİPMAN LİSTESİ","Outdoor unit mechanical equipment"],["MERKEZİ KULLANILAN EKİPMANLAR","Central system equipment"],["REMOTE KONDENSER ÖZELLİKLERİ","Remote condenser features"],["İÇ ÜNİTE MEKANİK EKİPMAN LİSTESİ","Indoor unit mechanical equipment"],["Şoklama grupları","Blast chiller units"],["Oda ölçüleri:","Room dimensions:"],["kalınlığında endüstriyel kilitli tip duvar, tavan, zemin paneli","thick industrial cam-lock wall, ceiling and floor panels"],["kalınlığında endüstriyel kilitli tip duvar, tavan paneli","thick industrial cam-lock wall and ceiling panels"],["Dondurucu oda \\(-18°C\\)","Freezer room (-18°C)"],["Soğuk oda \\(0/\\+5°C\\)","Cold room (0/+5°C)"],["Tavan askı rayı","Ceiling hanging rail"],["(\\d+) adet (\\S+) net geçişli ısıtıcılı ","$1 pcs $2 clear opening heated "],["(\\d+) adet (\\S+) net geçişli ","$1 pcs $2 clear opening "],["menteşeli","hinged"],["sürgülü","sliding"],["özel kapı","custom door"],[" kapı(?=\\s|$|,)"," door"],["Soğutma grubu modeli:","Condensing unit model:"],["Kompresör:","Compressor:"],["Soğutma kapasitesi:","Cooling capacity:"],["Oda ihtiyacı:","Room requirement:"],["Gerekli kapasite:","Required capacity:"],["Ünite kapasitesi:","Unit capacity:"],["Sistem:","System:"],["Bağlı dolap:","Connected cabinet:"],["Bağlı modüller:","Connected modules:"],["Bağlı odalar:","Connected rooms:"],["Bağlı:","Connected:"],["\\(soğuk oda\\)","(cold room)"],["Evaporatör: ","Evaporator: "],["exp\\. valf dahil","expansion valve included"],[" \\(her biri\\)"," (each)"],["\\(2 adet, oda gücü iki gruba bölünür\\)","(2 pcs, room load split between two units)"],["Evaporatör \\+ exp\\. valf","Evaporator + expansion valve"],["Fan hız kontrol","Fan speed control"],["Defrost kontaktör","Defrost contactor"],["Likit tutucu","Liquid receiver"],["Yağ ayırıcı","Oil separator"],["Solenoid vana","Solenoid valve"],["Dual basınç kontrol","Dual pressure control"],[" dahil\\b"," included"],["Tesisat hariçtir[^\\n]*","Piping excluded"],["(\\d+)°C/\\+","$1°C/+"],["evaporatör \\+ dijital panel \\(","evaporator + digital panel ("],[", merkezi sisteme bağlı\\)",", connected to central system)"],[", 2 evaporatör\\)",", 2 evaporators)"],["2 adet soğutma grubu","2 condensing units"],["soğutma grubu","condensing unit"],["Soğutma grubu \\(dış ünite\\)","Condensing unit (outdoor)"],["Soğutma Grubu","Condensing unit"],["Soğutma grubu","Condensing unit"],["\\bnegatif\\b","low temp."],["\\bpozitif\\b","medium temp."],["harici kondenserli merkezi sistem","central system with remote condenser"],["scroll merkezi sistem","scroll central system"],["Scroll merkezi sistem","Scroll central system"],["Harici kondenserli merkezi sistem","Central system with remote condenser"],["Şoklama grubu","Blast chiller unit"],["Şoklama grup","Blast chiller unit"],["için uçlara","for both ends"],["\\(birleşik grup\\)","(joined group)"],[" aksesuarı$"," accessory"],["(\\d) KOMPRESÖRLÜ - (\\d+) RPM KONDENSERLİ[^\\n]*","$1 compressors - $2 RPM condenser"],["(\\d) KOMPRESÖRLÜ & HARICI KONDENSERLI MERKEZI SOGUTMA SISTEMI","$1 compressors, central cooling system with remote condenser"],["ŞOKLAMA GRUPLARI","Blast chiller units"],["Kompresör Model","Compressor model"],["Kompresör Miktar \\(Adet\\)","Compressor quantity"],["Adet x HP","Qty x HP"],["Soğutma Kapasitesi","Cooling capacity"],["Kapasite \\(","Capacity ("],["Kondenser Tip","Condenser type"],["Bağlantı Çapları","Connection sizes"],["Kompressör Model","compressor model"],["Toplam Güç \\(HP\\)","Total power (HP)"],["Condenser Capacity Kondenser Kapasitesi","Condenser capacity"],["Kondenser Fanı Adet x Çap","Condenser fan qty x diameter"],["Marka / Model","Brand / model"],["Kompressör Gücü \\(HP\\)","Compressor power (HP)"],["Evaporatör Modeli","Evaporator model"],["Miktar \\(adet\\)","Quantity"],["Dış Ünite Birim Liste Fiyatı","Outdoor unit list price"],["Liste Fiyatı","List price"],["Kondenser Birim Fiyatı","Condenser unit price"],["Evaporatör & Exp\\.Valf Fıyatı","Evaporator & expansion valve price"],["Dijital Kontrol Paneli Fiyatı","Digital control panel price"],["\\(ayrıca\\)","(separate)"],["\\bAdet\\b","Qty"],["Ekipman:","Equipment:"],["Elektrik Panosu \\(Siemens ya da ABB Şalt Malzeme\\)","Electrical panel (Siemens or ABB switchgear)"],["Elektrik Panosu","Electrical panel"],["Emiş-Basma Hattı Titreşim Alıcılar","Suction-discharge line vibration absorbers"],["Titrelşim Alıcılar","Vibration absorbers"],["Titreşim Alıcı","Vibration absorber"],["Likit Tankı","Liquid tank"],["Basma Hattı Çek Valf","Discharge line check valve"],["Kompresör Basma Hattı Çek Valf","Compressor discharge check valve"],["Fan Kontrol","Fan control"],["Bakır Borulu Kondenser","Copper tube condenser"],["Senol Kondenser","Senol condenser"],["Kondenser","Condenser"],["Kombine Presostat","Combined pressure switch"],["Kombine Basınç Presostat","Combined pressure switch"],["Kombine Basınç Kontrol","Combined pressure control"],["Merkezi Şase - Açık Tip","Central open-type frame"],["Senol Şase","Senol frame"],["Şase","Frame"],["Alçak Basınç-Yüksek Basınç Manometre","Low-high pressure gauge"],["Alçak-Yüksek Basınç Manometreleri","Low-high pressure gauges"],["Alçak-Yüksek Basınç Manometre","Low-high pressure gauge"],["Scroll Kompresör","Scroll compressor"],["Yarı Hermetik Kompresör","Semi-hermetic compressor"],["Kompresör Rotolog Vana","Compressor rotalock valve"],["Küresel Vanalar","Ball valves"],["Küresel Vana","Ball valve"],["Yağ Dengeleme","Oil equalisation"],["Gözetleme Camı","Sight glass"],["Yağlama Hattı Ara Vanaları","Oil line shut-off valves"],["Yağlama Hattı Ara Vanalar","Oil line shut-off valves"],["Yağlama Hattı Sight glass","Oil line sight glass"],["Yağlama Hattı Rotolog Vana","Oil line rotalock valve"],["Yağlama Hattı Çek Valf","Oil line check valve"],["K\\. ?Filtre","Filter drier"],["Kurutucu Filtre","Filter drier"],["Yağ Ayırıcı","Oil separator"],["Dönüş Hattı Akümülatör \\(Likit Tutucu\\)","Suction accumulator (liquid receiver)"],["Likit Tutucu","Liquid receiver"],["Merkezi Kontrol","Central control"],["Elektronik Yağ Seviye Regülatörü","Electronic oil level regulator"],["Yüksek Basınç Kontrol","High pressure control"],["Yağ Filtresi","Oil filter"],["Yağ Deposu","Oil reservoir"],["Z\\.Abegg ya da EBM Marka Fan","Z.Abegg or EBM fan"],["Selenoid Valf\\+bobin","Solenoid valve + coil"],["Isıtıcı Rezistans","Heater"],["Fan Hız Kontrol","Fan speed control"],["Susturucu","Muffler"],["\\bKompresör\\b","Compressor"],["^([A-Za-z][^/\\n]*?)\\s+/\\s+.+$","$1"],["İlave boyalı tel raf","Additional painted wire shelf"],["İlave paslanmaz tel raf","Additional stainless wire shelf"],["İlave boyalı raf","Additional painted shelf"],["İlave paslanmaz raf","Additional stainless shelf"],["Raf aydınlatma","Shelf lighting"],["Paslanmaz [İi]ç Yüzey Farkı|Paslanmaz iç yüzey farkı","Stainless interior surcharge"],["Paslanmaz [Dd]avlumbaz [Aa]ltı [Hh]avuzu","Stainless under-hood tray"],["Paslanmaz [Öö]n [Dd]elikli [Ss]ac","Stainless perforated front sheet"],["Paslanmaz [Ff]an [Dd]avlumbazı farkı","Stainless fan hood surcharge"],["Paslanmaz [Ff]an [Dd]avlumbazı","Stainless fan hood"],["Enerji tasarruflu fan farkı","Energy-saving fan surcharge"],["Boyalı Sürgü farkı","Painted sliding surcharge"],["Dolap bölücü - plexi","Cabinet divider - plexi"],["Dolap bölücü","Cabinet divider"],["Ahşap palet","Wooden pallet"],["Ahşap manav sepeti \\(adet\\)","Wooden produce basket (each)"],["Ürün durdurucu pleksi adedi","Product stopper plexi (each)"],["Raf etiketliği adedi","Shelf price holder (each)"],["Epoksi boyalı evaporatör","Epoxy-coated evaporator"],["Pleksi arka sürgü","Plexi rear sliding door"],["Cam ara raf aydınlatmalı","Lit glass shelf"],["Cam ara raf","Glass shelf"],["Et için pembe LED","Pink LED for meat"],["Modüler saladbar - benmari aparatı","Modular saladbar - bain-marie insert"],["Ön lazer sac dekorasyon - LEDli","Laser-cut front decor with LED"],["Kapalı sandık fiyatı","Closed crate"],["Ara bölücü cam","Glass divider"],["Modül bölücü cam","Module glass divider"],["Poşetlik","Bag holder"],["Polietilen kesme tahtası","Polyethylene cutting board"],["Kesme tahtası","Cutting board"],["Bıçaklık","Knife holder"],["GN Küvet","GN pan"],["Kapalı Aynalı Yan Panel Takım","Closed mirrored side panel set"],["Kapalı Aynalı Yan Panel","Closed mirrored side panel"],["Aynalı Yan Panel","Mirrored side panel"],["Kapalı Yan Panel Takım","Closed side panel set"],["Kapalı Yan Panel","Closed side panel"],["Isıcamlı Yan Panel Takım","Double-glazed side panel set"],["Isıcamlı Yan Panel","Double-glazed side panel"],["Isıcamlı yan farkı - fitilli kenar","Double-glazed side surcharge - sealed edge"],["Isıcamlı yan farkı - alüminyum kenar","Double-glazed side surcharge - aluminium edge"],["Isıcamlı yan fiyat farkı","Double-glazed side surcharge"],["Yan Panel Takım - Isıcamlı yan farkı","Side panel set - double-glazed surcharge"],["Yan Panel Takım - Isıcamlı","Side panel set - double-glazed"],["Yan Panel Takım - 8mm tek camlı","Side panel set - 8mm single glass"],["Yan Panel Cam Farkı","Side panel glass surcharge"],["Yan Panel Takım","Side panel set"],["Yan Panel","Side panel"],["Tek Yan Cam Farkı","Single side glass surcharge"],["PS yan panel dekor takımı \\(2 taraf\\)","PS side panel decor set (2 sides)"],["Yan panel dekor takımı \\(2 taraf\\)","Side panel decor set (2 sides)"],["Corian yan takım dekor","Corian side decor set"],["Ahşap dekor \\(ön \\+ yanlar\\)","Wooden decor (front + sides)"],["Lake ahşap 2 Yan Dekor","Lacquered wood 2-side decor"],["Ahşap 2 Yan Dekor","Wooden 2-side decor"],["(\\d) sıra(?=\\s|$|,)","$1 row"],["(\\d) Sıra(?=\\s|$|,)","$1 row"],["\\b(\\d+) kapı(?=\\s|$|,)","$1 doors"],["\\((\\d) adet\\)","($1 pcs)"],["(\\d) adet\\b","$1 pcs"],["DK\\b","outer corner"],["İK\\b","inner corner"],["\\b([2-9]) door\\b","$1 doors"],["(\\d)\\.(\\d{3}) W\\b","$1,$2 W"]].map(([p,r])=>[new RegExp(p,'g'),r]);
 function tkEnSatir(x){
   const k = String(x).trim();
   if (Object.prototype.hasOwnProperty.call(TK_EN,k)) return TK_EN[k];
@@ -3274,9 +3348,9 @@ function tkDolapModule(code){
   const motor = /\bPG\b|plug|İÇTEN/i.test(txt) ? 'PG' : (/\bRT\b|remote|DIŞTAN/i.test(txt) ? 'RT' : '');
   const nm = TK_UP(r.name).startsWith(TK_UP(p.name)) ? r.name : `${p.name} ${r.name}`;
   const kap = dolapKap(p, H);
-  return {id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pid, ad:`${nm} · ${col}`, L, D, H, motor,
+  return {id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pid, ad:`${nm} · ${col}`, baslik:dolapBaslik(p, r, col), L, D, H, motor,
     liste:list, isk: document.getElementById('dlDisc').value.trim() || undefined, img: tkImg(p),
-    aciklama:[p.sub, ...tkFeats(p)].filter(Boolean).join('\n'), wpm: kap ? kap.wpm : null, zone: kap ? kap.zone : (/\bLT\b/.test(TK_UP(p.name)) ? 'NEG' : 'POZ'),
+    aciklama:dolapAciklama(p, r, col), wpm: kap ? kap.wpm : null, zone: kap ? kap.zone : (/\bLT\b/.test(TK_UP(p.name)) ? 'NEG' : 'POZ'),
     birlesik:false, yan:null};
 }
 function tkModAdd(mod){ tkMods().push(mod); tkSave(); showToast(`"${mod.ad}" dolap projesine eklendi (Teklif Sepeti).`); }
@@ -3343,7 +3417,7 @@ function tkModPlan(){
   const lines = [], warn = [], units = [];
   groups.forEach(g=>{
     const head = g[0];
-    g.forEach(m=>lines.push({tip:'dolap', ad:m.ad, aciklama:m.aciklama, liste:m.liste, isk:m.isk, img:m.img, birim:'AD'}));
+    g.forEach(m=>lines.push({tip:'dolap', ad:m.baslik||m.ad, aciklama:m.aciklama, liste:m.liste, isk:m.isk, img:m.img, birim:'AD'}));
     if (head.motor==='RT'){
       const yanAd = head.yan==null ? tkYanDefault(head.pid) : head.yan;
       const y = tkYanOpts(head.pid).find(x=>x.ad===yanAd);
@@ -3483,7 +3557,7 @@ function tkPrintHtml(){
     <table class="pf-info"><tr><th>${Y.musteri}</th><td>${escHtml(TK.musteri||'—')}</td><th>${Y.proje}</th><td>${escHtml(TK.proje||'—')}</td></tr>
       <tr><th>${Y.ilgili}</th><td>${escHtml(TK.ilgili||'—')}</td><th>${Y.iletisim}</th><td>${escHtml(TK.iletisim||'—')}</td></tr></table>
     <table class="pf-lines"><thead><tr><th>#</th><th>${Y.aciklama}</th><th>${Y.miktar}</th><th>${Y.birimF}</th><th>${Y.tutar}</th></tr></thead><tbody>
-    ${TK.satirlar.map((l,i)=>{ const ac = tkMetin(l.aciklama); return `<tr><td>${i+1}</td><td>${l.img?`<img class="pf-img" src="${l.img}" alt="">`:''}<b>${escHtml(tkMetin(l.ad))}</b>${ac?`<ul>${ac.split('\n').filter(x=>x.trim()).map(x=>`<li>${escHtml(x)}</li>`).join('')}</ul>`:''}</td><td>${tkAdet(l.miktar)} ${escHtml(tkBirim(l.birim))}</td><td>${tkPara(l.fiyat)}</td><td>${tkPara(l.miktar*l.fiyat)}</td></tr>`; }).join('')}
+    ${TK.satirlar.map((l,i)=>{ const ac = tkMetin(l.aciklama); return `<tr><td>${i+1}</td><td><div class="pf-k">${l.img?`<img class="pf-img" src="${l.img}" alt="">`:''}<div class="pf-m"><b>${escHtml(tkMetin(l.ad))}</b>${ac?`<ul${ac.split('\n').length>6?' class="cok"':''}>${ac.split('\n').filter(x=>x.trim()).map(x=>`<li>${escHtml(x)}</li>`).join('')}</ul>`:''}</div></div></td><td>${tkAdet(l.miktar)} ${escHtml(tkBirim(l.birim))}</td><td>${tkPara(l.fiyat)}</td><td>${tkPara(l.miktar*l.fiyat)}</td></tr>`; }).join('')}
     </tbody></table>
     <table class="pf-tot"><tr><th>${Y.toplam}</th><td>${tkPara(t.ara)}</td></tr>${t.otv?`<tr><th>${Y.otv}</th><td>${tkPara(t.otv)}</td></tr>`:''}${TK.kdv?`<tr><th>${Y.kdv}</th><td>${tkPara(t.kdv)}</td></tr>`:''}<tr class="g"><th>${Y.genel}</th><td>${tkPara(t.genel)}</td></tr></table>
     ${TK.not?`<div class="pf-notes"><b>${Y.notlar}</b>${TK.not.split('\n').filter(x=>x.trim()).map(x=>`<p>${escHtml(x)}</p>`).join('')}</div>`:''}
@@ -3501,7 +3575,17 @@ document.getElementById('tkPreview').addEventListener('click', tkPreviewOpen);
 document.getElementById('tkPrevClose').addEventListener('click', tkPreviewClose);
 document.getElementById('tkPrev').addEventListener('click', e=>{ if (e.target.id==='tkPrev') tkPreviewClose(); });
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && !document.getElementById('tkPrev').hidden) tkPreviewClose(); });
-document.getElementById('tkPrevPrint').addEventListener('click', ()=>{ tkPreviewClose(); document.getElementById('tkPrint').click(); });
+document.getElementById('tkPrevPrint').addEventListener('click', ()=>{ // ekranda görünen teklif yazdırılır (kayıtlı teklif de olabilir)
+  const html = document.getElementById('tkPaper').innerHTML; tkPreviewClose();
+  document.getElementById('tkPrintArea').innerHTML = html; document.body.classList.add('tk-printing');
+  setTimeout(()=>{ window.print(); setTimeout(()=>document.body.classList.remove('tk-printing'), 300); }, 50);
+});
+function tkOnizleGoster(veri){
+  const k = TK; TK = Object.assign(tkEmpty(), veri);
+  try{ document.getElementById('tkPaper').innerHTML = tkPrintHtml(); } finally { TK = k; }
+  document.getElementById('tkPrev').hidden = false; document.body.classList.add('tk-prev-open');
+  document.querySelector('.tk-prev-body').scrollTop = 0;
+}
 document.getElementById('tkPrint').addEventListener('click', ()=>{
   if (!TK.satirlar.length){ showToast('Önce sepete kalem ekleyin.', true); return; }
   document.getElementById('tkPrintArea').innerHTML = tkPrintHtml();
@@ -3515,7 +3599,9 @@ document.getElementById('dlDetail').addEventListener('click', e=>{
   const c = e.target.closest('[data-tk]'); if (!c) return;
   const parts = c.dataset.tk.split('|');
   const mod = parts.length===4 && +parts[3]>=0 ? tkDolapModule(c.dataset.tk) : null;
-  if (mod) tkModAdd(mod); else { const l = tkDolapLine(c.dataset.tk); if (l) tkAdd(l); else return; }
+  const tkAday = mod || tkDolapLine(c.dataset.tk); if (!tkAday) return;
+  if (!confirm(`"${tkAday.baslik||tkAday.ad}" sepete eklensin mi?`)) return;
+  if (mod) tkModAdd(mod); else tkAdd(tkAday);
   c.classList.add('added'); setTimeout(()=>c.classList.remove('added'), 900);
 });
 document.getElementById('sgGroup').addEventListener('click', e=>{ const b = e.target.closest('[data-tkg]'); if (b){ tkAddGrup(b.dataset.tkg); return; } const tr = e.target.closest('[data-sgg]'); if (tr){ const k = 'g'+tr.dataset.sgg; SG_OPEN = SG_OPEN===k ? '' : k; renderSogutma(); } });
@@ -3525,6 +3611,8 @@ tkBadge();
 // Yeni modül eklemek: ana sayfaya data-go="ad" kartı + <div class="view" data-view="ad" hidden> yeterli.
 function renderTakvim(){ /* girişli sürümde (auth.js) Supabase'den doldurulur */ }
 function renderOneriler(){ /* girişli sürümde (auth.js) Supabase'den doldurulur */ }
+function renderGorevler(){ /* girişli sürümde (auth.js) Supabase'den doldurulur */ }
+function renderTeklifler(){ /* girişli sürümde (auth.js) Supabase'den doldurulur */ }
 function currentView(){
   const v = (location.hash.match(/^#\/([\w-]+)/)||[])[1];
   // alt adres: routeParam()
@@ -3543,6 +3631,8 @@ function showView(){
   if (v==='teklif') renderTeklif();
   if (v==='takvim') renderTakvim();
   if (v==='oneriler') renderOneriler();
+  if (v==='gorevler') renderGorevler();
+  if (v==='projeler') renderTeklifler();
 }
 function go(v){
   const h = v==='home' ? '#/' : '#/'+v;
@@ -3675,6 +3765,7 @@ async function uygulamayiAc(prof){
   if (!appStarted){ appStarted = true; await startApp(); }
   startPresence();
   aktifBildir();
+  grvYukle().catch(()=>{});
   if (prof.role==='admin'){ document.body.classList.add('is-admin'); $a('homeAdminSec').hidden = false; $a('adminSection').style.display='block'; loadAdmin(); }
   showView();
   acilis('uygulama'); acilisRapor();
@@ -3691,7 +3782,7 @@ async function aktifBildir(){
 setInterval(aktifBildir, AKTIF_ARALIK);
 document.addEventListener('visibilitychange', aktifBildir);
 // Yeni sürüm: açık sekme de güncellenir. Kaydedilmemiş oda bilgisi varsa veya yazı yazılıyorsa sayfa kendiliğinden yenilenmez; o zaman sadece düğme çıkar.
-const APP_SURUM = 'ce769737e0d2dd73';
+const APP_SURUM = '60a320aef52c23ed';
 const SURUM_ARALIK = 5*60*1000;
 let yeniSurum = '', surumKirli = false;
 document.addEventListener('input', e=>{ if (e.target.closest && e.target.closest('[data-view="soguk-oda"],#authOverlay')) surumKirli = true; }, true);
@@ -3888,6 +3979,112 @@ $a('onrListe').addEventListener('click', async e=>{
     const r = await SB.from('oneriler').delete().eq('id', s.dataset.onrSil);
     if (r.error){ showToast('Silinemedi: '+r.error.message, true); return; }
     renderOneriler(); }
+});
+
+// ---- kayıtlı teklifler ----
+const TKL_DURUM = {taslak:'Hazırlanıyor', gonderildi:'Teklif gönderildi', siparis:'Sipariş alındı', kaybedildi:'Kaybedildi'};
+const TKL_NEDEN = ['İletişim eksikliği','Fiyatta anlaşamadık','Rakip firmayı seçti','Teslim süresi uymadı','Proje iptal oldu','Diğer'];
+let tklKayit = [];
+$a('tkKaydet').onclick = async ()=>{
+  if (!TK.satirlar.length){ showToast('Önce sepete kalem ekleyin.', true); return; }
+  const ad = [TK.musteri, TK.proje].map(x=>String(x||'').trim()).filter(Boolean).join(' · ');
+  if (!ad){ showToast('Kaydetmek için müşteri veya proje adı yazın.', true); $a('tkMusteri').focus(); return; }
+  const veri = JSON.parse(JSON.stringify(TK)); delete veri.kayitId;
+  const alan = {ad, toplam:tkTotals().genel, veri, guncelleme:new Date().toISOString()};
+  const r = TK.kayitId ? await SB.from('teklifler').update(alan).eq('id', TK.kayitId)
+    : await (async()=>{ const id = crypto.randomUUID(); const q = await SB.from('teklifler').insert({id, user_id:CUR.id, yazan:CUR.full_name||CUR.email, durum:'taslak', ...alan}); if (!q.error) TK.kayitId = id; return q; })();
+  if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); return; }
+  tkSave(); showToast('Teklif kaydedildi. Kayıtlı Projeler sayfasında görünür.');
+};
+renderTeklifler = async function(){
+  const el = $a('tklListe'), oz = $a('tklOzet');
+  const r = await SB.from('teklifler').select('*').order('guncelleme',{ascending:false}).limit(300);
+  if (r.error){ el.innerHTML = '<div class="empty-hist">Teklifler şu an yüklenemedi.</div>'; oz.innerHTML=''; return; }
+  tklKayit = r.data||[];
+  const admin = CUR.role==='admin', say = d => tklKayit.filter(x=>x.durum===d).length;
+  oz.innerHTML = tklKayit.length ? Object.keys(TKL_DURUM).map(d=>`<span>${TKL_DURUM[d]}: <b>${say(d)}</b></span>`).join('') : '';
+  el.innerHTML = tklKayit.length ? tklKayit.map(x=>`<div class="tkl-k tkl-d-${escH(x.durum)}" data-tkl="${x.id}">
+    <div class="tkl-u"><div><b>${escH(x.ad)}</b><small>${admin?escH(x.yazan||'—')+' · ':''}${new Date(x.guncelleme||x.olusturma).toLocaleDateString('tr-TR')}</small></div><div class="tkl-t">${fmt(+x.toplam||0)}</div></div>
+    <div class="tkl-a"><select data-tkl-durum aria-label="Teklif durumu">${Object.keys(TKL_DURUM).map(d=>`<option value="${d}"${d===x.durum?' selected':''}>${TKL_DURUM[d]}</option>`).join('')}</select>
+      ${x.durum==='kaybedildi'?`<select data-tkl-neden aria-label="Kaybedilme nedeni"><option value="">Neden seçin…</option>${TKL_NEDEN.map(n=>`<option${n===x.kayip_neden?' selected':''}>${n}</option>`).join('')}</select>`:''}
+      <button class="icon-btn" type="button" data-tkl-bak>Önizle</button><button class="icon-btn" type="button" data-tkl-ac>Aç</button><button class="icon-btn" type="button" data-tkl-sil>Sil</button></div></div>`).join('') : '<div class="empty-hist">Henüz kayıtlı teklif yok. Teklif Sepeti\'nde "Teklifi kaydet"e basın.</div>';
+};
+async function tklGuncelle(id, alan){
+  const r = await SB.from('teklifler').update(alan).eq('id', id);
+  if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); return; }
+  renderTeklifler();
+}
+$a('tklListe').addEventListener('change', e=>{
+  const k = e.target.closest('[data-tkl]'); if (!k) return;
+  if (e.target.matches('[data-tkl-durum]')) tklGuncelle(k.dataset.tkl, {durum:e.target.value, kayip_neden:null, guncelleme:new Date().toISOString()});
+  if (e.target.matches('[data-tkl-neden]')) tklGuncelle(k.dataset.tkl, {kayip_neden:e.target.value||null});
+});
+$a('tklListe').addEventListener('click', async e=>{
+  const k = e.target.closest('[data-tkl]'); if (!k) return;
+  const x = tklKayit.find(q=>q.id===k.dataset.tkl); if (!x) return;
+  if (e.target.closest('[data-tkl-bak]')) tkOnizleGoster(x.veri);
+  if (e.target.closest('[data-tkl-ac]')){
+    if (TK.satirlar.length && TK.kayitId!==x.id && !confirm('Sepetteki kalemler bu teklifle değiştirilsin mi?')) return;
+    TK = Object.assign(tkEmpty(), x.veri, {kayitId:x.id}); tkSave(); location.hash = '#/teklif';
+  }
+  if (e.target.closest('[data-tkl-sil]') && confirm('Bu teklif silinsin mi?')){
+    const r = await SB.from('teklifler').delete().eq('id', x.id);
+    if (r.error){ showToast('Silinemedi: '+r.error.message, true); return; }
+    if (TK.kayitId===x.id){ delete TK.kayitId; tkSave(); }
+    renderTeklifler();
+  }
+});
+
+// ---- görevler: yönetici atar, atanan yapıldı işaretler ----
+let grvKayit = [];
+function grvRozet(){
+  const c = $a('homeGorevCard'); if (!c || !CUR) return;
+  const n = grvKayit.filter(x=>x.atanan===CUR.id && x.durum!=='yapildi').length;
+  let b = c.querySelector('.hc-gorev');
+  if (!n){ if (b) b.remove(); return; }
+  if (!b){ b = document.createElement('span'); b.className = 'hc-gorev'; b.style.cssText = 'display:inline-block;margin-top:6px;background:#e3342b;color:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600'; c.appendChild(b); }
+  b.textContent = n + ' görev bekliyor';
+}
+async function grvYukle(){
+  const r = await SB.from('gorevler').select('*').order('olusturma',{ascending:false}).limit(300);
+  if (r.error) return false;
+  grvKayit = r.data||[]; grvRozet(); return true;
+}
+renderGorevler = async function(){
+  const el = $a('grvListe'), admin = CUR.role==='admin';
+  $a('grvYeni').hidden = !admin;
+  if (admin){
+    const p = await SB.from('profiles').select('id,full_name,email,approved').eq('approved', true);
+    const k = $a('grvKime'), sec = k.value;
+    k.innerHTML = '<option value="">Kişi seçin…</option>' + (p.data||[]).map(u=>`<option value="${u.id}"${u.id===sec?' selected':''}>${escH(u.full_name||u.email)}</option>`).join('');
+  }
+  if (!(await grvYukle())){ el.innerHTML = '<div class="empty-hist">Görevler şu an yüklenemedi.</div>'; return; }
+  const bugun = trBugun(), sira = [...grvKayit.filter(x=>x.durum!=='yapildi'), ...grvKayit.filter(x=>x.durum==='yapildi')];
+  el.innerHTML = sira.length ? sira.map(x=>{ const yap = x.durum==='yapildi', gec = !yap && x.son_tarih && x.son_tarih<bugun, ben = x.atanan===CUR.id;
+    return `<div class="grv-k${yap?' yapildi':''}"><b>${escH(x.baslik)}</b>${x.aciklama?`<p>${escH(x.aciklama)}</p>`:''}
+      <div class="onr-a">${yap?'<span class="onr-e">✓ Yapıldı</span>':''}<span>${admin?escH(x.atanan_ad||'—'):'Atayan: '+escH(x.atayan_ad||'—')}${x.son_tarih?` · <span class="${gec?'grv-gec':''}">Son tarih: ${new Date(x.son_tarih+'T12:00:00').toLocaleDateString('tr-TR')}${gec?' (gecikti)':''}</span>`:''}</span><span class="sp"></span>
+      ${admin||ben?`<button class="icon-btn" type="button" data-grv-yap="${x.id}">${yap?'Geri al':'Yaptım'}</button>`:''}
+      ${admin?`<button class="icon-btn" type="button" data-grv-sil="${x.id}">Sil</button>`:''}</div></div>`; }).join('') : '<div class="empty-hist">Görev yok.</div>';
+};
+$a('grvAta').onclick = async ()=>{
+  const kime = $a('grvKime'), b = $a('grvBaslik').value.trim();
+  if (!kime.value){ showToast('Görevi kime atayacağınızı seçin.', true); return; }
+  if (!b){ showToast('Görevi yazın.', true); return; }
+  const r = await SB.from('gorevler').insert({atayan:CUR.id, atayan_ad:CUR.full_name||CUR.email, atanan:kime.value, atanan_ad:kime.options[kime.selectedIndex].text, baslik:b, aciklama:$a('grvAciklama').value.trim()||null, son_tarih:$a('grvTarih').value||null});
+  if (r.error){ showToast('Atanamadı: '+r.error.message, true); return; }
+  $a('grvBaslik').value=''; $a('grvAciklama').value=''; $a('grvTarih').value=''; kime.value='';
+  showToast('Görev atandı.'); renderGorevler();
+};
+$a('grvListe').addEventListener('click', async e=>{
+  const y = e.target.closest('[data-grv-yap]'), s = e.target.closest('[data-grv-sil]');
+  if (y){ const x = grvKayit.find(q=>q.id===y.dataset.grvYap); if (!x) return; const yap = x.durum==='yapildi';
+    const r = await SB.from('gorevler').update({durum:yap?'bekliyor':'yapildi', tamamlanma:yap?null:new Date().toISOString()}).eq('id', x.id);
+    if (r.error){ showToast('Kaydedilemedi: '+r.error.message, true); return; }
+    renderGorevler(); }
+  if (s && confirm('Bu görev silinsin mi?')){
+    const r = await SB.from('gorevler').delete().eq('id', s.dataset.grvSil);
+    if (r.error){ showToast('Silinemedi: '+r.error.message, true); return; }
+    renderGorevler(); }
 });
 
 // ---- yönetici paneli ----
